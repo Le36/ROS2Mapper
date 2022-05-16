@@ -1,7 +1,7 @@
 # Definition of Done
 
 - CI build passing
-- Code coverage at least 75%
+- At least rudimentary robot functionality such as moving
 - Code refactoring done
 - Code passes Cppcheck
 - Code reviewed by at least one peer
