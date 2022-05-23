@@ -6,4 +6,4 @@ University of Helsinki, Ohjelmistotuotantoprojekti (Software Engineering Project
 
 - [Definition of done](./Documentation/definition-of-done.md)
 - [Timesheet](./Documentation/timesheet.md)
-- [Spring 0 burndown](./Documentation/sprint0.png)
+- [Sprint 0 burndown](./Documentation/sprint0.png)
