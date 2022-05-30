@@ -1,4 +1,4 @@
-sprint9
+### sprint0
 
 ROS 2 and its installation went smoothly following the instructions: https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html
 
@@ -9,7 +9,8 @@ The installation of Gazebo 11 went smoothly following the instructions: https://
 Building the robot was easy, and things related to it made it easy, for example, the ssh connection between devices in the same WLAN and other similar tricks. eg robot control with master keyboard and robot in wireless mode.
 
 
-sprint1
+### sprint1
+
 this sprint i installed the camera system using the following guide:
 https://github.com/ros-perception/vision_opencv/tree/ros2/cv_bridge
 with opencv and v4l2 camera. getting the camera was simple but colcon build takes a lot of time with sudo upgrades etc. so lots of waiting when working with these external sensors for the rasp pi.
