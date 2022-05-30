@@ -14,7 +14,18 @@ __Negatives__:
  - None
  
  
- ## Sprint 1 (24.05. - 30.05.)
- ROS2 package library (https://index.ros.org/) search seemed somewhat cumbersome at first. In the website GUI there was no way to specify which ROS2 distribution I wanted the search results to be for. I then noticed the little question mark symbol next to the search bar which lead me to the lunr instruction page (https://lunrjs.com/guides/searching.html) and I was able to specify my searches better. Still the search didn’t seem to function properly with the term “distro:foxy camera”. This looks for any result with the distro being foxy and any other field being camera. The lunr documentation says that when both fields match, the results will be shown first, but this does not seem to be the case as the correct results are shown on the second page instead of the first. Maybe the index page could have search filtering implemented a bit better.
+## Sprint 1 (24.05. - 30.05.)
+I focused mainly on the camera node of the physical Turtlebot3 in this sprint. It took me a lot of time to get the node working and my developing experience reflects this.
  
- So many ROS2 versions → confusing when looking for instructions online.
+ROS2 package library (https://index.ros.org/) search seemed somewhat cumbersome at first. In the website GUI there was no way to specify which ROS2 distribution I wanted the search results to be for. I then noticed the little question mark symbol next to the search bar which lead me to the lunr instruction page (https://lunrjs.com/guides/searching.html) and I was able to specify my searches better. Still the search didn’t seem to function properly with the term “distro:foxy camera”. This looks for any result with the distro being foxy and any other field being camera. The lunr documentation says that when both fields match, the results will be shown first, but this does not seem to be the case as the correct results are shown on the second page instead of the first. Maybe the index page could have search filtering implemented a bit better. This could, ofcourse, also be my misunderstanding.
+
+In addition to the official ROS documentation and it's tutorials, general Googling provides a lot of good results. However, in my opinion this also highlights a negative aspect of ROS; so many ROS versions where nodes are not cross-compatible. Even when the ROS version is the same as the one used in the tutorial, building often fails. This caused me frustration in this sprint although I was able to get everything working in the end.
+
+I was quite surprised of the very long build times when doing it in the Raspberry Pi. It felt quite frustrating having to wait sometimes up to 2 hours for the packages to build only to have it fail at the last part. But, this is a part of developing with such technologies and is a part of the work process.
+
+__Positives__:
+ - Lots of premade packages viewable from https://index.ros.org/
+
+__Negatives__:
+ - Many tutorials online most of which did not work as is
+ - Long build times in Raspberry Pi
