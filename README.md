@@ -14,7 +14,7 @@ University of Helsinki, Ohjelmistotuotantoprojekti (Software Engineering Project
 
 ## Diaries
 - [Juho](./Diaries/juho.md)
-- [Kosti](./Diaries/kosti.txt)
-- [Leevi](./Diaries/leevi.txt)
-- [Oskari](./Diaries/oskari.txt)
-- [Sami](./Diaries/sami.txt)
+- [Kosti](./Diaries/kosti.md)
+- [Leevi](./Diaries/leevi.md)
+- [Oskari](./Diaries/oskari.md)
+- [Sami](./Diaries/sami.md)
