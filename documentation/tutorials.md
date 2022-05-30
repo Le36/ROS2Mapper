@@ -103,6 +103,10 @@
     ros2 launch turtlebot3_navigation2 navigation2.launch.py
     ros2 launch slam_toolbox online_async_launch.py
     ```
+3. (On the remote PC, control the robot)
+    ```
+    ros2 run turtlebot3_teleop teleop_keyboard
+    ```
 
 ### Getting the Raspberry Pi camera working
 1. On the Raspberry Pi
