@@ -104,7 +104,7 @@
         $ . install/local_setup.bash
         $ ros2 run v4l2_camera v4l2_camera_node
         ```
-        The last commands gives errors because apparently the Raspberry Pi camera doesn't have all the configuration settings a regular camera would have. The errors are probably safe to ignore.
+        The last command gives errors because apparently, the Raspberry Pi camera doesn't have all the configuration settings a regular camera would have. The errors are probably safe to ignore.
 2.  On your PC
     1.  Run the following command
         ```
@@ -114,11 +114,21 @@
     3.  Select "/image_raw/compressed" from the dropdown menu 
 
 ### Autonomous exploration in the Gazebo simulator
-1. Install and build [m-explore](https://github.com/robo-friends/m-explore-ros2)
-2. Run the following commands
+1. Clone and build [m-explore-ros2](https://github.com/robo-friends/m-explore-ros2)
+    ```
+    $ git clone https://github.com/robo-friends/m-explore-ros2
+    $ cd m-explore-ros2
+    $ colcon build
+    ```
+2. Run Gazebo and Nav2
     ```
     $ ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
     $ ros2 launch turtlebot3_navigation2 navigation2.launch.py use_sim_time:=True
     $ ros2 launch slam_toolbox online_async_launch.py
+    ```
+3. Run the exploration
+    ```
+    $ cd m-explore-ros2
+    $ source install/setup.bash
     $ ros2 launch explore_lite explore.launch.py
     ```
