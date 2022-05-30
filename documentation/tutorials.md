@@ -94,22 +94,22 @@
 
 ### Nav2 and SLAM on the physical robot
 ([link to the tutorial](https://navigation.ros.org/tutorials/docs/navigation2_with_slam.html))
-1. On the Raspberry Pi, run the following commands
+1. [Raspi] Run turtlebot3_bringup
     ```
     ros2 launch turtlebot3_bringup robot.launch.py
     ```
-2. On the remote PC, run Nav2 and SLAM
+2. [Remote] Run Nav2 and SLAM
     ```
     ros2 launch turtlebot3_navigation2 navigation2.launch.py
     ros2 launch slam_toolbox online_async_launch.py
     ```
-3. (On the remote PC, control the robot)
+3. ([Remote] Control the robot)
     ```
     ros2 run turtlebot3_teleop teleop_keyboard
     ```
 
 ### Getting the Raspberry Pi camera working
-1. On the Raspberry Pi
+1. [Raspi] Download and build the camera node
     1. Add `start_x=1` to the end of `/boot/firmware/config.txt`
     2. Reboot
     3. Run the following commands
@@ -127,14 +127,14 @@
         cd ~/ros2_ws
         colcon build --symlink-install
         ```
-    4. Open a new terminal and run the following commands
-        ```
-        cd ~/ros2_ws
-        . install/local_setup.bash
-        ros2 run v4l2_camera v4l2_camera_node
-        ```
-        The last command gives errors because apparently, the Raspberry Pi camera doesn't have all the configuration settings a regular camera would have. The errors are probably safe to ignore.
-2.  On the remote PC
+2. [Raspi] Run the camera node (in a new terminal)
+    ```
+    cd ~/ros2_ws
+    . install/local_setup.bash
+    ros2 run v4l2_camera v4l2_camera_node
+    ```
+    The last command gives errors because apparently, the Raspberry Pi camera doesn't have all the configuration settings a regular camera would have. The errors are probably safe to ignore.
+3. [Remote] View the output of the camera
     1.  Run the following command
         ```
         ros2 run rqt_image_view rqt_image_view
@@ -161,17 +161,17 @@
     ```
 
 ### Autonomous exploration on the physical robot
-1. On the remote PC, clone and build [m-explore-ros2](https://github.com/robo-friends/m-explore-ros2)
+1. [Remote] Clone and build [m-explore-ros2](https://github.com/robo-friends/m-explore-ros2)
     ```
     git clone https://github.com/robo-friends/m-explore-ros2
     cd m-explore-ros2
     colcon build --symlink-install
     ```
-2. On the Raspberry Pi, run turtlebot3_bringup
+2. [Raspi] Run turtlebot3_bringup
     ```
     ros2 launch turtlebot3_bringup robot.launch.py
     ```
-3. On the remote PC, run Nav2, SLAM, and the exploration
+3. [Remote] Run Nav2, SLAM, and the exploration
     ```
     ros2 launch turtlebot3_navigation2 navigation2.launch.py
     ros2 launch slam_toolbox online_async_launch.py
