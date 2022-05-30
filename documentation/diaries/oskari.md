@@ -23,6 +23,8 @@ In addition to the official ROS documentation and it's tutorials, general Googli
 
 I was quite surprised of the very long build times when doing it in the Raspberry Pi. It felt quite frustrating having to wait sometimes up to 2 hours for the packages to build only to have it fail at the last part. But, this is a part of developing with such technologies and is a part of the work process.
 
+The camera package we used (https://index.ros.org/r/v4l2_camera/) has some imteresting bugs when we are using it. We are able to see the camera feed live using ```ros2 run rqt_image_view rqt_image_view``` on the remote pc, but changing the image topic to e.g. /image_raw results in no video shown. Changing back to /image_raw/compressed results in rqt crashing. I must investigate this further.
+
 __Positives__:
  - Lots of premade packages viewable from https://index.ros.org/
 
