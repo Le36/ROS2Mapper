@@ -98,7 +98,7 @@
     ```
     ros2 launch turtlebot3_bringup robot.launch.py
     ```
-2. On the remote PC, run Nav2
+2. On the remote PC, run Nav2 and SLAM
     ```
     ros2 launch turtlebot3_navigation2 navigation2.launch.py
     ros2 launch slam_toolbox online_async_launch.py
@@ -167,7 +167,7 @@
     ```
     ros2 launch turtlebot3_bringup robot.launch.py
     ```
-3. On the remote PC, run Nav2 and the exploration
+3. On the remote PC, run Nav2, SLAM, and the exploration
     ```
     ros2 launch turtlebot3_navigation2 navigation2.launch.py
     ros2 launch slam_toolbox online_async_launch.py
