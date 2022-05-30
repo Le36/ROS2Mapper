@@ -63,6 +63,18 @@
     $ cd ~/turtlebot3_ws
     $ colcon build --symlink-install
     ```
+3. Install v4l2 package
+    ```
+    apt-get install ros-<ros_version>-v4l2-camera
+    ```
+4. Run the node
+    ```
+    ros2 run v4l2_camera v4l2_camera_node
+    ```
+5. View live feed
+    ```
+    ros2 run rqt_image_view rqt_image_view
+    ```
 
 ### SLAM in the Gazebo simulation
 ([link to the tutorial](https://emanual.robotis.com/docs/en/platform/turtlebot3/slam_simulation/))
