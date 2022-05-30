@@ -118,7 +118,7 @@
         cd ~/ros2_ws/src
         rosdep install -i --from-path src --rosdistro foxy -y
         cd ~/ros2_ws
-        colcon build
+        colcon build --symlink-install
         ```
     4. Open a new terminal and run the following commands
         ```
@@ -140,7 +140,7 @@
     ```
     git clone https://github.com/robo-friends/m-explore-ros2
     cd m-explore-ros2
-    colcon build
+    colcon build --symlink-install
     ```
 2. Run Gazebo and Nav2
     ```
