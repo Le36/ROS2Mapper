@@ -60,12 +60,12 @@
     ```
 2. And then recompile the turtlebot3 models
     ```
-    $ cd ~/turtlebot3_ws
-    $ colcon build --symlink-install
+    cd ~/turtlebot3_ws
+    colcon build --symlink-install
     ```
 3. Install v4l2 package
     ```
-    apt-get install ros-<ros_version>-v4l2-camera
+    apt-get install ros-foxy-v4l2-camera
     ```
 4. Run the node
     ```
@@ -80,15 +80,15 @@
 ([link to the tutorial](https://emanual.robotis.com/docs/en/platform/turtlebot3/slam_simulation/))
 1. Launch the simulation world
     ```
-    $ ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
+    ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
     ```
 2. Run SLAM node
     ```
-    $ ros2 launch turtlebot3_cartographer cartographer.launch.py use_sim_time:=True
+    ros2 launch turtlebot3_cartographer cartographer.launch.py use_sim_time:=True
     ```
 3. (Control the robot)
     ```
-    $ ros2 run turtlebot3_teleop teleop_keyboard
+    ros2 run turtlebot3_teleop teleop_keyboard
     ```
 
 ### Nav2 and SLAM on the physical robot
@@ -96,9 +96,9 @@
 1. On the Raspberry pi
     1. Run the following commands 
         ```
-        $ ros2 launch turtlebot3_bringup robot.launch.py
-        $ ros2 launch turtlebot3_navigation2 navigation2.launch.py
-        $ ros2 launch slam_toolbox online_async_launch.py
+        ros2 launch turtlebot3_bringup robot.launch.py
+        ros2 launch turtlebot3_navigation2 navigation2.launch.py
+        ros2 launch slam_toolbox online_async_launch.py
         ```
 
 ### Getting the Raspberry Pi camera working
@@ -107,30 +107,30 @@
     2. Reboot
     3. Run the following commands
         ```
-        $ sudo apt install libtheora-dev libogg-dev libboost-python-dev
-        $ mkdir -p ~/ros2_ws/src && cd ~/ros2_ws/src
-        $ git clone --branch foxy https://github.com/ros-perception/image_common
-        $ git clone --branch ros2 https://github.com/ros-perception/vision_opencv
-        $ git clone --branch foxy-devel https://github.com/ros-perception/image_transport_plugins
-        $ git clone --branch foxy https://gitlab.com/boldhearts/ros2_v4l2_camera src/v4l2_camera
-        $ cd ~/ros2_ws
-        $ rosdep install -i --from-path src --rosdistro foxy -y
-        $ cd ~/ros2_ws/src
-        $ rosdep install -i --from-path src --rosdistro foxy -y
-        $ cd ~/ros2_ws
-        $ colcon build
+        sudo apt install libtheora-dev libogg-dev libboost-python-dev
+        mkdir -p ~/ros2_ws/src && cd ~/ros2_ws/src
+        git clone --branch foxy https://github.com/ros-perception/image_common
+        git clone --branch ros2 https://github.com/ros-perception/vision_opencv
+        git clone --branch foxy-devel https://github.com/ros-perception/image_transport_plugins
+        git clone --branch foxy https://gitlab.com/boldhearts/ros2_v4l2_camera src/v4l2_camera
+        cd ~/ros2_ws
+        rosdep install -i --from-path src --rosdistro foxy -y
+        cd ~/ros2_ws/src
+        rosdep install -i --from-path src --rosdistro foxy -y
+        cd ~/ros2_ws
+        colcon build
         ```
     4. Open a new terminal and run the following commands
         ```
-        $ cd ~/ros2_ws
-        $ . install/local_setup.bash
-        $ ros2 run v4l2_camera v4l2_camera_node
+        cd ~/ros2_ws
+        . install/local_setup.bash
+        ros2 run v4l2_camera v4l2_camera_node
         ```
         The last command gives errors because apparently, the Raspberry Pi camera doesn't have all the configuration settings a regular camera would have. The errors are probably safe to ignore.
 2.  On your PC
     1.  Run the following command
         ```
-        $ ros2 run rqt_image_view rqt_image_view
+        ros2 run rqt_image_view rqt_image_view
         ```
     2.  When rqt has opened, press "Refresh topics"
     3.  Select "/image_raw/compressed" from the dropdown menu 
@@ -138,19 +138,19 @@
 ### Autonomous exploration in the Gazebo simulator
 1. Clone and build [m-explore-ros2](https://github.com/robo-friends/m-explore-ros2)
     ```
-    $ git clone https://github.com/robo-friends/m-explore-ros2
-    $ cd m-explore-ros2
-    $ colcon build
+    git clone https://github.com/robo-friends/m-explore-ros2
+    cd m-explore-ros2
+    colcon build
     ```
 2. Run Gazebo and Nav2
     ```
-    $ ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
-    $ ros2 launch turtlebot3_navigation2 navigation2.launch.py use_sim_time:=True
-    $ ros2 launch slam_toolbox online_async_launch.py
+    ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
+    ros2 launch turtlebot3_navigation2 navigation2.launch.py use_sim_time:=True
+    ros2 launch slam_toolbox online_async_launch.py
     ```
 3. Run the exploration
     ```
-    $ cd m-explore-ros2
-    $ source install/setup.bash
-    $ ros2 launch explore_lite explore.launch.py
+    cd m-explore-ros2
+    source install/setup.bash
+    ros2 launch explore_lite explore.launch.py
     ```

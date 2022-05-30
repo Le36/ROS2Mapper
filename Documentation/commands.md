@@ -11,19 +11,19 @@
 ### Launching the Turtlebot3 worlds
 - turtlebot3_world
     ```
-    $ ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
+    ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
     ```
 - turtlebot3_house
     ```
-    $ ros2 launch turtlebot3_gazebo turtlebot3_house.launch.py
+    ros2 launch turtlebot3_gazebo turtlebot3_house.launch.py
     ```
 
 ### Controlling the Turtlebot3
 ```
-$ ros2 run turtlebot3_teleop teleop_keyboard
+ros2 run turtlebot3_teleop teleop_keyboard
 ```
 
 ### Launching the Cartographer
 ```
-$ ros2 launch turtlebot3_cartographer cartographer.launch.py
+ros2 launch turtlebot3_cartographer cartographer.launch.py
 ```
