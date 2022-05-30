@@ -1,16 +1,26 @@
-# Tutorials
+# Tutorials.md
 
 ## Table of contents
+- [Table of contents](#table-of-contents)
 - [Tutorials](#tutorials)
-    - [Table of contents](#table-of-contents)
-    - [Tutorials](#tutorials-1)
-        - [Adding a camera to the turtlebot3 burger model for Gazebo](#adding-a-camera-to-the-turtlebot3-burger-model-for-gazebo)
-        - [SLAM in the Gazebo simulation](#slam-in-the-gazebo-simulation)
-        - [Nav2 and SLAM on the physical robot](#nav2-and-slam-on-the-physical-robot)
-        - [Getting the Raspberry Pi camera working](#getting-the-raspberry-pi-camera-working)
-        - [Autonomous exploration in the Gazebo simulator](#autonomous-exploration-in-the-gazebo-simulator)
+    - [Configuring markdown autoformat in VS Code](#configuring-markdown-autoformat-in-vs-code)
+    - [Adding a camera to the turtlebot3 burger model for Gazebo](#adding-a-camera-to-the-turtlebot3-burger-model-for-gazebo)
+    - [SLAM in the Gazebo simulation](#slam-in-the-gazebo-simulation)
+    - [Nav2 and SLAM on the physical robot](#nav2-and-slam-on-the-physical-robot)
+    - [Getting the Raspberry Pi camera working](#getting-the-raspberry-pi-camera-working)
+    - [Autonomous exploration in the Gazebo simulator](#autonomous-exploration-in-the-gazebo-simulator)
 
 ## Tutorials
+### Configuring markdown autoformat in VS Code
+1. Install the Markdown All in One extension
+    1. Press `Ctrl+Shift+X` to open the extensions tab
+    2. Search for `Markdown All in One` and install it
+2. Configure VS Code settings
+    1. Press `Ctrl+Comma` to open the settings
+    2. Search for `format on save` and check the box
+    3. Search for `indentation size` and select the option `inherit`
+    4. Search for `toc.levels` and change the value to `2..6`
+
 ### Adding a camera to the turtlebot3 burger model for Gazebo
 1. Add the following lines to `~/turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot3_gazebo/models/turtlebot3_burger/model.sdf`
     ```xml
