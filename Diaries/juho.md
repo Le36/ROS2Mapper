@@ -1,6 +1,6 @@
 # Diary, Juho
 
-## Sprint 0
+## Sprint 0 (16.05 - 23.05)
 ### Monday 16.05
 I use Arch Linux (btw) on my laptop so I started trying to install gazebo on it. There is a [gazebo package](https://aur.archlinux.org/packages/gazebo) in the Arch User Repository but installing it wasn't easy. I had to install some of the dependencies separately because their PKGBUILDs had errors and one of them even had a compile error, which I fixed by editing the file just before it was compiled. (Not the correct way to fix things, but it worked)  
 After I installed Gazebo, I started trying to install ROS 2. The Galactic version of ROS 2 is also a [package](https://aur.archlinux.org/packages/ros2-galactic) in the Arch User Repository, but it had too many errors and I gave up trying to install it.
@@ -28,7 +28,7 @@ When looking up how to find QR codes from images and get their relative position
 I started trying to figure out how I would attach add a camera to the TurtleBot3 in Gazebo but didn't get too far.  
 I also tried to figure out how to use Nav2 in the simulation but the [Nav2 tutorial](https://navigation.ros.org/tutorials/docs/navigation2_with_slam.html) didn't work.  
 
-## Sprint 1
+## Sprint 1 (24.05 - 30.05)
 ### Wednesday 25.06
 I started trying to figure out how to get a camera working in the simulation. I found [a Gazebo tutorial](https://classic.gazebosim.org/tutorials?tut=ros_gzplugins#Camera), but it didn't help at all. I also found [turtlebot3-camera](https://github.com/shaigivati/turtlebot3-camera) GitHub repository, but that didn't work either. The turtlebot3-camera repository had launch files, but I was initially a bit confused as to how to use them, but after rechecking the ros2 tutorial I managed to launch it, but it failed because it is for ROS 1 I think. I had no idea how to get the camera working in the simulation or how the model files work, but I had to get the camera working by desperately googling stuff.
 
