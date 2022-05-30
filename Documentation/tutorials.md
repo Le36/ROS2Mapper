@@ -41,8 +41,8 @@
             <camera name="camera_name">
               <horizontal_fov>1.086</horizontal_fov>
               <image>
-                <width>1920</width>
-                <height>1080</height>
+                <width>1024</width>
+                <height>768</height>
                 <format>R8G8B8</format>
               </image>
             </camera>
