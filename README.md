@@ -12,7 +12,7 @@ University of Helsinki, Ohjelmistotuotantoprojekti (Software Engineering Project
 - [Tutorials](documentation/tutorials.md)
 - [Commands](documentation/commands.md)
 
-## diaries
+## Diaries
 - [Juho](documentation/diaries/juho.md)
 - [Kosti](documentation/diaries/kosti.md)
 - [Leevi](documentation/diaries/leevi.md)
