@@ -9,6 +9,7 @@
     - [Nav2 and SLAM on the physical robot](#nav2-and-slam-on-the-physical-robot)
     - [Getting the Raspberry Pi camera working](#getting-the-raspberry-pi-camera-working)
     - [Autonomous exploration in the Gazebo simulator](#autonomous-exploration-in-the-gazebo-simulator)
+    - [Autonomous exploration on the physical robot](#autonomous-exploration-on-the-physical-robot)
 
 ## Tutorials
 ### Configuring markdown autoformat in VS Code
@@ -63,7 +64,7 @@
     cd ~/turtlebot3_ws
     colcon build --symlink-install
     ```
-3. Install v4l2 package
+3. Install the v4l2 package
     ```
     apt-get install ros-foxy-v4l2-camera
     ```
@@ -93,16 +94,18 @@
 
 ### Nav2 and SLAM on the physical robot
 ([link to the tutorial](https://navigation.ros.org/tutorials/docs/navigation2_with_slam.html))
-1. On the Raspberry pi
-    1. Run the following commands 
-        ```
-        ros2 launch turtlebot3_bringup robot.launch.py
-        ros2 launch turtlebot3_navigation2 navigation2.launch.py
-        ros2 launch slam_toolbox online_async_launch.py
-        ```
+1. On the Raspberry Pi, run the following commands
+    ```
+    ros2 launch turtlebot3_bringup robot.launch.py
+    ```
+2. On the remote PC, run Nav2
+    ```
+    ros2 launch turtlebot3_navigation2 navigation2.launch.py
+    ros2 launch slam_toolbox online_async_launch.py
+    ```
 
 ### Getting the Raspberry Pi camera working
-1. In the Raspberry Pi
+1. On the Raspberry Pi
     1. Add `start_x=1` to the end of `/boot/firmware/config.txt`
     2. Reboot
     3. Run the following commands
@@ -127,7 +130,7 @@
         ros2 run v4l2_camera v4l2_camera_node
         ```
         The last command gives errors because apparently, the Raspberry Pi camera doesn't have all the configuration settings a regular camera would have. The errors are probably safe to ignore.
-2.  On your PC
+2.  On the remote PC
     1.  Run the following command
         ```
         ros2 run rqt_image_view rqt_image_view
@@ -142,14 +145,33 @@
     cd m-explore-ros2
     colcon build --symlink-install
     ```
-2. Run Gazebo and Nav2
+2. Run Gazebo, Nav2, and the exploration
     ```
     ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
     ros2 launch turtlebot3_navigation2 navigation2.launch.py use_sim_time:=True
     ros2 launch slam_toolbox online_async_launch.py
+
+    cd m-explore-ros2
+    source install/setup.bash
+    ros2 launch explore_lite explore.launch.py
     ```
-3. Run the exploration
+
+### Autonomous exploration on the physical robot
+1. On the remote PC, clone and build [m-explore-ros2](https://github.com/robo-friends/m-explore-ros2)
     ```
+    git clone https://github.com/robo-friends/m-explore-ros2
+    cd m-explore-ros2
+    colcon build --symlink-install
+    ```
+2. On the Raspberry Pi, run turtlebot3_bringup
+    ```
+    ros2 launch turtlebot3_bringup robot.launch.py
+    ```
+3. On the remote PC, run Nav2 and the exploration
+    ```
+    ros2 launch turtlebot3_navigation2 navigation2.launch.py
+    ros2 launch slam_toolbox online_async_launch.py
+
     cd m-explore-ros2
     source install/setup.bash
     ros2 launch explore_lite explore.launch.py
