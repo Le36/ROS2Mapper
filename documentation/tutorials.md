@@ -87,7 +87,7 @@
     ```
     ros2 launch turtlebot3_cartographer cartographer.launch.py use_sim_time:=True
     ```
-3. (Control the robot)
+3. Control the robot
     ```
     ros2 run turtlebot3_teleop teleop_keyboard
     ```
@@ -103,7 +103,7 @@
     ros2 launch turtlebot3_navigation2 navigation2.launch.py
     ros2 launch slam_toolbox online_async_launch.py
     ```
-3. ([Remote] Control the robot)
+3. [Remote] Control the robot
     ```
     ros2 run turtlebot3_teleop teleop_keyboard
     ```
