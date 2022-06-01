@@ -1,0 +1,26 @@
+name: Build
+on:
+  push:
+    paths:
+      - 'workspace/**'
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ros-tooling/setup-ros@master
+      - name: build
+        run: |
+          cd workspace && colcon build
+  lint:
+    name: ament_pycodestyle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ros-tooling/setup-ros@master
+      - uses: ros-tooling/action-ros2-lint@master
+        with:
+          linter: pycodestyle
+          package-name: workspace
