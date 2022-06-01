@@ -10,7 +10,7 @@
     - [Getting the Raspberry Pi camera working](#getting-the-raspberry-pi-camera-working)
     - [Autonomous exploration in the Gazebo simulator](#autonomous-exploration-in-the-gazebo-simulator)
     - [Autonomous exploration on the physical robot](#autonomous-exploration-on-the-physical-robot)
-    - [Add QR code models to Gazebo](#add-qr-code-models-to-gazebo)
+    - [Add the QR code models to Gazebo](#add-the-qr-code-models-to-gazebo)
     - [Running the nodes](#running-the-nodes)
 
 ## Tutorials
@@ -183,7 +183,7 @@
     ros2 launch explore_lite explore.launch.py
     ```
 
-### Add QR code models to Gazebo
+### Add the QR code models to Gazebo
 1. Copy the models to your Gazebo models directory
     ```
     cp models/qr_code_* ~/.gazebo/models/ -r
@@ -204,8 +204,7 @@
     ```
     colcon build --symlink-install
     ```
-4. (In a new terminal window) Source and run
-    TODO: Add launch file
+4. (In a new terminal window) Source and run (TODO: Add launch file)
     ```
     source install/setup.bash
     ros2 run qr_code_reader launch
