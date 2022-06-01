@@ -20,4 +20,4 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        cd workspace && pylint $(git ls-files -ox '*test*' '*.py')
+        cd workspace && pylint $(find -name "*.py" | grep -v "test\|install\|build\|setup.py")
