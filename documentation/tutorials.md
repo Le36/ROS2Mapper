@@ -10,6 +10,7 @@
     - [Getting the Raspberry Pi camera working](#getting-the-raspberry-pi-camera-working)
     - [Autonomous exploration in the Gazebo simulator](#autonomous-exploration-in-the-gazebo-simulator)
     - [Autonomous exploration on the physical robot](#autonomous-exploration-on-the-physical-robot)
+    - [Add QR code models to Gazebo](#add-qr-code-models-to-gazebo)
 
 ## Tutorials
 ### Configuring markdown autoformat in VS Code
@@ -179,4 +180,11 @@
     cd m-explore-ros2
     source install/setup.bash
     ros2 launch explore_lite explore.launch.py
+    ```
+
+### Add QR code models to Gazebo
+1. Pull the models from the git repo
+2. Copy the pulled model folders to your Gazebo directory models folder
+    ```
+    ~/.gazebo/models/
     ```
