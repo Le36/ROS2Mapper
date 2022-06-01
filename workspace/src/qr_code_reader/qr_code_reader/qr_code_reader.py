@@ -29,7 +29,7 @@ class QRCodeReader(Node):
             self.publish(code.data)
 
     def publish(self, data: str):
-        """Publish QR code data"""
+        """Publish QR code data to /qr_code_found topic when QR codes are found"""
         msg = String()
         msg.data = str(data)
         self.publisher_.publish(msg)
