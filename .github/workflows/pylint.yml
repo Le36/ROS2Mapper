@@ -1,23 +1,17 @@
-name: Pylint
-
+name: Lint
 on:
   push:
     paths:
       - 'workspace/**'
 
 jobs:
-  build:
+  lint:
+    name: ament_flake8
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v3
-      with:
-        python-version: 3.8
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pylint
-    - name: Analysing the code with pylint
-      run: |
-        cd workspace && pylint $(find -name "*.py" | grep -v "test\|install\|build\|setup.py")
+      - uses: actions/checkout@v3
+      - uses: ros-tooling/setup-ros@master
+      - uses: ros-tooling/action-ros2-lint@master
+        with:
+          linter: flake8
+          package-name: workspace
