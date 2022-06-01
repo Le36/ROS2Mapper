@@ -20,6 +20,7 @@ class QRCodeReader(Node):
         self.bridge = CvBridge()
 
     def image_callback(self, msg_image: Image):
+        """Convert image to correct format and find possible QR codes in it"""
         image = self.bridge.imgmsg_to_cv2(msg_image, "bgr8")
         codes = pyzbar.decode(image)
         for code in codes:
@@ -27,12 +28,14 @@ class QRCodeReader(Node):
             self.publish(code.data)
 
     def publish(self, data: str):
+        """Publish QR code data"""
         msg = String()
         msg.data = str(data)
         self.publisher_.publish(msg)
 
 
 def main(args=None):
+    """Run the node"""
     rclpy.init(args=args)
     qr_code_reader = QRCodeReader()
     rclpy.spin(qr_code_reader)
