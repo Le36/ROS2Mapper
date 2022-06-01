@@ -1,4 +1,4 @@
-name: Lint
+name: Lint and compile
 on:
   push:
     paths:
@@ -15,3 +15,12 @@ jobs:
         with:
           linter: flake8
           package-name: workspace
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ros-tooling/setup-ros@master
+      - name: build
+        run: |
+          cd workspace && colcon build
