@@ -5,3 +5,4 @@
 - Code refactoring done
 - Code reviewed by at least one peer
 - Documentation updated when relevant
+- Customer has accepted everything
