@@ -1,15 +1,15 @@
+from cv_bridge import CvBridge
 from pyzbar import pyzbar
-
 import rclpy
 from rclpy.node import Node
-from cv_bridge import CvBridge
-from std_msgs.msg import String
 from sensor_msgs.msg import Image
+from std_msgs.msg import String
 
 
 class QRCodeReader(Node):
+
     def __init__(self):
-        '''Create the subscriber and the publisher.'''
+        """Create the subscriber and the publisher."""
         super().__init__('qr_code_reader')
         self.subscription = self.create_subscription(
             Image,
@@ -21,22 +21,22 @@ class QRCodeReader(Node):
         self.bridge = CvBridge()
 
     def image_callback(self, msg_image: Image):
-        '''Find possible QR codes in the image and then publish the data in the QR codes.'''
+        """Find possible QR codes in the image and then publish the data in the QR codes."""
         image = self.bridge.imgmsg_to_cv2(msg_image, 'bgr8')
         codes = pyzbar.decode(image)
         for code in codes:
-            self.get_logger().info(f'Found code with data \'{code.data}\'')
+            self.get_logger().info(f"Found code with data '{code.data}'")
             self.publish(code.data)
 
     def publish(self, data: str):
-        '''Publish QR code data to /qr_code_found topic when QR codes are found.'''
+        """Publish QR code data to /qr_code_found topic when QR codes are found."""
         msg = String()
         msg.data = str(data)
         self.publisher_.publish(msg)
 
 
 def main(args=None):
-    '''Run the node.'''
+    """Run the node."""
     rclpy.init(args=args)
     qr_code_reader = QRCodeReader()
     rclpy.spin(qr_code_reader)

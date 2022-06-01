@@ -2,7 +2,7 @@ import sqlite3
 
 
 def init():
-    '''Initialize the database.'''
+    """Initialize the database."""
     conn = sqlite3.connect('test.db')
     conn.execute(
         'CREATE TABLE IF NOT EXISTS robot (id INTEGER PRIMARY KEY, data TEXT)'
