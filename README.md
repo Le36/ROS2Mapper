@@ -1,5 +1,6 @@
 # ROS2 Mapper
 
+[![Lint and compile](https://github.com/Le36/ros2-mapper/actions/workflows/lint_and_compile.yml/badge.svg)](https://github.com/Le36/ros2-mapper/actions/workflows/lint_and_compile.yml)  
 University of Helsinki, Ohjelmistotuotantoprojekti (Software Engineering Project), summer 2022
 
 ## Documents
