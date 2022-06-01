@@ -20,7 +20,8 @@ class QRCodeReader(Node):
         self.bridge = CvBridge()
 
     def image_callback(self, msg_image: Image):
-        """Convert image to correct format and find possible QR codes in it"""
+        """Convert image to correct format and find possible QR codes in it
+        and then publish the data in the QR codes"""
         image = self.bridge.imgmsg_to_cv2(msg_image, "bgr8")
         codes = pyzbar.decode(image)
         for code in codes:
