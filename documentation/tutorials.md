@@ -184,20 +184,20 @@
     ```
 
 ### Add QR code models to Gazebo
-1. Pull the models from the git repo
-2. Copy the pulled model folders to your Gazebo directory models folder
+1. Copy the models to your Gazebo models directory
     ```
-    ~/.gazebo/models/
+    cp models/qr_code_* ~/.gazebo/models/ -r
     ```
 
 ### Running the nodes
-1. Go to the workspace
+1. Go to the workspace in the repository
     ```
     cd workspace
     ```
 2. Install dependencies
     ```
     rosdep install -i --from-path src --rosdistro foxy -y
+    sudo apt install libzbar-dev
     pip3 install pyzbar
     ```
 3. Build
