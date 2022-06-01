@@ -15,7 +15,8 @@ setup(
     zip_safe=True,
     maintainer='bntti',
     maintainer_email='roysko.juho@gmail.com',
-    description='Listens for images from the image topic and publishes the QR code data to /qr_code_found topic when recognizing a QR code',
+    description='Listens for images from the image topic and publishes the QR code'
+                'data to /qr_code_found topic when recognizing a QR code.',
     license='MIT',
     tests_require=['pytest'],
     entry_points={
