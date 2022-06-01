@@ -11,6 +11,7 @@
     - [Autonomous exploration in the Gazebo simulator](#autonomous-exploration-in-the-gazebo-simulator)
     - [Autonomous exploration on the physical robot](#autonomous-exploration-on-the-physical-robot)
     - [Add QR code models to Gazebo](#add-qr-code-models-to-gazebo)
+    - [Running the nodes](#running-the-nodes)
 
 ## Tutorials
 ### Configuring markdown autoformat in VS Code
@@ -187,4 +188,25 @@
 2. Copy the pulled model folders to your Gazebo directory models folder
     ```
     ~/.gazebo/models/
+    ```
+
+### Running the nodes
+1. Go to the workspace
+    ```
+    cd workspace
+    ```
+2. Install dependencies
+    ```
+    rosdep install -i --from-path src --rosdistro foxy -y
+    pip3 install pyzbar
+    ```
+3. Build
+    ```
+    colcon build --symlink-install
+    ```
+4. (In a new terminal window) Source and run
+    TODO: Add launch file
+    ```
+    source install/setup.bash
+    ros2 run qr_code_reader launch
     ```
