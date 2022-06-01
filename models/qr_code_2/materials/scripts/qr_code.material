@@ -1,0 +1,13 @@
+material QRCode2/Image
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture qr_code_2.png
+      }
+    }
+  }
+}

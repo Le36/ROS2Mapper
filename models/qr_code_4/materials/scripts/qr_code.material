@@ -1,4 +1,4 @@
-material QRCode/Image
+material QRCode4/Image
 {
   technique
   {
@@ -6,7 +6,7 @@ material QRCode/Image
     {
       texture_unit
       {
-        texture qr_code.png
+        texture qr_code_4.png
       }
     }
   }

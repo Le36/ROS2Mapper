@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<sdf version="1.4">
+  <model name="qr_code_3">
+    <static>true</static>
+    <link name="link">
+      <visual name="visual">
+        <cast_shadows>false</cast_shadows>
+        <geometry>
+          <box>
+            <size>0.01 0.25 0.25</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>model://qr_code_3/materials/scripts</uri>
+            <uri>model://qr_code_3/materials/textures</uri>
+            <name>QRCode3/Image</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>
