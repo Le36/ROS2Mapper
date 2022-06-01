@@ -9,6 +9,7 @@ from cv_bridge import CvBridge
 
 class QRCodeReader(Node):
     def __init__(self):
+        """Create the subscriber and the publisher"""
         super().__init__('qr_code_reader')
         self.subscription = self.create_subscription(
             Image,
