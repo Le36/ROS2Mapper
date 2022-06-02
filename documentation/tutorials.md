@@ -264,10 +264,16 @@
     ```
 2. Install dependencies
     ```
-    sudo apt install python3-opencv -y
+    rosdep install -i --from-path src --rosdistro foxy -y
+    sudo apt install libzbar-dev python3-opencv -y
+    pip3 install pyzbar
     pip3 install pytest -U
     ```
-3. Run the tests
+3. Build
+    ```
+    colcon build --symlink-install
+    ```
+4. (In a new termial window) Run the tests
     ```
     ./test.sh
     ```
