@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - "workspace/**"
+      - ".github/workflows/main.yml"
 
 jobs:
   build-lint-and-run-tests:
@@ -13,8 +14,10 @@ jobs:
       - uses: ros-tooling/setup-ros@master
       - name: Install dependencies
         run: |
-          sudo apt install pycodestyle -y
+          sudo apt install libzbar-dev pycodestyle -y
           pip3 install -U pytest
+          pip3 install pyzbar
+          cd workspace && rosdep install -i --from-path src --rosdistro foxy -y
       - name: Build
         run: |
           cd workspace && colcon build
