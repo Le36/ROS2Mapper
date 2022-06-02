@@ -14,6 +14,7 @@
 - [Project](#project)
     - [Running the nodes](#running-the-nodes)
     - [Running the linter](#running-the-linter)
+    - [Running the tests](#running-the-tests)
 
 # Tutorials
 
@@ -253,4 +254,19 @@
 3. Run the linter
     ```
     ./lint.sh
+    ```
+
+### Running the tests
+
+1. Go to the workspace in the repository
+    ```
+    cd workspace
+    ```
+2. Install pytest
+    ```
+    pip3 install pytest -U
+    ```
+3. Run the tests
+    ```
+    ./test.sh
     ```
