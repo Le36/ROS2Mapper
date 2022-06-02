@@ -8,7 +8,7 @@ from .submodules.data_repository import data_repository
 
 class MemoryNode(Node):
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("memory_node")
         self.add_data_subscription = self.create_subscription(
             String,
@@ -16,13 +16,13 @@ class MemoryNode(Node):
             self.add_data_callback,
             10)
 
-    def add_data_callback(self, msg):
+    def add_data_callback(self, msg: String) -> None:
         self.get_logger().info(
             f"Adding QR code with data '{msg.data}' to the database")
         data_repository.add_data(msg.data)
 
 
-def main(args=None):
+def main(args=None) -> None:
     rclpy.init(args=args)
     memory_node = MemoryNode()
     rclpy.spin(memory_node)
