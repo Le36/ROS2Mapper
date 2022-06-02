@@ -4,7 +4,7 @@ source install/setup.bash
 ros2 launch launch/launch.py >/dev/null &
 PID=$!
 
-sleep 3
+sleep 5
 pytest src/tests
 RET=$?
 
