@@ -17,7 +17,7 @@ setup(
     maintainer='leevi',
     maintainer_email='48809753+Le36@users.noreply.github.com',
     description='TODO: Package description',
-    license='TODO: License declaration',
+    license='MIT',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [

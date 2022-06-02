@@ -14,7 +14,7 @@ jobs:
       - uses: ros-tooling/setup-ros@master
       - name: Install dependencies
         run: |
-          sudo apt install libzbar-dev pycodestyle -y
+          sudo apt install libzbar-dev pycodestyle ros-foxy-ros-base -y
           pip3 install -U pytest
           pip3 install pyzbar
           rosdep update
@@ -27,4 +27,4 @@ jobs:
           cd workspace && ./lint.sh
       - name: Run tests
         run: |
-          cd workspace && ./test.sh
+          cd workspace && source /opt/ros/foxy/setup.bash && ./test.sh
