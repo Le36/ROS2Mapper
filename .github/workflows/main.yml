@@ -16,4 +16,4 @@ jobs:
           sudo apt install pycodestyle
       - name: Build and run linting
         run: |
-          cd workspace && colcon build && ./lint.py
+          cd workspace && colcon build && ./lint.sh
