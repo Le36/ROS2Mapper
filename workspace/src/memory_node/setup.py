@@ -21,7 +21,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'listener = memory_node.add_data:main',
+            'listener = memory_node.memory_node:main',
         ],
     },
 )
