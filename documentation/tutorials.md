@@ -222,6 +222,7 @@
     ```
     rosdep install -i --from-path src --rosdistro foxy -y
     sudo apt install libzbar-dev
+    sudo apt install sqlite3
     pip3 install pyzbar
     ```
 3. Build
@@ -233,6 +234,20 @@
     source install/setup.bash
     ros2 run qr_code_reader launch
     ```
+
+5. (In a new terminal window) Source and run MEMORY NODE
+    ```
+    source install/setup.bash
+    ros2 run memory_node listener
+    ```
+   memory node can be tested with *this* command.
+
+   `ros2 topic pub -1 /add_data std_msgs/String "{data: 'Hello from terminal'}"`
+
+   database file will be in the workspace folder "test.db"
+
+   browse with
+   `sudo apt install sqlitebrowser`
 
 ### Running the linter
 
