@@ -1,13 +1,12 @@
+import rclpy
 from cv_bridge import CvBridge
 from pyzbar import pyzbar
-import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
 from std_msgs.msg import String
 
 
 class QRCodeReader(Node):
-
     def __init__(self):
         """Create the subscriber and the publisher."""
         super().__init__('qr_code_reader')
