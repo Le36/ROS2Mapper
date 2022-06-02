@@ -13,7 +13,7 @@ class AddData(Node):
         super().__init__('add_data')
         self.subscription = self.create_subscription(
             String,
-            'add_data',
+            '/add_data',
             self.listener_callback,
             10)
         self.subscription  # prevent unused variable warning

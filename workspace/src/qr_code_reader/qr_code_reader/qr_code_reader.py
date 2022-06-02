@@ -15,7 +15,7 @@ class QRCodeReader(Node):
             "/camera/image_raw",
             self.image_callback,
             10)
-        self.publisher_ = self.create_publisher(String, "/qr_code_found", 10)
+        self.publisher_ = self.create_publisher(String, "/add_data", 10)
 
         self.bridge = CvBridge()
 
