@@ -17,7 +17,8 @@ class MemoryNode(Node):
             10)
 
     def add_data_callback(self, msg):
-        self.get_logger().info(f"Adding {msg.data} to the database")
+        self.get_logger().info(
+            f"Adding QR code with data '{msg.data}' to the database")
         data_repository.add_data(msg.data)
 
 

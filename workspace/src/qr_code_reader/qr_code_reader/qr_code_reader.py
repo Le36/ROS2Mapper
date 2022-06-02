@@ -10,6 +10,10 @@ class QRCodeReader(Node):
     def __init__(self):
         """Create the subscriber and the publisher"""
         super().__init__("qr_code_reader")
+
+        self.found_codes = []
+        self.bridge = CvBridge()
+
         self.subscription = self.create_subscription(
             Image,
             "/camera/image_raw",
@@ -17,18 +21,20 @@ class QRCodeReader(Node):
             10)
         self.publisher_ = self.create_publisher(String, "/add_data", 10)
 
-        self.bridge = CvBridge()
-
     def image_callback(self, msg_image: Image):
         """Find and publish QR code data"""
         image = self.bridge.imgmsg_to_cv2(msg_image, "bgr8")
         codes = pyzbar.decode(image)
         for code in codes:
-            self.get_logger().info(f"Found code with data '{code.data}'")
-            self.publish(code.data)
+            data = code.data.decode()
+            if data in self.found_codes:
+                continue
+            self.found_codes.append(data)
+            self.get_logger().info(f"Found new a QR code with data '{data}'")
+            self.publish(data)
 
     def publish(self, data: str):
-        """Publish data to /qr_code_found topic"""
+        """Publish data to the /add_data topic"""
         msg = String()
         msg.data = str(data)
         self.publisher_.publish(msg)
