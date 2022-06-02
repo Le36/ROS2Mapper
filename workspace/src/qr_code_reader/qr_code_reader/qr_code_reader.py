@@ -19,7 +19,7 @@ class QRCodeReader(Node):
             "/camera/image_raw",
             self.image_callback,
             10)
-        self.publisher_ = self.create_publisher(String, "/add_data", 10)
+        self.publisher = self.create_publisher(String, "/add_data", 10)
 
     def image_callback(self, msg_image: Image):
         """Find and publish QR code data"""
@@ -31,13 +31,7 @@ class QRCodeReader(Node):
                 continue
             self.found_codes.append(data)
             self.get_logger().info(f"Found new a QR code with data '{data}'")
-            self.publish(data)
-
-    def publish(self, data: str):
-        """Publish data to the /add_data topic"""
-        msg = String()
-        msg.data = str(data)
-        self.publisher_.publish(msg)
+            self.publisher.publish(String(data=data))
 
 
 def main(args=None):
