@@ -1,6 +1,6 @@
 # ROS2 Mapper
 
-[![Build](https://github.com/Le36/ros2-mapper/actions/workflows/main.yml/badge.svg)](https://github.com/Le36/ros2-mapper/actions/workflows/main.yml)  
+[![CI](https://github.com/Le36/ros2-mapper/actions/workflows/main.yml/badge.svg)](https://github.com/Le36/ros2-mapper/actions/workflows/main.yml)  
 University of Helsinki, Ohjelmistotuotantoprojekti (Software Engineering Project), summer 2022
 
 ## Documents
