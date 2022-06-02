@@ -17,6 +17,7 @@ jobs:
           sudo apt install libzbar-dev pycodestyle -y
           pip3 install -U pytest
           pip3 install pyzbar
+          rosdep update
           cd workspace && rosdep install -i --from-path src --rosdistro foxy -y
       - name: Build
         run: |
