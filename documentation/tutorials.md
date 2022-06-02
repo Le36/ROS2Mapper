@@ -1,4 +1,5 @@
 # Table of contents
+
 - [VS Code](#vs-code)
     - [Configuring markdown autoformat in VS Code](#configuring-markdown-autoformat-in-vs-code)
 - [Gazebo](#gazebo)
@@ -15,8 +16,11 @@
     - [Running the linter](#running-the-linter)
 
 # Tutorials
+
 ## VS Code
+
 ### Configuring markdown autoformat in VS Code
+
 1. Install the Markdown All in One extension
     1. Press `Ctrl+Shift+X` to open the extensions tab
     2. Search for `Markdown All in One` and install it
@@ -27,8 +31,11 @@
     4. Search for `toc.levels` and change the value to `2..6`
 
 ## Gazebo
+
 ### Adding a camera to the turtlebot3 burger model for Gazebo
-1. Add the following lines to `~/turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot3_gazebo/models/turtlebot3_burger/model.sdf`
+
+1. Add the following lines
+   to `~/turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot3_gazebo/models/turtlebot3_burger/model.sdf`
     ```xml
         <joint name="camera_joint" type="fixed">
           <parent>base_link</parent>
@@ -83,7 +90,9 @@
     ```
 
 ### SLAM in the Gazebo simulation
+
 ([link to the tutorial](https://emanual.robotis.com/docs/en/platform/turtlebot3/slam_simulation/))
+
 1. Launch the simulation world
     ```
     ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
@@ -98,6 +107,7 @@
     ```
 
 ### Autonomous exploration in the Gazebo simulator
+
 1. Clone and build [m-explore-ros2](https://github.com/robo-friends/m-explore-ros2)
     ```
     git clone https://github.com/robo-friends/m-explore-ros2
@@ -116,14 +126,18 @@
     ```
 
 ### Adding the QR code models to Gazebo
+
 1. Copy the models to your Gazebo models directory
     ```
     cp models/qr_code_* ~/.gazebo/models/ -r
     ```
 
 ## Physical robot
+
 ### Nav2 and SLAM on the physical robot
+
 ([link to the tutorial](https://navigation.ros.org/tutorials/docs/navigation2_with_slam.html))
+
 1. [Raspi] Run turtlebot3_bringup
     ```
     ros2 launch turtlebot3_bringup robot.launch.py
@@ -139,6 +153,7 @@
     ```
 
 ### Getting the Raspberry Pi camera working
+
 1. [Raspi] Download and build the camera node
     1. Add `start_x=1` to the end of `/boot/firmware/config.txt`
     2. Reboot
@@ -163,16 +178,18 @@
     . install/local_setup.bash
     ros2 run v4l2_camera v4l2_camera_node
     ```
-    The last command gives errors because apparently, the Raspberry Pi camera doesn't have all the configuration settings a regular camera would have. The errors are probably safe to ignore.
+   The last command gives errors because apparently, the Raspberry Pi camera doesn't have all the configuration settings
+   a regular camera would have. The errors are probably safe to ignore.
 3. [Remote] View the output of the camera
-    1.  Run the following command
-        ```
-        ros2 run rqt_image_view rqt_image_view
-        ```
-    2.  When rqt has opened, press "Refresh topics"
-    3.  Select "/image_raw/compressed" from the dropdown menu 
+    1. Run the following command
+       ```
+       ros2 run rqt_image_view rqt_image_view
+       ```
+    2. When rqt has opened, press "Refresh topics"
+    3. Select "/image_raw/compressed" from the dropdown menu
 
 ### Autonomous exploration on the physical robot
+
 1. [Remote] Clone and build [m-explore-ros2](https://github.com/robo-friends/m-explore-ros2)
     ```
     git clone https://github.com/robo-friends/m-explore-ros2
@@ -194,7 +211,9 @@
     ```
 
 ## Project
+
 ### Running the nodes
+
 1. Go to the workspace in the repository
     ```
     cd workspace
@@ -216,6 +235,7 @@
     ```
 
 ### Running the linter
+
 1. Go to the workspace in the repository
     ```
     cd workspace
