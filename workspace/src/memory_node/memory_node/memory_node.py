@@ -24,9 +24,9 @@ class MemoryNode(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    adder = MemoryNode()
-    rclpy.spin(adder)
-    adder.destroy_node()
+    memory_node = MemoryNode()
+    rclpy.spin(memory_node)
+    memory_node.destroy_node()
     rclpy.shutdown()
 
 
