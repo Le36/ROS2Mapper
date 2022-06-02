@@ -14,7 +14,7 @@ jobs:
       - uses: ros-tooling/setup-ros@master
       - name: Install dependencies
         run: |
-          sudo apt install libzbar-dev pycodestyle ros-foxy-ros-base -y
+          sudo apt install libzbar-dev pycodestyle python3-opencv -y
           pip3 install -U pytest
           pip3 install pyzbar
           rosdep update

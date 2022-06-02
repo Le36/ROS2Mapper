@@ -262,8 +262,9 @@
     ```
     cd workspace
     ```
-2. Install pytest
+2. Install dependencies
     ```
+    sudo apt install python3-opencv -y
     pip3 install pytest -U
     ```
 3. Run the tests
