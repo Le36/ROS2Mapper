@@ -214,40 +214,31 @@
 
 ### Running the nodes
 
-1. Go to the workspace in the repository
+1. Source `m-explore-ros2`
+    1. I recommend adding the source command to ~/.bashrc
+2. Go to the workspace folder in the repository
     ```
     cd workspace
     ```
-2. Install dependencies
+3. Install the dependencies
     ```
     rosdep install -i --from-path src --rosdistro foxy -y
-    sudo apt install libzbar-dev
-    sudo apt install sqlite3
+    sudo apt install libzbar-dev -y
     pip3 install pyzbar
     ```
-3. Build
+4. Build
     ```
     colcon build --symlink-install
     ```
-4. (In a new terminal window) Source and run (TODO: Add launch file)
+5. (In a new terminal window) Run the launch script
     ```
-    source install/setup.bash
-    ros2 run qr_code_reader launch
+    ./run.sh
     ```
-
-5. (In a new terminal window) Source and run MEMORY NODE
-    ```
-    source install/setup.bash
-    ros2 run memory_node listener
-    ```
-   memory node can be tested with *this* command.
-
-   `ros2 topic pub -1 /add_data std_msgs/String "{data: 'Hello from terminal'}"`
-
-   database file will be in the workspace folder "test.db"
-
-   browse with
-   `sudo apt install sqlitebrowser`
+- The database is saved to `test.db` and can be browsed with `sqlitebrowser`
+    - To install `sqlitebrowser` run
+        ```
+        sudo apt install sqlitebrowser
+        ```
 
 ### Running the linter
 
