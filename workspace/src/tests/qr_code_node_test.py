@@ -52,7 +52,7 @@ class QRCodeNodeTest(unittest.TestCase):
         ros_image = self.bridge.cv2_to_imgmsg(image, "bgr8")
         self.test_node.publisher.publish(ros_image)
 
-        time.sleep(1)
+        time.sleep(5)
         self.subscriber_mock.assert_not_called()
 
     def test_sending_image_with_a_qr_code(self):
@@ -62,7 +62,7 @@ class QRCodeNodeTest(unittest.TestCase):
         ros_image = self.bridge.cv2_to_imgmsg(image, "bgr8")
         self.test_node.publisher.publish(ros_image)
 
-        time.sleep(1)
+        time.sleep(5)
         self.subscriber_mock.assert_called_once_with(String(
             data='{"name": "STATION", "id": "1"}'
         ))

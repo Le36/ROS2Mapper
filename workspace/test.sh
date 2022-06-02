@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source install/setup.bash
-ros2 launch launch/launch.py >/dev/null &
+ros2 launch launch/launch.py &
 PID=$!
 
 sleep 1
