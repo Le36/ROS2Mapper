@@ -20,3 +20,9 @@ now I haven't found the time for that.
 I also got the nav2-SLAM working together and then started to look into how I'd get self-exploration/mapping to work in ros2. Luckily Sami had already found a 
 package that did just that, m-explore. This was the first time I had to install and build a package outside the initial ones and there were no issues. 
 Lastly, I tried to get these same things working on the physical robot, but the nav2-SLAM doesn't seem to work as well in real physical space as in the simulation.
+
+# Sprint 2
+
+I've been looking into the navigation stack (nav2) and its relation with the explorer_lite node in m-explore by examining the topics and the type of data they publish and subscribe to. Luckily, while the documentation for ros2 is anemic compared to ros documenation, the architecture is documented in the ros version of the explorer_lite node. Unfortunately the navigation stack is ridiculously complicated and explorer_lite, as its name suggests, can only really do one thing out of the box and the parameters it provides don't allow for significant behavioral changes. Either we have to change the explorer_lite to some other autonomous path finding node or we have to manually manipulate the topic messages and maybe even the code. 
+
+I've also noticed that jumping straight into Turtlebot, which is a fairly complicated robot without first e.g. creating your own super simple robot with a URDF-file can be a hassle. Without understanding the basics of how ros2 can simulate robots and how it interacts with the robot's parts you can waste time on fairly simple issues.
