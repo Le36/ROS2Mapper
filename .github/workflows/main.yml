@@ -5,8 +5,8 @@ on:
       - "workspace/**"
 
 jobs:
-  build-and-lint:
-    name: Build and lint
+  build-lint-and-run-tests:
+    name: Build, lint, and run tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
