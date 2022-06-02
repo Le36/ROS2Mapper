@@ -8,7 +8,7 @@ def create_tables():
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS robot (
-            id INTEGER PRIMARY KEY, 
+            id INTEGER PRIMARY KEY,
             data TEXT
         );
     """)
