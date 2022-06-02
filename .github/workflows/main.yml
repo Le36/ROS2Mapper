@@ -1,0 +1,19 @@
+name: Build
+on:
+  push:
+    paths:
+      - "workspace/**"
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ros-tooling/setup-ros@master
+      - name: Install pycodestyle
+        run: |
+          sudo apt install pycodestyle
+      - name: Build and run linting
+        run: |
+          cd workspace && colcon build && ./lint.py

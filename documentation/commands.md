@@ -1,13 +1,12 @@
-# Commands.md
-
-## Table of contents
-- [Table of contents](#table-of-contents)
-- [Commands](#commands)
+# Table of contents
+- [Gazebo](#gazebo)
     - [Launching the Turtlebot3 worlds](#launching-the-turtlebot3-worlds)
+- [General](#general)
     - [Controlling the Turtlebot3](#controlling-the-turtlebot3)
     - [Launching the Cartographer](#launching-the-cartographer)
 
-## Commands
+# Commands
+## Gazebo
 ### Launching the Turtlebot3 worlds
 - turtlebot3_world
     ```
@@ -18,6 +17,7 @@
     ros2 launch turtlebot3_gazebo turtlebot3_house.launch.py
     ```
 
+## General
 ### Controlling the Turtlebot3
 ```
 ros2 run turtlebot3_teleop teleop_keyboard

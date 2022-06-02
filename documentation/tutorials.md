@@ -1,19 +1,21 @@
-# Tutorials.md
-
-## Table of contents
-- [Table of contents](#table-of-contents)
-- [Tutorials](#tutorials)
+# Table of contents
+- [VS Code](#vs-code)
     - [Configuring markdown autoformat in VS Code](#configuring-markdown-autoformat-in-vs-code)
+- [Gazebo](#gazebo)
     - [Adding a camera to the turtlebot3 burger model for Gazebo](#adding-a-camera-to-the-turtlebot3-burger-model-for-gazebo)
     - [SLAM in the Gazebo simulation](#slam-in-the-gazebo-simulation)
+    - [Autonomous exploration in the Gazebo simulator](#autonomous-exploration-in-the-gazebo-simulator)
+    - [Adding the QR code models to Gazebo](#adding-the-qr-code-models-to-gazebo)
+- [Physical robot](#physical-robot)
     - [Nav2 and SLAM on the physical robot](#nav2-and-slam-on-the-physical-robot)
     - [Getting the Raspberry Pi camera working](#getting-the-raspberry-pi-camera-working)
-    - [Autonomous exploration in the Gazebo simulator](#autonomous-exploration-in-the-gazebo-simulator)
     - [Autonomous exploration on the physical robot](#autonomous-exploration-on-the-physical-robot)
-    - [Add the QR code models to Gazebo](#add-the-qr-code-models-to-gazebo)
+- [Project](#project)
     - [Running the nodes](#running-the-nodes)
+    - [Running the linter](#running-the-linter)
 
-## Tutorials
+# Tutorials
+## VS Code
 ### Configuring markdown autoformat in VS Code
 1. Install the Markdown All in One extension
     1. Press `Ctrl+Shift+X` to open the extensions tab
@@ -24,6 +26,7 @@
     3. Search for `indentation size` and select the option `inherit`
     4. Search for `toc.levels` and change the value to `2..6`
 
+## Gazebo
 ### Adding a camera to the turtlebot3 burger model for Gazebo
 1. Add the following lines to `~/turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot3_gazebo/models/turtlebot3_burger/model.sdf`
     ```xml
@@ -94,6 +97,31 @@
     ros2 run turtlebot3_teleop teleop_keyboard
     ```
 
+### Autonomous exploration in the Gazebo simulator
+1. Clone and build [m-explore-ros2](https://github.com/robo-friends/m-explore-ros2)
+    ```
+    git clone https://github.com/robo-friends/m-explore-ros2
+    cd m-explore-ros2
+    colcon build --symlink-install
+    ```
+2. Run Gazebo, Nav2, and the exploration
+    ```
+    ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
+    ros2 launch turtlebot3_navigation2 navigation2.launch.py use_sim_time:=True
+    ros2 launch slam_toolbox online_async_launch.py
+
+    cd m-explore-ros2
+    source install/setup.bash
+    ros2 launch explore_lite explore.launch.py
+    ```
+
+### Adding the QR code models to Gazebo
+1. Copy the models to your Gazebo models directory
+    ```
+    cp models/qr_code_* ~/.gazebo/models/ -r
+    ```
+
+## Physical robot
 ### Nav2 and SLAM on the physical robot
 ([link to the tutorial](https://navigation.ros.org/tutorials/docs/navigation2_with_slam.html))
 1. [Raspi] Run turtlebot3_bringup
@@ -144,24 +172,6 @@
     2.  When rqt has opened, press "Refresh topics"
     3.  Select "/image_raw/compressed" from the dropdown menu 
 
-### Autonomous exploration in the Gazebo simulator
-1. Clone and build [m-explore-ros2](https://github.com/robo-friends/m-explore-ros2)
-    ```
-    git clone https://github.com/robo-friends/m-explore-ros2
-    cd m-explore-ros2
-    colcon build --symlink-install
-    ```
-2. Run Gazebo, Nav2, and the exploration
-    ```
-    ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
-    ros2 launch turtlebot3_navigation2 navigation2.launch.py use_sim_time:=True
-    ros2 launch slam_toolbox online_async_launch.py
-
-    cd m-explore-ros2
-    source install/setup.bash
-    ros2 launch explore_lite explore.launch.py
-    ```
-
 ### Autonomous exploration on the physical robot
 1. [Remote] Clone and build [m-explore-ros2](https://github.com/robo-friends/m-explore-ros2)
     ```
@@ -183,12 +193,7 @@
     ros2 launch explore_lite explore.launch.py
     ```
 
-### Add the QR code models to Gazebo
-1. Copy the models to your Gazebo models directory
-    ```
-    cp models/qr_code_* ~/.gazebo/models/ -r
-    ```
-
+## Project
 ### Running the nodes
 1. Go to the workspace in the repository
     ```
@@ -208,4 +213,18 @@
     ```
     source install/setup.bash
     ros2 run qr_code_reader launch
+    ```
+
+### Running the linter
+1. Go to the workspace in the repository
+    ```
+    cd workspace
+    ```
+2. Install the linter
+    ```
+    sudo apt install pycodestyle
+    ```
+3. Run the linter
+    ```
+    ./lint.sh
     ```
