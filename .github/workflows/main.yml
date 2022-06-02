@@ -15,15 +15,12 @@ jobs:
         run: |
           sudo apt install pycodestyle -y
           pip3 install -U pytest
-      - name: Change directory
-        run: |
-          cd workspace
       - name: Build
         run: |
-          colcon build
+          cd workspace && colcon build
       - name: Lint
         run: |
-          ./lint.sh
+          cd workspace && ./lint.sh
       - name: Run tests
         run: |
-          ./test.sh
+          cd workspace && ./test.sh
