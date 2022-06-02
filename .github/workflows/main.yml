@@ -11,9 +11,19 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ros-tooling/setup-ros@master
-      - name: Install pycodestyle
+      - name: Install dependencies
         run: |
-          sudo apt install pycodestyle
-      - name: Build and lint
+          sudo apt install pycodestyle -y
+          pip3 install -U pytest
+      - name: Change directory
         run: |
-          cd workspace && colcon build && ./lint.sh
+          cd workspace
+      - name: Build
+        run: |
+          colcon build
+      - name: Lint
+        run: |
+          ./lint.sh
+      - name: Run tests
+        run: |
+          ./test.sh
