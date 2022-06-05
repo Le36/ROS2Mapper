@@ -21,6 +21,15 @@ class MemoryNode(Node):
             f"Adding QR code with data '{msg.data}' to the database")
         data_repository.add_data(msg.data)
 
+    def read_data_callback(self, data) -> None:
+        self.get_logger().info(
+            f"Reading data from the database with data:'{data}'"
+        )
+        return data_repository.read_data(data)
+
+    def drop_table(self) -> None:
+        data_repository.drop_table()
+
 
 def main(args=None) -> None:
     rclpy.init(args=args)
