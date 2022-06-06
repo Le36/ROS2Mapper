@@ -15,7 +15,7 @@ elif [ -z $IP ]; then
 else
     # Raspi
     . ~/ros2_ws/install/local_setup.bash
-    ros2 launch turtlebot3_bringup robot.launch.py
+    ros2 launch turtlebot3_bringup robot.launch.py >/dev/null 2>&1 &
     sleep 20
 fi
 
