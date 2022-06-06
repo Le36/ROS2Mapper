@@ -217,6 +217,11 @@
 
 1. Source `m-explore-ros2`
     1. I recommend adding the source command to ~/.bashrc
+    2. Otherwise
+        ```
+        cd m-explore-ros2
+        source install/setup.bash
+        ```
 2. Go to the workspace folder in the repository
     ```
     cd workspace
@@ -235,11 +240,6 @@
     ```
     ./run.sh
     ```
-- The database is saved to `test.db` and can be browsed with `sqlitebrowser`
-    - To install `sqlitebrowser` run
-        ```
-        sudo apt install sqlitebrowser
-        ```
 
 ### Running the linter
 
