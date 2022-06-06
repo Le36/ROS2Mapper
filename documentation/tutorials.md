@@ -2,11 +2,15 @@
 
 - [VS Code](#vs-code)
     - [Configuring markdown autoformat in VS Code](#configuring-markdown-autoformat-in-vs-code)
-- [Ros2 setup](#ros2-setup)
+- [[Remote] Ros2 setup](#remote-ros2-setup)
     - [Install Ros2 and Gazebo](#install-ros2-and-gazebo)
     - [Install turtlebot3](#install-turtlebot3)
     - [Install m-explore-ros2](#install-m-explore-ros2)
     - [Setup Ros2](#setup-ros2)
+- [[Raspi] Ros 2 setup](#raspi-ros-2-setup)
+    - [Install Ros 2](#install-ros-2)
+    - [Install m-explore-ros2](#install-m-explore-ros2-1)
+    - [Setup the turtlebot 3](#setup-the-turtlebot-3)
 - [Gazebo](#gazebo)
     - [Adding a camera to the turtlebot3 burger model for Gazebo](#adding-a-camera-to-the-turtlebot3-burger-model-for-gazebo)
     - [SLAM in the Gazebo simulation](#slam-in-the-gazebo-simulation)
@@ -16,11 +20,14 @@
     - [Nav2 and SLAM on the physical robot](#nav2-and-slam-on-the-physical-robot)
     - [Getting the Raspberry Pi camera working](#getting-the-raspberry-pi-camera-working)
     - [Autonomous exploration on the physical robot](#autonomous-exploration-on-the-physical-robot)
-- [Project](#project)
+- [Project in gazebo](#project-in-gazebo)
     - [Initialization](#initialization)
     - [Running the project](#running-the-project)
     - [Running the linter](#running-the-linter)
     - [Running the tests](#running-the-tests)
+- [Project on the physical robot](#project-on-the-physical-robot)
+    - [Initialization](#initialization-1)
+    - [Running the project](#running-the-project-1)
 
 # Tutorials
 
@@ -37,7 +44,7 @@
     3. Search for `indentation size` and select the option `inherit`
     4. Search for `toc.levels` and change the value to `2..6`
 
-## Ros2 setup
+## [Remote] Ros2 setup
 
 ### Install Ros2 and Gazebo
 
@@ -54,7 +61,7 @@ sudo apt install python3-vcstool
 mkdir -p ~/turtlebot3_ws/src
 cd ~/turtlebot3_ws
 wget https://raw.githubusercontent.com/ROBOTIS-GIT/turtlebot3/ros2/turtlebot3.repos
-sed -ie 's/ros2/foxy-devel/g' turtlebot3.repos
+sed -ie "s/ros2/foxy-devel/g" turtlebot3.repos
 vcs import src < turtlebot3.repos
 colcon build --symlink-install
 ```
@@ -73,12 +80,45 @@ colcon build --symlink-install
 Add the source commands to `~/.bashrc` by running
 ```
 echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
-echo 'source ~/turtlebot3_ws/install/setup.bash' >> ~/.bashrc
-echo 'source ~/m-explore-ros2/install/setup.bash' >> ~/.bashrc
-echo 'export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:~/turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot3_gazebo/models' >> ~/.bashrc
-echo 'export TURTLEBOT3_MODEL=burger' >> ~/.bashrc
+echo "source ~/turtlebot3_ws/install/setup.bash" >> ~/.bashrc
+echo "source ~/m-explore-ros2/install/setup.bash" >> ~/.bashrc
+echo "export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:~/turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot3_gazebo/models" >> ~/.bashrc
+echo "export TURTLEBOT3_MODEL=burger" >> ~/.bashrc
 echo "export ROS_DOMAIN_ID=$((1 + $RANDOM % 232))" >> ~/.bashrc
 ```
+
+## [Raspi] Ros 2 setup
+
+- First follow [this](https://emanual.robotis.com/docs/en/platform/turtlebot3/sbc_setup/) tutorial
+    - Remember to select `Foxy` as the version
+
+### Install Ros 2
+
+[Raspi] Install Ros 2 and nav2
+```
+sudo apt install ros-foxy-desktop python3-colcon-common-extension -y
+sudo apt install ros-foxy-cartographer ros-foxy-cartographer-ros ros-foxy-navigation2 ros-foxy-nav2-bringup -y
+```
+
+### Install m-explore-ros2
+
+[Raspi] Install m-explore-ros2
+```
+cd ~
+git clone https://github.com/robo-friends/m-explore-ros2
+cd m-explore-ros2
+colcon build --symlink-install
+```
+
+### Setup the turtlebot 3
+
+1. [Raspi] Add the source commands to `~/.bashrc` by running
+    ```
+    echo "source ~/m-explore-ros2/install/setup.bash" >> ~/.bashrc
+    echo "export TURTLEBOT3_MODEL=burger" >> ~/.bashrc
+    ```
+2. Edit the `~/.bashrc` file and set `ROS_DOMAIN_ID` to equal the value on the remote PC
+
 
 ## Gazebo
 
@@ -242,7 +282,7 @@ ros2 launch explore_lite explore.launch.py
     ros2 launch explore_lite explore.launch.py
     ```
 
-## Project
+## Project in gazebo
 
 **Note: The following commands must be run in the workspace folder of the repository**
 
@@ -277,4 +317,23 @@ ros2 launch explore_lite explore.launch.py
 
 ```
 pytest src
+```
+
+## Project on the physical robot
+
+### Initialization
+
+1. [Raspi] Clone the repository and install the dependencies
+    ```
+    # asd
+    ```
+2. [Remote] Install nmap
+    ```
+    sudo apt install nmap
+    ```
+
+### Running the project
+
+```
+IP=<Turtlebot 3 ip> ./run.sh
 ```
