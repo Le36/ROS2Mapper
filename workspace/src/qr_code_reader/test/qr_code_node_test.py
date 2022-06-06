@@ -7,9 +7,12 @@ from unittest.mock import Mock
 import cv2
 import rclpy
 from cv_bridge import CvBridge
+from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 from sensor_msgs.msg import Image
 from std_msgs.msg import String
+
+from ..qr_code_reader.qr_code_reader import QRCodeReader
 
 
 class NodeNode(Node):
@@ -18,24 +21,34 @@ class NodeNode(Node):
 
         self.publisher = self.create_publisher(Image, "/camera/image_raw", 10)
         self.subscription = self.create_subscription(
-            String,
-            "/add_data",
-            subscriber_callback,
-            10
+            String, "/add_data", subscriber_callback, 10
         )
+
+    def send_image(self, image_filename: str):
+        bridge = CvBridge()
+        dirname = os.path.dirname(__file__)
+        image_path = os.path.join(dirname, "images", image_filename)
+        image = cv2.imread(image_path)
+        ros_image = bridge.cv2_to_imgmsg(image, "bgr8")
+        self.publisher.publish(ros_image)
 
 
 class QRCodeNodeTest(unittest.TestCase):
     @classmethod
     def setUpClass(self):
-        self.bridge = CvBridge()
-
+        rclpy.init()
         self.subscriber_mock = Mock()
         self.test_node = NodeNode(self.subscriber_mock)
+        self.qr_code_reader_node = QRCodeReader()
+        self.qr_code_reader_node.get_logger().set_level(40)
 
-        self.node_thread = threading.Thread(
-            target=lambda: rclpy.spin(self.test_node))
-        self.node_thread.start()
+        executor = MultiThreadedExecutor()
+        executor.add_node(self.qr_code_reader_node)
+        executor.add_node(self.test_node)
+        self.executor_thread = threading.Thread(target=executor.spin)
+        self.executor_thread.start()
+
+        time.sleep(1)
 
     def setUp(self):
         self.subscriber_mock.reset_mock()
@@ -43,26 +56,16 @@ class QRCodeNodeTest(unittest.TestCase):
     @classmethod
     def tearDownClass(self):
         rclpy.shutdown()
-        self.node_thread.join()
+        self.executor_thread.join()
 
     def test_sending_image_without_a_qr_code(self):
-        dirname = os.path.dirname(__file__)
-        image_path = os.path.join(dirname, "images/no-qr-code.jpg")
-        image = cv2.imread(image_path)
-        ros_image = self.bridge.cv2_to_imgmsg(image, "bgr8")
-        self.test_node.publisher.publish(ros_image)
-
-        time.sleep(5)
+        self.test_node.send_image("no-qr-code.jpg")
+        time.sleep(1)
         self.subscriber_mock.assert_not_called()
 
     def test_sending_image_with_a_qr_code(self):
-        dirname = os.path.dirname(__file__)
-        image_path = os.path.join(dirname, "images/qr-code.jpg")
-        image = cv2.imread(image_path)
-        ros_image = self.bridge.cv2_to_imgmsg(image, "bgr8")
-        self.test_node.publisher.publish(ros_image)
-
-        time.sleep(5)
+        self.test_node.send_image("qr-code.jpg")
+        time.sleep(1)
         self.subscriber_mock.assert_called_once_with(String(
             data='{"name": "STATION", "id": "1"}'
         ))

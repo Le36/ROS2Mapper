@@ -1,6 +1,8 @@
-/.idea
 venv
 __pycache__
+data
+
+/.idea
 .flaskenv
 .env
 test.db

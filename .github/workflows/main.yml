@@ -16,15 +16,15 @@ jobs:
         run: |
           sudo apt install libzbar-dev pycodestyle python3-opencv ros-foxy-ros-base -y
           pip3 install -U pytest
-          pip3 install pyzbar
+          pip3 install pyzbar pytest-env
           rosdep update
           cd workspace && rosdep install -i --from-path src --rosdistro foxy -y
       - name: Build
         run: |
-          cd workspace && colcon build
+          cd workspace && colcon build --symlink-install
       - name: Lint
         run: |
           cd workspace && ./lint.sh
       - name: Run tests
         run: |
-          cd workspace && source /opt/ros/foxy/setup.bash && ./test.sh
+          cd workspace && source /opt/ros/foxy/setup.bash && source install/setup.bash && pytest src

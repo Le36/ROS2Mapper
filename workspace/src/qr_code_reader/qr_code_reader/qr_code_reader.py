@@ -15,10 +15,8 @@ class QRCodeReader(Node):
         self.bridge = CvBridge()
 
         self.subscription = self.create_subscription(
-            Image,
-            "/camera/image_raw",
-            self.image_callback,
-            10)
+            Image, "/camera/image_raw", self.image_callback, 10
+        )
         self.publisher = self.create_publisher(String, "/add_data", 10)
 
     def image_callback(self, msg_image: Image):
