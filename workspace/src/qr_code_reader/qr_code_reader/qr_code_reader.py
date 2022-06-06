@@ -1,4 +1,5 @@
 import rclpy
+import cv2
 from cv_bridge import CvBridge
 from pyzbar import pyzbar
 from rclpy.node import Node
@@ -14,9 +15,16 @@ class QRCodeReader(Node):
         self.found_codes = []
         self.bridge = CvBridge()
 
+        # For the Gazebo simulator
         self.subscription = self.create_subscription(
             Image, "/camera/image_raw", self.image_callback, 10
         )
+
+        # For the physical robot
+        self.subscription = self.create_subscription(
+            Image, "/image_raw", self.image_callback, 10
+        )
+
         self.publisher = self.create_publisher(String, "/add_data", 10)
 
     def image_callback(self, msg_image: Image):
