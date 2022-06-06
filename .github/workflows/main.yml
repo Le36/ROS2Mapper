@@ -2,7 +2,10 @@ name: CI
 on:
   push:
     paths:
-      - "workspace/**"
+      - "workspace/launch/**"
+      - "workspace/src/**"
+      - "workspace/lint.sh"
+      - "workspace/pytest.ini"
       - ".github/workflows/main.yml"
 
 jobs:
