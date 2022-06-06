@@ -17,7 +17,8 @@
     - [Getting the Raspberry Pi camera working](#getting-the-raspberry-pi-camera-working)
     - [Autonomous exploration on the physical robot](#autonomous-exploration-on-the-physical-robot)
 - [Project](#project)
-    - [Running the nodes](#running-the-nodes)
+    - [Initialization](#initialization)
+    - [Running the project](#running-the-project)
     - [Running the linter](#running-the-linter)
     - [Running the tests](#running-the-tests)
 
@@ -243,56 +244,37 @@ ros2 launch explore_lite explore.launch.py
 
 ## Project
 
-### Running the nodes
+**Note: The following commands must be run in the workspace folder of the repository**
 
-1. Go to the workspace folder in the repository
-    ```
-    cd workspace
-    ```
-2. Install the dependencies
+### Initialization
+
+1. Install the dependencies
     ```
     rosdep install -i --from-path src --rosdistro foxy -y
-    sudo apt install libzbar-dev -y
-    pip3 install pyzbar
-    ```
-3. Build
-    ```
-    colcon build --symlink-install
-    ```
-4. (In a new terminal window) Run the launch script
-    ```
-    ./run.sh
-    ```
-
-### Running the linter
-
-1. Go to the workspace in the repository
-    ```
-    cd workspace
-    ```
-2. Install the linter
-    ```
-    sudo apt install pycodestyle
-    ```
-3. Run the linter
-    ```
-    ./lint.sh
-    ```
-
-### Running the tests
-
-1. Go to the workspace in the repository
-    ```
-    cd workspace
-    ```
-2. Install dependencies
-    ```
-    rosdep install -i --from-path src --rosdistro foxy -y
-    sudo apt install libzbar-dev python3-opencv -y
+    sudo apt install pycodestyle libzbar-dev python3-opencv -y
     pip3 install pyzbar pytest-env
     pip3 install pytest -U
     ```
-3. Run the tests
+2. Build
     ```
-    pytest src
+    colcon build --symlink-install
     ```
+
+
+### Running the project
+
+```
+./run.sh
+```
+
+### Running the linter
+
+```
+./lint.sh
+```
+
+### Running the tests
+
+```
+pytest src
+```
