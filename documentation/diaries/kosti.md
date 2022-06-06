@@ -29,6 +29,8 @@ I've tried to hack a solution together by resetting the nav2 costmap that explor
 
 Explore_lite ros version calls an action named move_base. This doesn't exist in ros2 as it is succeeded by nav2, but there is no documentation for how the ros2 explore_lite calls move actions for nav2.
 
+Then I tried to look into a solution that would circumvent m-explorer completely by using a nav2 package called simple commander, but unfortunately the ros2 installation that we used apparently installed only the rudimentary packages, and doesn't include simple commander. I'm not sure how to move forward with installing only this particular nav2 package.
+
 I've also noticed that jumping straight into Turtlebot, which is a fairly complicated robot without first e.g. creating your own super simple robot with a URDF-file can be a hassle. Without understanding the basics of how ros2 can simulate robots and how it interacts with the robot's parts you can waste time on fairly simple issues.
 
 https://automaticaddison.com/ provides good tutorials that actually explain how ros2 works at least to some degree.
