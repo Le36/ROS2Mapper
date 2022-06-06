@@ -2,17 +2,18 @@
 
 - [VS Code](#vs-code)
     - [Configuring markdown autoformat in VS Code](#configuring-markdown-autoformat-in-vs-code)
-- [[Remote] Ros2 setup](#remote-ros2-setup)
+- [Remote Ros2 setup](#remote-ros2-setup)
     - [Install Ros2 and Gazebo](#install-ros2-and-gazebo)
     - [Install turtlebot3](#install-turtlebot3)
     - [Install m-explore-ros2](#install-m-explore-ros2)
     - [Setup Ros2](#setup-ros2)
     - [Setup Gazebo](#setup-gazebo)
-- [[Raspi] Ros 2 setup](#raspi-ros-2-setup)
+- [Raspi Ros 2 setup](#raspi-ros-2-setup)
     - [Install Ros 2](#install-ros-2)
     - [Install m-explore-ros2](#install-m-explore-ros2-1)
     - [Setup the turtlebot 3](#setup-the-turtlebot-3)
     - [Setup the Raspberry Pi camera](#setup-the-raspberry-pi-camera)
+    - [Add ssh key to the Raspberry Pi](#add-ssh-key-to-the-raspberry-pi)
 - [Gazebo](#gazebo)
     - [SLAM in the Gazebo simulation](#slam-in-the-gazebo-simulation)
     - [Autonomous exploration in the Gazebo simulator](#autonomous-exploration-in-the-gazebo-simulator)
@@ -45,7 +46,7 @@
     3. Search for `indentation size` and select the option `inherit`
     4. Search for `toc.levels` and change the value to `2..6`
 
-## [Remote] Ros2 setup
+## Remote Ros2 setup
 
 ### Install Ros2 and Gazebo
 
@@ -137,7 +138,7 @@ echo "export ROS_DOMAIN_ID=$((1 + $RANDOM % 232))" >> ~/.bashrc
     ```
 
 
-## [Raspi] Ros 2 setup
+## Raspi Ros 2 setup
 
 - First follow [this](https://emanual.robotis.com/docs/en/platform/turtlebot3/sbc_setup/) tutorial
     - Remember to select `Foxy` as the version
@@ -189,6 +190,12 @@ echo "export ROS_DOMAIN_ID=$((1 + $RANDOM % 232))" >> ~/.bashrc
         cd ~/ros2_ws
         colcon build --symlink-install
         ```
+
+### Add ssh key to the Raspberry Pi
+1. [Remote] Run the following command
+    ```
+    ssh-copy-id ubuntu@<Turtlebot 3 ip>
+    ```
 
 
 ## Gazebo

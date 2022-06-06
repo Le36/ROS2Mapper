@@ -4,7 +4,7 @@ trap "kill 0" EXIT
 
 source install/setup.bash
 
-if [[ -z $IP || -z $BOT ]]; then
+if [[ -z $IP && -z $BOT ]]; then
     # Remote
     ros2 launch launch/test_world_2.launch.py >/dev/null 2>&1 &
 elif [ -z $IP ]; then
