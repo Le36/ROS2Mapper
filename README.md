@@ -11,7 +11,6 @@ University of Helsinki, Ohjelmistotuotantoprojekti (Software Engineering Project
 
 ## Dev documents
 - [Tutorials](documentation/tutorials.md)
-- [Commands](documentation/commands.md)
 
 ## Diaries
 - [Juho](documentation/diaries/juho.md)

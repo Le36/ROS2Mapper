@@ -2,6 +2,11 @@
 
 - [VS Code](#vs-code)
     - [Configuring markdown autoformat in VS Code](#configuring-markdown-autoformat-in-vs-code)
+- [Ros2 setup](#ros2-setup)
+    - [Install Ros2 and Gazebo](#install-ros2-and-gazebo)
+    - [Install turtlebot3](#install-turtlebot3)
+    - [Install m-explore-ros2](#install-m-explore-ros2)
+    - [Setup Ros2](#setup-ros2)
 - [Gazebo](#gazebo)
     - [Adding a camera to the turtlebot3 burger model for Gazebo](#adding-a-camera-to-the-turtlebot3-burger-model-for-gazebo)
     - [SLAM in the Gazebo simulation](#slam-in-the-gazebo-simulation)
@@ -30,6 +35,49 @@
     2. Search for `format on save` and check the box
     3. Search for `indentation size` and select the option `inherit`
     4. Search for `toc.levels` and change the value to `2..6`
+
+## Ros2 setup
+
+### Install Ros2 and Gazebo
+
+```
+sudo apt install ros-foxy-desktop python3-colcon-common-extension -y
+sudo apt install gazebo11 ros-foxy-gazebo-ros-pkgs -y
+sudo apt install ros-foxy-cartographer ros-foxy-cartographer-ros ros-foxy-navigation2 ros-foxy-nav2-bringup -y
+```
+
+### Install turtlebot3
+
+```
+sudo apt install python3-vcstool
+mkdir -p ~/turtlebot3_ws/src
+cd ~/turtlebot3_ws
+wget https://raw.githubusercontent.com/ROBOTIS-GIT/turtlebot3/ros2/turtlebot3.repos
+sed -ie 's/ros2/foxy-devel/g' turtlebot3.repos
+vcs import src < turtlebot3.repos
+colcon build --symlink-install
+```
+
+### Install m-explore-ros2
+
+```
+cd ~
+git clone https://github.com/robo-friends/m-explore-ros2
+cd m-explore-ros2
+colcon build --symlink-install
+```
+
+### Setup Ros2
+
+Add the source commands to `~/.bashrc` by running
+```
+echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
+echo 'source ~/turtlebot3_ws/install/setup.bash' >> ~/.bashrc
+echo 'source ~/m-explore-ros2/install/setup.bash' >> ~/.bashrc
+echo 'export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:~/turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot3_gazebo/models' >> ~/.bashrc
+echo 'export TURTLEBOT3_MODEL=burger' >> ~/.bashrc
+echo "export ROS_DOMAIN_ID=$((1 + $RANDOM % 232))" >> ~/.bashrc
+```
 
 ## Gazebo
 
@@ -109,22 +157,13 @@
 
 ### Autonomous exploration in the Gazebo simulator
 
-1. Clone and build [m-explore-ros2](https://github.com/robo-friends/m-explore-ros2)
-    ```
-    git clone https://github.com/robo-friends/m-explore-ros2
-    cd m-explore-ros2
-    colcon build --symlink-install
-    ```
-2. Run Gazebo, Nav2, and the exploration
-    ```
-    ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
-    ros2 launch turtlebot3_navigation2 navigation2.launch.py use_sim_time:=True
-    ros2 launch slam_toolbox online_async_launch.py
-
-    cd m-explore-ros2
-    source install/setup.bash
-    ros2 launch explore_lite explore.launch.py
-    ```
+Run Gazebo, Nav2, and the exploration
+```
+ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
+ros2 launch turtlebot3_navigation2 navigation2.launch.py use_sim_time:=True
+ros2 launch slam_toolbox online_async_launch.py
+ros2 launch explore_lite explore.launch.py
+```
 
 ### Adding the QR code models to Gazebo
 
@@ -191,23 +230,14 @@
 
 ### Autonomous exploration on the physical robot
 
-1. [Remote] Clone and build [m-explore-ros2](https://github.com/robo-friends/m-explore-ros2)
-    ```
-    git clone https://github.com/robo-friends/m-explore-ros2
-    cd m-explore-ros2
-    colcon build --symlink-install
-    ```
-2. [Raspi] Run turtlebot3_bringup
+1. [Raspi] Run turtlebot3_bringup
     ```
     ros2 launch turtlebot3_bringup robot.launch.py
     ```
-3. [Remote] Run Nav2, SLAM, and the exploration
+2. [Remote] Run Nav2, SLAM, and the exploration
     ```
     ros2 launch turtlebot3_navigation2 navigation2.launch.py
     ros2 launch slam_toolbox online_async_launch.py
-
-    cd m-explore-ros2
-    source install/setup.bash
     ros2 launch explore_lite explore.launch.py
     ```
 
@@ -215,31 +245,24 @@
 
 ### Running the nodes
 
-1. Source `m-explore-ros2`
-    1. I recommend adding the source command to ~/.bashrc
-2. Go to the workspace folder in the repository
+1. Go to the workspace folder in the repository
     ```
     cd workspace
     ```
-3. Install the dependencies
+2. Install the dependencies
     ```
     rosdep install -i --from-path src --rosdistro foxy -y
     sudo apt install libzbar-dev -y
     pip3 install pyzbar
     ```
-4. Build
+3. Build
     ```
     colcon build --symlink-install
     ```
-5. (In a new terminal window) Run the launch script
+4. (In a new terminal window) Run the launch script
     ```
     ./run.sh
     ```
-- The database is saved to `test.db` and can be browsed with `sqlitebrowser`
-    - To install `sqlitebrowser` run
-        ```
-        sudo apt install sqlitebrowser
-        ```
 
 ### Running the linter
 
