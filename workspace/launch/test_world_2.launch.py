@@ -21,7 +21,8 @@ def generate_launch_description():
     home_dir = os.path.expanduser('~')
     turtlebot3_launch_file_dir = os.path.join(
         home_dir,
-        "turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot3_gazebo/launch/"
+        "turtlebot3_ws/src/turtlebot3/",
+        "turtlebot3_simulations/turtlebot3_gazebo/launch/"
     )
 
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
@@ -41,8 +42,9 @@ def generate_launch_description():
         ),
 
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                [turtlebot3_launch_file_dir, "/robot_state_publisher.launch.py"]),
+            PythonLaunchDescriptionSource([
+                turtlebot3_launch_file_dir, "/robot_state_publisher.launch.py"
+            ]),
             launch_arguments={"use_sim_time": use_sim_time}.items(),
         ),
     ])
