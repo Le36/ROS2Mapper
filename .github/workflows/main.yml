@@ -27,4 +27,4 @@ jobs:
           cd workspace && ./lint.sh
       - name: Run tests
         run: |
-          cd workspace && source /opt/ros/foxy/setup.bash && source install/setup.bash && pytest src
+          cd workspace && source /opt/ros/foxy/setup.bash && pytest src

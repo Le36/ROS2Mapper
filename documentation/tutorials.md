@@ -269,11 +269,7 @@
     pip3 install pyzbar pytest-env
     pip3 install pytest -U
     ```
-3. Build
+3. Run the tests
     ```
-    colcon build --symlink-install
-    ```
-4. (In a new termial window) Run the tests
-    ```
-    source install/setup.bash && pytest src
+    pytest src
     ```
