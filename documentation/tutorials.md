@@ -7,18 +7,19 @@
     - [Install turtlebot3](#install-turtlebot3)
     - [Install m-explore-ros2](#install-m-explore-ros2)
     - [Setup Ros2](#setup-ros2)
+    - [Setup Gazebo](#setup-gazebo)
 - [[Raspi] Ros 2 setup](#raspi-ros-2-setup)
     - [Install Ros 2](#install-ros-2)
     - [Install m-explore-ros2](#install-m-explore-ros2-1)
     - [Setup the turtlebot 3](#setup-the-turtlebot-3)
+    - [Setup the Raspberry Pi camera](#setup-the-raspberry-pi-camera)
 - [Gazebo](#gazebo)
-    - [Adding a camera to the turtlebot3 burger model for Gazebo](#adding-a-camera-to-the-turtlebot3-burger-model-for-gazebo)
     - [SLAM in the Gazebo simulation](#slam-in-the-gazebo-simulation)
     - [Autonomous exploration in the Gazebo simulator](#autonomous-exploration-in-the-gazebo-simulator)
     - [Adding the QR code models to Gazebo](#adding-the-qr-code-models-to-gazebo)
 - [Physical robot](#physical-robot)
     - [Nav2 and SLAM on the physical robot](#nav2-and-slam-on-the-physical-robot)
-    - [Getting the Raspberry Pi camera working](#getting-the-raspberry-pi-camera-working)
+    - [Getting the output from the Raspberry Pi camera](#getting-the-output-from-the-raspberry-pi-camera)
     - [Autonomous exploration on the physical robot](#autonomous-exploration-on-the-physical-robot)
 - [Project in gazebo](#project-in-gazebo)
     - [Initialization](#initialization)
@@ -87,45 +88,13 @@ echo "export TURTLEBOT3_MODEL=burger" >> ~/.bashrc
 echo "export ROS_DOMAIN_ID=$((1 + $RANDOM % 232))" >> ~/.bashrc
 ```
 
-## [Raspi] Ros 2 setup
+### Setup Gazebo
 
-- First follow [this](https://emanual.robotis.com/docs/en/platform/turtlebot3/sbc_setup/) tutorial
-    - Remember to select `Foxy` as the version
-
-### Install Ros 2
-
-[Raspi] Install Ros 2 and nav2
-```
-sudo apt install ros-foxy-desktop python3-colcon-common-extension -y
-sudo apt install ros-foxy-cartographer ros-foxy-cartographer-ros ros-foxy-navigation2 ros-foxy-nav2-bringup -y
-```
-
-### Install m-explore-ros2
-
-[Raspi] Install m-explore-ros2
-```
-cd ~
-git clone https://github.com/robo-friends/m-explore-ros2
-cd m-explore-ros2
-colcon build --symlink-install
-```
-
-### Setup the turtlebot 3
-
-1. [Raspi] Add the source commands to `~/.bashrc` by running
+1. Install the camera node
     ```
-    echo "source ~/m-explore-ros2/install/setup.bash" >> ~/.bashrc
-    echo "export TURTLEBOT3_MODEL=burger" >> ~/.bashrc
+    apt-get install ros-foxy-v4l2-camera
     ```
-2. Edit the `~/.bashrc` file and set `ROS_DOMAIN_ID` to equal the value on the remote PC
-
-
-## Gazebo
-
-### Adding a camera to the turtlebot3 burger model for Gazebo
-
-1. Add the following lines
-   to `~/turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot3_gazebo/models/turtlebot3_burger/model.sdf`
+2. Add the following lines to `~/turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot3_gazebo/models/turtlebot3_burger/model.sdf`
     ```xml
         <joint name="camera_joint" type="fixed">
           <parent>base_link</parent>
@@ -161,23 +130,68 @@ colcon build --symlink-install
           </sensor>
         </link>
     ```
-2. And then recompile the turtlebot3 models
+3. Recompile the turtlebot3 models
     ```
     cd ~/turtlebot3_ws
     colcon build --symlink-install
     ```
-3. Install the v4l2 package
+
+
+## [Raspi] Ros 2 setup
+
+- First follow [this](https://emanual.robotis.com/docs/en/platform/turtlebot3/sbc_setup/) tutorial
+    - Remember to select `Foxy` as the version
+
+### Install Ros 2
+
+1. [Raspi] Install packages
     ```
-    apt-get install ros-foxy-v4l2-camera
+    sudo apt install ros-foxy-desktop python3-colcon-common-extension -y
+    sudo apt install ros-foxy-cartographer ros-foxy-cartographer-ros ros-foxy-navigation2 ros-foxy-nav2-bringup -y
     ```
-4. Run the node
+
+### Install m-explore-ros2
+
+1. [Raspi] Install m-explore-ros2
     ```
-    ros2 run v4l2_camera v4l2_camera_node
+    cd ~
+    git clone https://github.com/robo-friends/m-explore-ros2
+    cd m-explore-ros2
+    colcon build --symlink-install
     ```
-5. View live feed
+
+### Setup the turtlebot 3
+
+1. [Raspi] Add the source commands to `~/.bashrc` by running
     ```
-    ros2 run rqt_image_view rqt_image_view
+    echo "source ~/m-explore-ros2/install/setup.bash" >> ~/.bashrc
+    echo "export TURTLEBOT3_MODEL=burger" >> ~/.bashrc
     ```
+2. [Raspi] Edit the `~/.bashrc` file and set `ROS_DOMAIN_ID` to equal the value on the remote PC
+
+### Setup the Raspberry Pi camera
+
+1. [Raspi] Download and build the camera node
+    1. Add `start_x=1` to the end of `/boot/firmware/config.txt`
+    2. Reboot
+    3. Run the following commands
+        ```
+        sudo apt install libtheora-dev libogg-dev libboost-python-dev
+        mkdir -p ~/ros2_ws/src && cd ~/ros2_ws/src
+        git clone --branch foxy https://github.com/ros-perception/image_common
+        git clone --branch ros2 https://github.com/ros-perception/vision_opencv
+        git clone --branch foxy-devel https://github.com/ros-perception/image_transport_plugins
+        git clone --branch foxy https://gitlab.com/boldhearts/ros2_v4l2_camera src/v4l2_camera
+        cd ~/ros2_ws
+        rosdep install -i --from-path src --rosdistro foxy -y
+        cd ~/ros2_ws/src
+        rosdep install -i --from-path src --rosdistro foxy -y
+        cd ~/ros2_ws
+        colcon build --symlink-install
+        ```
+
+
+## Gazebo
 
 ### SLAM in the Gazebo simulation
 
@@ -233,27 +247,9 @@ ros2 launch explore_lite explore.launch.py
     ros2 run turtlebot3_teleop teleop_keyboard
     ```
 
-### Getting the Raspberry Pi camera working
+### Getting the output from the Raspberry Pi camera
 
-1. [Raspi] Download and build the camera node
-    1. Add `start_x=1` to the end of `/boot/firmware/config.txt`
-    2. Reboot
-    3. Run the following commands
-        ```
-        sudo apt install libtheora-dev libogg-dev libboost-python-dev
-        mkdir -p ~/ros2_ws/src && cd ~/ros2_ws/src
-        git clone --branch foxy https://github.com/ros-perception/image_common
-        git clone --branch ros2 https://github.com/ros-perception/vision_opencv
-        git clone --branch foxy-devel https://github.com/ros-perception/image_transport_plugins
-        git clone --branch foxy https://gitlab.com/boldhearts/ros2_v4l2_camera src/v4l2_camera
-        cd ~/ros2_ws
-        rosdep install -i --from-path src --rosdistro foxy -y
-        cd ~/ros2_ws/src
-        rosdep install -i --from-path src --rosdistro foxy -y
-        cd ~/ros2_ws
-        colcon build --symlink-install
-        ```
-2. [Raspi] Run the camera node (in a new terminal)
+1. [Raspi] Run the camera node (in a new terminal)
     ```
     cd ~/ros2_ws
     . install/local_setup.bash
@@ -261,7 +257,7 @@ ros2 launch explore_lite explore.launch.py
     ```
    The last command gives errors because apparently, the Raspberry Pi camera doesn't have all the configuration settings
    a regular camera would have. The errors are probably safe to ignore.
-3. [Remote] View the output of the camera
+2. [Remote] View the output of the camera
     1. Run the following command
        ```
        ros2 run rqt_image_view rqt_image_view

@@ -14,7 +14,9 @@ elif [ -z $IP ]; then
     # TODO: Run the remote part of the software
 else
     # Raspi
+    . ~/ros2_ws/install/local_setup.bash
     ros2 launch turtlebot3_bringup robot.launch.py
+    sleep 20
 fi
 
 if [ -z $BOT ]; then
