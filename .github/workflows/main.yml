@@ -9,8 +9,8 @@ on:
       - ".github/workflows/main.yml"
 
 jobs:
-  build-lint-and-run-tests:
-    name: Build, lint, and run tests
+  CI:
+    name: CI
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -28,6 +28,11 @@ jobs:
       - name: Lint
         run: |
           cd workspace && ./lint.sh
-      - name: Run tests
+      - name: Run tests and generage code coverage report
         run: |
-          cd workspace && source /opt/ros/foxy/setup.bash && DELAY=1 pytest src
+          source /opt/ros/foxy/setup.bash && DELAY=1 coverage run --branch -m pytest workspace/src
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./.coverage
