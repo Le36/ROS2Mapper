@@ -4,16 +4,19 @@
 University of Helsinki, Ohjelmistotuotantoprojekti (Software Engineering Project), summer 2022
 
 ## Documents
+
 - [Definition of done](documentation/definition-of-done.md)
 - [Timesheet](documentation/timesheet.md)
 - [Product and sprint backlogs](https://github.com/Le36/ros2-mapper/projects)
 - [Sprint 1 burndown chart](documentation/images/sprint1.png)
 
 ## Dev documents
+
 - [Tutorials](documentation/tutorials.md)
 - [TurtleBot3 image](https://drive.google.com/file/d/1JExsfCfhW8HvZbS-rrAKpXwOzQ3-d5AO/view?usp=sharing)
 
 ## Diaries
+
 - [Juho](documentation/diaries/juho.md)
 - [Kosti](documentation/diaries/kosti.md)
 - [Leevi](documentation/diaries/leevi.md)
