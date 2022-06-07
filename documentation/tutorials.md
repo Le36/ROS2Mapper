@@ -80,6 +80,7 @@ colcon build --symlink-install
 ### Setup Ros2
 
 Add the source commands to `~/.bashrc` by running
+
 ```
 echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
 echo "source ~/turtlebot3_ws/install/setup.bash" >> ~/.bashrc
@@ -95,7 +96,8 @@ echo "export ROS_DOMAIN_ID=$((1 + $RANDOM % 232))" >> ~/.bashrc
     ```
     apt-get install ros-foxy-v4l2-camera
     ```
-2. Add the following lines to `~/turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot3_gazebo/models/turtlebot3_burger/model.sdf`
+2. Add the following lines
+   to `~/turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot3_gazebo/models/turtlebot3_burger/model.sdf`
     ```xml
         <joint name="camera_joint" type="fixed">
           <parent>base_link</parent>
@@ -140,7 +142,6 @@ echo "export ROS_DOMAIN_ID=$((1 + $RANDOM % 232))" >> ~/.bashrc
     ```
     cp models/qr_code_* ~/.gazebo/models/ -r
     ```
-
 
 ## Raspi Ros 2 setup
 
@@ -196,11 +197,11 @@ echo "export ROS_DOMAIN_ID=$((1 + $RANDOM % 232))" >> ~/.bashrc
         ```
 
 ### Add the ssh key to the Raspberry Pi
+
 1. [Remote] Run the following command
     ```
     ssh-copy-id ubuntu@<Turtlebot 3 ip>
     ```
-
 
 ## Gazebo
 
@@ -224,6 +225,7 @@ echo "export ROS_DOMAIN_ID=$((1 + $RANDOM % 232))" >> ~/.bashrc
 ### Autonomous exploration in the Gazebo simulator
 
 Run Gazebo, Nav2, and the exploration
+
 ```
 ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py
 ros2 launch turtlebot3_navigation2 navigation2.launch.py use_sim_time:=True
@@ -299,7 +301,6 @@ ros2 launch explore_lite explore.launch.py
     ```
     colcon build --symlink-install
     ```
-
 
 ### Running the project
 
