@@ -38,3 +38,15 @@ Re-installing ubuntu on SD card. For some reason card stopped working while form
 Leave the SD card on table for a while and after that it started working again.
 
 My pre set password didn’t work for some reason after the installation. Also was looking at wrong version of ROS on https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/ . The site doesn’t keep version when changing pages and this can cause problems if you forget to change it. Use way too many hours because of this.
+
+
+## Sprint 2 (31.5. - 7.6.)
+
+During Sprint2 it came obvious that I have to deepen my knowledge about how the nodes and packages we are using are actually build and how they work. Usually the documentation of the packages do not really explain things in detail. It's nice that ros2 has tools that help understanding the packages/nodes/services you are running currently. rqt_graph , rqt and rqt_console are great help to get better understanding. 
+
+A lot of the packages are in C++ which make things troubling as I'm not that familiar with it. So understanding/modifying packages will be a bigger task. 
+
+Most of my time for the week went while building tests and adding functions to our memory node and trying to understand how we could command m-explore. 
+
+There is now tutorials or any advice how the test should be build on ROS2. Mostly I just checked how they were done in other ros2 packages. Only thing mentioned in ros2 tutorials is that they should be in the node own folder. 
+

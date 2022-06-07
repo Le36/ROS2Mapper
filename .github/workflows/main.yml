@@ -30,9 +30,9 @@ jobs:
           cd workspace && ./lint.sh
       - name: Run tests and generage code coverage report
         run: |
-          cd workspace && source /opt/ros/foxy/setup.bash && DELAY=1 coverage run --branch -m pytest src
+          source /opt/ros/foxy/setup.bash && DELAY=1 coverage run --branch -m pytest workspace/src
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./workspace/.coverage
+          files: ./.coverage
