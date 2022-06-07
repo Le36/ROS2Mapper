@@ -11,6 +11,7 @@ University of Helsinki, Ohjelmistotuotantoprojekti (Software Engineering Project
 
 ## Dev documents
 - [Tutorials](documentation/tutorials.md)
+- [TurtleBot3 image](https://drive.google.com/file/d/1JExsfCfhW8HvZbS-rrAKpXwOzQ3-d5AO/view?usp=sharing)
 
 ## Diaries
 - [Juho](documentation/diaries/juho.md)
