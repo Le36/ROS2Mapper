@@ -33,7 +33,7 @@ class MemoryNodeTest(unittest.TestCase):
         executor.add_node(self.test_node)
         self.executor_thread = threading.Thread(target=executor.spin)
         self.executor_thread.start()
-        time.sleep(1)
+        time.sleep(0.1)
 
     def setUp(self):
         data_repository.delete_all()
@@ -45,3 +45,4 @@ class MemoryNodeTest(unittest.TestCase):
 
     def test_adding_data(self):
         self.test_node.send_data("1")
+        time.sleep(0.1)

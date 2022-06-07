@@ -8,7 +8,7 @@ from std_msgs.msg import String
 
 
 class QRCodeReader(Node):
-    def __init__(self):
+    def __init__(self) -> None:
         """Create the subscriber and the publisher"""
         super().__init__("qr_code_reader")
 
@@ -27,7 +27,7 @@ class QRCodeReader(Node):
 
         self.publisher = self.create_publisher(String, "/add_data", 10)
 
-    def image_callback(self, msg_image: Image):
+    def image_callback(self, msg_image: Image) -> None:
         """Find and publish QR code data"""
         image = self.bridge.imgmsg_to_cv2(msg_image, "bgr8")
         codes = pyzbar.decode(image)
@@ -39,8 +39,11 @@ class QRCodeReader(Node):
             self.get_logger().info(f"Found new a QR code with data '{data}'")
             self.publisher.publish(String(data=data))
 
+    def reset_found_codes(self) -> None:
+        self.found_codes = []
 
-def main(args=None):
+
+def main(args=None) -> None:  # pragma: no cover
     """Run the node"""
     rclpy.init(args=args)
     qr_code_reader = QRCodeReader()
@@ -49,5 +52,5 @@ def main(args=None):
     rclpy.shutdown()
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()

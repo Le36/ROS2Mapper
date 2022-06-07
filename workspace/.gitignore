@@ -2,5 +2,8 @@ build
 install
 log
 __pycache__
+htmlcov
+
 test.db
 .pytest_cache
+.coverage

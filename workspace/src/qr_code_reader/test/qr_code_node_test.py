@@ -48,10 +48,11 @@ class QRCodeNodeTest(unittest.TestCase):
         self.executor_thread = threading.Thread(target=executor.spin)
         self.executor_thread.start()
 
-        time.sleep(1)
+        time.sleep(0.1)
 
     def setUp(self):
         self.subscriber_mock.reset_mock()
+        self.qr_code_reader_node.reset_found_codes()
 
     @classmethod
     def tearDownClass(self):
@@ -60,12 +61,21 @@ class QRCodeNodeTest(unittest.TestCase):
 
     def test_sending_image_without_a_qr_code(self):
         self.test_node.send_image("no-qr-code.jpg")
-        time.sleep(1)
+        time.sleep(0.1)
         self.subscriber_mock.assert_not_called()
 
     def test_sending_image_with_a_qr_code(self):
         self.test_node.send_image("qr-code.jpg")
-        time.sleep(1)
+        time.sleep(0.1)
+        self.subscriber_mock.assert_called_once_with(String(
+            data='{"name": "STATION", "id": "1"}'
+        ))
+
+    def test_sending_image_with_the_same_qr_code_twice(self):
+        self.test_node.send_image("qr-code.jpg")
+        time.sleep(0.1)
+        self.test_node.send_image("qr-code.jpg")
+        time.sleep(0.1)
         self.subscriber_mock.assert_called_once_with(String(
             data='{"name": "STATION", "id": "1"}'
         ))

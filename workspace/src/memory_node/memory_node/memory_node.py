@@ -25,11 +25,11 @@ class MemoryNode(Node):
     #     )
     #     return data_repository.read_data(data)
 
-    def drop_table(self) -> None:
-        data_repository.drop_table()
+    # def drop_table(self) -> None:
+    #     data_repository.drop_table()
 
 
-def main(args=None) -> None:
+def main(args=None) -> None:  # pragma: no cover
     rclpy.init(args=args)
     memory_node = MemoryNode()
     rclpy.spin(memory_node)
@@ -37,5 +37,5 @@ def main(args=None) -> None:
     rclpy.shutdown()
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()

@@ -27,6 +27,7 @@
     - [Running the project](#running-the-project)
     - [Running the linter](#running-the-linter)
     - [Running the tests](#running-the-tests)
+    - [Generating the coverage report](#generating-the-coverage-report)
 - [Project on the physical robot](#project-on-the-physical-robot)
     - [Initialization](#initialization-1)
     - [Running the project](#running-the-project-1)
@@ -296,7 +297,7 @@ ros2 launch explore_lite explore.launch.py
     rosdep install -i --from-path src --rosdistro foxy -y
     sudo apt install pycodestyle libzbar-dev python3-opencv -y
     pip3 install pyzbar pytest-env
-    pip3 install pytest -U
+    pip3 install pytest coverage -U
     ```
 2. Build
     ```
@@ -320,6 +321,12 @@ ros2 launch explore_lite explore.launch.py
 
 ```
 pytest src
+```
+
+### Generating the coverage report
+
+```
+coverage run --branch -m pytest src && coverage html
 ```
 
 ## Project on the physical robot

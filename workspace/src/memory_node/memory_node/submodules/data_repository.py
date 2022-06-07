@@ -6,14 +6,14 @@ class DataRepository:
 
     def __init__(self) -> None:
         create_tables()
-        self.connection = get_database_connection()
 
     def add_data(self, data: str) -> None:
         """Add the data to the database"""
-        cursor = self.connection.cursor()
+        connection = get_database_connection()
+        cursor = connection.cursor()
         sql = "INSERT INTO robot (data) VALUES (:data)"
         cursor.execute(sql, {"data": data}),
-        self.connection.commit()
+        connection.commit()
 
     # def read_data(self, data) -> None:
     #     """Read data from the database"""
@@ -25,9 +25,10 @@ class DataRepository:
 
     def delete_all(self) -> None:
         """Delete all data from the database"""
-        cursor = self.connection.cursor()
+        connection = get_database_connection()
+        cursor = connection.cursor()
         cursor.execute("DELETE from robot")
-        self.connection.commit()
+        connection.commit()
 
 
 data_repository = DataRepository()
