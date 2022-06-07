@@ -13,7 +13,7 @@
     - [Install m-explore-ros2](#install-m-explore-ros2-1)
     - [Setup the turtlebot 3](#setup-the-turtlebot-3)
     - [Setup the Raspberry Pi camera](#setup-the-raspberry-pi-camera)
-    - [Add ssh key to the Raspberry Pi](#add-ssh-key-to-the-raspberry-pi)
+    - [Add the ssh key to the Raspberry Pi](#add-the-ssh-key-to-the-raspberry-pi)
 - [Gazebo](#gazebo)
     - [SLAM in the Gazebo simulation](#slam-in-the-gazebo-simulation)
     - [Autonomous exploration in the Gazebo simulator](#autonomous-exploration-in-the-gazebo-simulator)
@@ -22,7 +22,7 @@
     - [Nav2 and SLAM on the physical robot](#nav2-and-slam-on-the-physical-robot)
     - [Getting the output from the Raspberry Pi camera](#getting-the-output-from-the-raspberry-pi-camera)
     - [Autonomous exploration on the physical robot](#autonomous-exploration-on-the-physical-robot)
-- [Project in gazebo](#project-in-gazebo)
+- [Project in Gazebo](#project-in-gazebo)
     - [Initialization](#initialization)
     - [Running the project](#running-the-project)
     - [Running the linter](#running-the-linter)
@@ -192,7 +192,7 @@ echo "export ROS_DOMAIN_ID=$((1 + $RANDOM % 232))" >> ~/.bashrc
         colcon build --symlink-install
         ```
 
-### Add ssh key to the Raspberry Pi
+### Add the ssh key to the Raspberry Pi
 1. [Remote] Run the following command
     ```
     ssh-copy-id ubuntu@<Turtlebot 3 ip>
@@ -286,7 +286,7 @@ ros2 launch explore_lite explore.launch.py
     ros2 launch explore_lite explore.launch.py
     ```
 
-## Project in gazebo
+## Project in Gazebo
 
 **Note: The following commands must be run in the workspace folder of the repository**
 
@@ -335,15 +335,18 @@ coverage run --branch -m pytest src && coverage html
 
 1. [Raspi] Clone the repository and install the dependencies
     ```
-    # asd
-    ```
-2. [Remote] Install nmap
-    ```
-    sudo apt install nmap
+    cd ~
+    git clone https://github.com/Le36/ros2-mapper.git
+    cd ros2-mapper/workspace
+    rosdep install -i --from-path src --rosdistro foxy -y
+    sudo apt install libzbar-dev python3-opencv -y
+    pip3 install pyzbar
     ```
 
 ### Running the project
 
-```
-IP=<Turtlebot 3 ip> ./run.sh
-```
+1. [Remote] Find out the IP of the Raspberry Pi
+2. [Remote] Run the launch script
+    ```
+    IP=<Turtlebot 3 ip> ./run.sh
+    ```
