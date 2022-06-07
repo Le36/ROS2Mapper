@@ -30,4 +30,4 @@ jobs:
           cd workspace && ./lint.sh
       - name: Run tests
         run: |
-          cd workspace && source /opt/ros/foxy/setup.bash && pytest src
+          cd workspace && source /opt/ros/foxy/setup.bash && DELAY=1 pytest src

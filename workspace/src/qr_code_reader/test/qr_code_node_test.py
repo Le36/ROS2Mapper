@@ -37,6 +37,8 @@ class QRCodeNodeTest(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         rclpy.init()
+        self.delay = int(os.getenv("DELAY")) if os.getenv("DELAY") else 0.1
+
         self.subscriber_mock = Mock()
         self.test_node = NodeNode(self.subscriber_mock)
         self.qr_code_reader_node = QRCodeReader()
@@ -48,7 +50,7 @@ class QRCodeNodeTest(unittest.TestCase):
         self.executor_thread = threading.Thread(target=executor.spin)
         self.executor_thread.start()
 
-        time.sleep(0.1)
+        time.sleep(self.delay)
 
     def setUp(self):
         self.subscriber_mock.reset_mock()
@@ -61,21 +63,21 @@ class QRCodeNodeTest(unittest.TestCase):
 
     def test_sending_image_without_a_qr_code(self):
         self.test_node.send_image("no-qr-code.jpg")
-        time.sleep(0.1)
+        time.sleep(self.delay)
         self.subscriber_mock.assert_not_called()
 
     def test_sending_image_with_a_qr_code(self):
         self.test_node.send_image("qr-code.jpg")
-        time.sleep(0.1)
+        time.sleep(self.delay)
         self.subscriber_mock.assert_called_once_with(String(
             data='{"name": "STATION", "id": "1"}'
         ))
 
     def test_sending_image_with_the_same_qr_code_twice(self):
         self.test_node.send_image("qr-code.jpg")
-        time.sleep(0.1)
+        time.sleep(self.delay)
         self.test_node.send_image("qr-code.jpg")
-        time.sleep(0.1)
+        time.sleep(self.delay)
         self.subscriber_mock.assert_called_once_with(String(
             data='{"name": "STATION", "id": "1"}'
         ))
