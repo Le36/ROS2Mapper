@@ -1,0 +1,2 @@
+fixes:
+  - "::workspace/" # move root e.g., "path/" => "workspace/path/"
