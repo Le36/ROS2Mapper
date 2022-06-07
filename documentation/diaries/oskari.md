@@ -15,7 +15,7 @@ __Negatives__:
  
  
 ## Sprint 1 (24.05. - 30.05.)
-I focused mainly on the camera node of the physical Turtlebot3 in this sprint. It took me a lot of time to get the node working and my developing experience reflects this.
+I focused mainly on the camera node of the physical TurtleBot3 in this sprint. It took me a lot of time to get the node working and my developing experience reflects this.
  
 ROS2 package library (https://index.ros.org/) search seemed somewhat cumbersome at first. In the website GUI there was no way to specify which ROS2 distribution I wanted the search results to be for. I then noticed the little question mark symbol next to the search bar which lead me to the lunr instruction page (https://lunrjs.com/guides/searching.html) and I was able to specify my searches better. Still the search didn’t seem to function properly with the term “distro:foxy camera”. This looks for any result with the distro being foxy and any other field being camera. The lunr documentation says that when both fields match, the results will be shown first, but this does not seem to be the case as the correct results are shown on the second page instead of the first. Maybe the index page could have search filtering implemented a bit better. This could, ofcourse, also be my misunderstanding.
 
@@ -31,3 +31,22 @@ __Positives__:
 __Negatives__:
  - Many tutorials online most of which did not work as is
  - Long build times in Raspberry Pi
+
+
+## Sprint 2 (31.05. - 07.06.)
+In this sprint my tasks were more broad instead of focusing on one specific aspect like in the previous sprint. I created simulation worlds with QR codes and the launch files for those. I also created an [image for the TurtleBot3](https://drive.google.com/file/d/1JExsfCfhW8HvZbS-rrAKpXwOzQ3-d5AO/view?usp=sharing). We also created launch scripts to make running the nodes much easier and able to be done with one simple command.
+
+After getting to know the Gazebo simulator, creating the test simulation worlds with simple walled structures was quite straightforward. Adding our own QR codes to the simulation world proved to be a little bit more tricky. Juho and I proceeded to look at tutorials online and we were able to create a QR code model for the simulator using a picture of the QR code as a texture. After suceeding in this, creating 5 different models for different QR codes was trivial. After adding the QR code models to the world, I noticed that the QR codes are not grouped/joined with the walls of the world itself and moving the world results in the QR codes staying still and vice versa. Despite this, the test worlds work and I proceeded to more pressing tasks. I might come back to this in the future if moving the test worlds manually is deemed necessary.
+
+An interesting note about the test simulation worlds was that sometimes the robot gets stuck in seemingly large spaces for no reason (our test world has a minimum gap of 1m between walls). This seems to be due to the m-explore-2 package we are using because there is no problem with the same route when manually using nav2.
+
+When we were able to get all the nodes and pakages working manually on the TurtleBot3, I created and image for the turtlebot which includes all the progress we have made so far and serves as a checkpoint to us if anything goes wrong with the SD card of the Raspberry Pi. We can easily mount this image and continue working where we left off instead of starting everything from scratch and having to build all the packages we have implemented so far, etc. At the moment the image surely contains some unnecessary elements (though not large in file size) and could be slimmed down, but we decided to leave this be for the moment to ensure that we have a working image. We will come back to this in the next sprint. 
+
+After Juho created some initial launch scripts for the simulator, we started looking in to achieving the same result on the TurtleBot3. Juho had previous experience with such scripts which made this a simple task and we were able to do it together quite easily. 
+
+__Positives__:
+ - Dealing with nodes and packages is becoming more clear/easy as I get more experience with ROS2
+ - Launch scripts make testing simpler
+
+__Negatives__:
+ - I feel like I should be getting to know some nodes/packages more in-depth to know how they are really working, but I am feeling a bit overwhelmed to do so as we are continuously implementing more and more of them
