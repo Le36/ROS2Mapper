@@ -17,7 +17,6 @@
 - [Gazebo](#gazebo)
     - [SLAM in the Gazebo simulation](#slam-in-the-gazebo-simulation)
     - [Autonomous exploration in the Gazebo simulator](#autonomous-exploration-in-the-gazebo-simulator)
-    - [Adding the QR code models to Gazebo](#adding-the-qr-code-models-to-gazebo)
 - [Physical robot](#physical-robot)
     - [Nav2 and SLAM on the physical robot](#nav2-and-slam-on-the-physical-robot)
     - [Getting the output from the Raspberry Pi camera](#getting-the-output-from-the-raspberry-pi-camera)
@@ -137,6 +136,10 @@ echo "export ROS_DOMAIN_ID=$((1 + $RANDOM % 232))" >> ~/.bashrc
     cd ~/turtlebot3_ws
     colcon build --symlink-install
     ```
+4. Add the QR code models to the Gazebo models directory
+    ```
+    cp models/qr_code_* ~/.gazebo/models/ -r
+    ```
 
 
 ## Raspi Ros 2 setup
@@ -227,13 +230,6 @@ ros2 launch turtlebot3_navigation2 navigation2.launch.py use_sim_time:=True
 ros2 launch slam_toolbox online_async_launch.py
 ros2 launch explore_lite explore.launch.py
 ```
-
-### Adding the QR code models to Gazebo
-
-1. Copy the models to your Gazebo models directory
-    ```
-    cp models/qr_code_* ~/.gazebo/models/ -r
-    ```
 
 ## Physical robot
 
