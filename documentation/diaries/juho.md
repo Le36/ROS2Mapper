@@ -49,6 +49,7 @@ Publishing data in the tests was always easy though. At some point, I just rewro
 
 I wanted to get the CI working, but I wasn't sure how to do that at first. I found [ament_lint](https://github.com/ament/ament_lint) and [setup-ros](https://github.com/ros-tooling/setup-ros), which I then used to get the linting working. Later I removed the ament_lint and just replaced it with my own script for running linting. Getting the build working in the CI was relatively easy, but I had some problems with adding the tests. I had to (re-)install ros-foxy-ros-base (I thought that setup-ros would install it?), and I also forgot to source `/opt/ros/foxy/setup.bash`, but after doing those two things, the tests were ~~working~~. The tests didn't initially work because they were written badly with race conditions and such, but after rewriting the tests they ran fine.
 
+I tried to run the stuff on the physical robot but every time I ran it, I got a random error. I tried multiple things, including running some of the things on the remote PC, but I still got some random errors, even though it should work the same way as in the Gazebo simulation.
 
 ### Positives
 - After rewriting the tests, I'm happy with how they turned out
@@ -59,3 +60,4 @@ I wanted to get the CI working, but I wasn't sure how to do that at first. I fou
 
 ### Negatives
 - No tutorials about how to test nodes
+- Random errors on the TurtleBot3 even though the code works in Gazebo
