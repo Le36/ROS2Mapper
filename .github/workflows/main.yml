@@ -6,6 +6,8 @@ on:
       - "workspace/src/**"
       - "workspace/lint.sh"
       - "workspace/pytest.ini"
+      - "workspace/.coveragerc"
+      - "codecov.yml"
       - ".github/workflows/main.yml"
 
 jobs:
