@@ -7,7 +7,7 @@ University of Helsinki, Ohjelmistotuotantoprojekti (Software Engineering Project
 ## Documents
 
 - [Definition of done](documentation/definition-of-done.md)
-- [Architecture diagram](documentation/ros2.drawio.png)
+- [Architecture diagram](documentation/images/ros2.drawio.png)
 - [Timesheet](documentation/timesheet.md)
 - [Product and sprint backlogs](https://github.com/Le36/ros2-mapper/projects)
 - [Sprint 2 burndown chart](documentation/images/sprint2.png)
