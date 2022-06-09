@@ -16,7 +16,7 @@ setup(
     zip_safe=True,
     maintainer='leevi',
     maintainer_email='48809753+Le36@users.noreply.github.com',
-    description='TODO: Package description',
+    description='Manages saving the QR codes',
     license='MIT',
     tests_require=['pytest'],
     entry_points={
