@@ -19,17 +19,18 @@ class NodeNode(Node):
     def __init__(self, subscriber_callback):
         super().__init__("test_node")
 
+        self.bridge = CvBridge()
+
         self.publisher = self.create_publisher(Image, "/camera/image_raw", 10)
         self.subscription = self.create_subscription(
             String, "/add_data", subscriber_callback, 10
         )
 
     def send_image(self, image_filename: str):
-        bridge = CvBridge()
         dirname = os.path.dirname(__file__)
         image_path = os.path.join(dirname, "images", image_filename)
         image = cv2.imread(image_path)
-        ros_image = bridge.cv2_to_imgmsg(image, "bgr8")
+        ros_image = self.bridge.cv2_to_imgmsg(image, "bgr8")
         self.publisher.publish(ros_image)
 
 

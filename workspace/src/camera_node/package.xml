@@ -1,15 +1,14 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>qr_code_reader</name>
+  <name>camera_node</name>
   <version>0.0.0</version>
-  <description>Listens for images from the image topic and publishes the QR code data to /qr_code_found topic when recognizing a QR code</description>
+  <description>Publishes images from the camera</description>
   <maintainer email="roysko.juho@gmail.com">bntti</maintainer>
   <license>MIT</license>
 
   <exec_depend>rclpy</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
-  <exec_depend>std_msgs</exec_depend>
   <exec_depend>cv_bridge</exec_depend>
 
   <test_depend>python3-pytest</test_depend>

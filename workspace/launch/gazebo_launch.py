@@ -13,10 +13,5 @@ def generate_launch_description():
             package='memory_node',
             executable='listener',
             name='memory_node'
-        ),
-        Node(
-            package='camera_node',
-            executable='launch',
-            name='camera_node'
         )
     ])
