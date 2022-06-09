@@ -13,7 +13,7 @@
     - [Install m-explore-ros2](#install-m-explore-ros2-1)
     - [Setup the turtlebot 3](#setup-the-turtlebot-3)
     - [Setup the Raspberry Pi camera](#setup-the-raspberry-pi-camera)
-    - [Add the ssh key to the Raspberry Pi](#add-the-ssh-key-to-the-raspberry-pi)
+    - [Add your ssh key to the Raspberry Pi](#add-your-ssh-key-to-the-raspberry-pi)
 - [Gazebo](#gazebo)
     - [SLAM in the Gazebo simulation](#slam-in-the-gazebo-simulation)
     - [Autonomous exploration in the Gazebo simulator](#autonomous-exploration-in-the-gazebo-simulator)
@@ -177,26 +177,11 @@ echo "export ROS_DOMAIN_ID=$((1 + $RANDOM % 232))" >> ~/.bashrc
 
 ### Setup the Raspberry Pi camera
 
-1. [Raspi] Download and build the camera node
+1. [Raspi] Enable the camera
     1. Add `start_x=1` to the end of `/boot/firmware/config.txt`
     2. Reboot
-    3. Run the following commands
-        ```
-        sudo apt install libtheora-dev libogg-dev libboost-python-dev
-        mkdir -p ~/ros2_ws/src && cd ~/ros2_ws/src
-        git clone --branch foxy https://github.com/ros-perception/image_common
-        git clone --branch ros2 https://github.com/ros-perception/vision_opencv
-        git clone --branch foxy-devel https://github.com/ros-perception/image_transport_plugins
-        git clone --branch foxy https://gitlab.com/boldhearts/ros2_v4l2_camera src/v4l2_camera
-        cd ~/ros2_ws
-        rosdep install -i --from-path src --rosdistro foxy -y
-        cd ~/ros2_ws/src
-        rosdep install -i --from-path src --rosdistro foxy -y
-        cd ~/ros2_ws
-        colcon build --symlink-install
-        ```
 
-### Add the ssh key to the Raspberry Pi
+### Add your ssh key to the Raspberry Pi
 
 1. [Remote] Run the following command
     ```
