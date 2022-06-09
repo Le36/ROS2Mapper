@@ -21,7 +21,7 @@ def create_tables():
         (
             content     TEXT,
             coordinates TEXT,
-            time        TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL PRIMARY KEY 
+            time        TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL PRIMARY KEY
         );
     """)
 
