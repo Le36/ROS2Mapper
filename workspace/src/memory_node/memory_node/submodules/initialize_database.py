@@ -19,9 +19,9 @@ def create_tables():
         );
         CREATE TABLE IF NOT EXISTS history
         (
-            content     TEXT UNIQUE PRIMARY KEY,
+            content     TEXT,
             coordinates TEXT,
-            time        TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+            time        TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL PRIMARY KEY 
         );
     """)
 
