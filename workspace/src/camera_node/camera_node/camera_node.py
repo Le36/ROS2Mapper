@@ -8,7 +8,7 @@ from sensor_msgs.msg import Image
 class CameraNode(Node):
     def __init__(self) -> None:
         """Create the publisher"""
-        super().__init__("qr_code_reader")
+        super().__init__("camera_node")
 
         self.bridge = CvBridge()
         self.cap = cv2.VideoCapture(0)
