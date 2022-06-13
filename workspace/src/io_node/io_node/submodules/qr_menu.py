@@ -1,8 +1,8 @@
 import os
 import select
 import sys
-import rclpy
 
+from std_msgs.msg import String
 import termios
 import tty
 
@@ -20,9 +20,14 @@ CTRL-C to quit
 
 class QRMenu:
 
-    def __init__(self, return_to_menu) -> None:
+    def __init__(self, return_to_menu, publisher) -> None:
         self._return_to_menu = return_to_menu
+        self._publisher = publisher
         self._running = False
+
+    def qr_navigation_callback(self, msg_command: String) -> None:
+        """Publish user input for QR code id"""
+        self._publisher.publish(String(data=msg_command))
 
     def _get_key(self, settings):
         tty.setraw(sys.stdin.fileno())
