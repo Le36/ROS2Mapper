@@ -53,7 +53,6 @@ class ExploreNode(Node):
 
         # print(self.getGlobalCostmap())
 
-        self.move(-2, -0.5)
         
     def map_listener_callback(self, msg):
         self.map = msg.data
@@ -63,6 +62,28 @@ class ExploreNode(Node):
         self.map_resolution = msg.info.resolution
         
         self.get_logger().info('I heard: "%s"' % [self.map_width, self.map_height, self.map_origin, self.map_resolution])
+        self.make_map()
+
+    def make_map(self):
+
+        map = []
+
+        print(self.map[1])
+
+        i = 0
+
+        for y in range(0,int(self.map_height)):
+            j = []
+            for x in range(0,int(self.map_width)):
+                j.append(self.map[i])
+                i += 1
+                y += 1
+            x += 1
+            map.append(j)
+            print(j)
+        
+    
+
 
 
     def tf_listener_callback(self, msg):
