@@ -93,9 +93,14 @@ class ExploreNode(Node):
 
             # self.get_logger().info('I heard: "%s"' % self.robot_positon)
 
-    def transform_coordinates_into_grid(self, coordinates):
-        self.map_origin
-    
+    def transform_coordinates_into_grid(self):
+        # self.map_origin
+        # self.map_resolution
+        # self.robot_positon
+
+        distance_x = self.robot_positon[0] - self.map_origin[0]
+        distance_y = self.robot_positon[1] - self.map_origin[1]
+        
     def explore(self):
 
         while(self.check_exploration_status()):
