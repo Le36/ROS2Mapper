@@ -38,11 +38,13 @@ class ExploreNode(Node):
             self.map_listener_callback,
             1)
         
-        # self.tf_occupance_listener = self.create_subscription(
-        #     TFMessage,
-        #     '/tf',
-        #     self.tf_listener_callback,
-        #     1)
+        self.tf_occupance_listener = self.create_subscription(
+            TFMessage,
+            '/tf',
+            self.tf_listener_callback,
+            1)
+        
+        self.robot_positon = [0.0, 0.0, 0.0]
 
         self.map = []
         self.copyOfMap = []
@@ -58,10 +60,10 @@ class ExploreNode(Node):
         self.map = msg.data
         self.map_width = msg.info.width
         self.map_height = msg.info.height
-        self.map_origin = (msg.info.origin.position.x, msg.info.origin.position.y, msg.info.origin.position.z)
+        self.map_origin = [msg.info.origin.position.x, msg.info.origin.position.y, msg.info.origin.position.z]
         self.map_resolution = msg.info.resolution
         
-        self.get_logger().info('I heard: "%s"' % [self.map_width, self.map_height, self.map_origin, self.map_resolution])
+        # self.get_logger().info('I heard: "%s"' % [self.map_width, self.map_height, self.map_origin, self.map_resolution])
         self.make_map()
 
     def make_map(self):
@@ -81,17 +83,18 @@ class ExploreNode(Node):
             x += 1
             map.append(j)
             print(j)
-        
-    
-
 
 
     def tf_listener_callback(self, msg):
 
         if msg.transforms[0].header.frame_id == 'odom':
             data = msg.transforms[0].transform.translation
+            self.robot_positon = [data.x, data.y, data.z]
 
-            self.get_logger().info('I heard: "%s"' % data)
+            # self.get_logger().info('I heard: "%s"' % self.robot_positon)
+
+    def transform_coordinates_into_grid(self, coordinates):
+        self.map_origin
     
     def explore(self):
 
