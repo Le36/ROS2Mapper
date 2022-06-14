@@ -32,22 +32,20 @@ class ExploreNode(Node):
         self.spin_client = ActionClient(self, Spin, 'spin')
         
 
-        # self.map_occupance_listener = self.create_subscription(
-        #     OccupancyGrid,
-        #     '/map',
-        #     self.map_listener_callback,
-        #     1)
-        
-        self.tf_occupance_listener = self.create_subscription(
-            TFMessage,
-            '/tf',
-            self.tf_listener_callback,
+        self.map_occupance_listener = self.create_subscription(
+            OccupancyGrid,
+            '/map',
+            self.map_listener_callback,
             1)
+        
+        # self.tf_occupance_listener = self.create_subscription(
+        #     TFMessage,
+        #     '/tf',
+        #     self.tf_listener_callback,
+        #     1)
 
         self.map = []
         self.copyOfMap = []
-        self.origin = ()
-        self.resolution = 1.0
 
         # print(self.getLocalCostmap())
 
@@ -59,15 +57,15 @@ class ExploreNode(Node):
         
     def map_listener_callback(self, msg):
         self.map = msg.data
-        self.origin = msg.origin
-        self.resolution = msg.resolution
+        self.map_width = msg.info.width
+        self.map_height = msg.info.height
+        self.map_origin = (msg.info.origin.position.x, msg.info.origin.position.y, msg.info.origin.position.z)
+        self.map_resolution = msg.info.resolution
         
-        self.get_logger().info('I heard: "%s"' % msg)
+        self.get_logger().info('I heard: "%s"' % [self.map_width, self.map_height, self.map_origin, self.map_resolution])
 
 
     def tf_listener_callback(self, msg):
-
-
 
         if msg.transforms[0].header.frame_id == 'odom':
             data = msg.transforms[0].transform.translation
