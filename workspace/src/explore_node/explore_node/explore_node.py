@@ -1,3 +1,4 @@
+from time import sleep
 import rclpy
 from rclpy.node import Node
 from rclpy.action import ActionClient
@@ -5,6 +6,7 @@ from rclpy.action import ActionClient
 from nav2_msgs.action import NavigateToPose, Spin
 from nav2_msgs.srv import ClearEntireCostmap, GetCostmap
 from nav_msgs.msg import OccupancyGrid
+from tf2_msgs.msg import TFMessage
 
 from builtin_interfaces.msg import Duration
 
@@ -30,30 +32,48 @@ class ExploreNode(Node):
         self.spin_client = ActionClient(self, Spin, 'spin')
         
 
-        """self.occupance_listener = self.create_subscription(
-            OccupancyGrid,
-            '/map',
-            self.listener_callback,
+        # self.map_occupance_listener = self.create_subscription(
+        #     OccupancyGrid,
+        #     '/map',
+        #     self.map_listener_callback,
+        #     1)
+        
+        self.tf_occupance_listener = self.create_subscription(
+            TFMessage,
+            '/tf',
+            self.tf_listener_callback,
             1)
-"""
+
         self.map = []
         self.copyOfMap = []
+        self.origin = ()
+        self.resolution = 1.0
 
-        #print(self.getLocalCostmap())
+        # print(self.getLocalCostmap())
 
-        #print("--------")
+        # print("--------")
 
-        #print(self.getGlobalCostmap())
+        # print(self.getGlobalCostmap())
 
-        self.move(2.0,2.0)
-
+        self.move(-2, -0.5)
         
-    def listener_callback(self, msg):
-        self.map = msg
+    def map_listener_callback(self, msg):
+        self.map = msg.data
+        self.origin = msg.origin
+        self.resolution = msg.resolution
         
+        self.get_logger().info('I heard: "%s"' % msg)
 
-        self.get_logger().info('I heard: "%s"' % msg.data)
 
+    def tf_listener_callback(self, msg):
+
+
+
+        if msg.transforms[0].header.frame_id == 'odom':
+            data = msg.transforms[0].transform.translation
+
+            self.get_logger().info('I heard: "%s"' % data)
+    
     def explore(self):
 
         while(self.check_exploration_status()):
@@ -81,7 +101,7 @@ class ExploreNode(Node):
         #goal_pose.header.stamp = self.navigator.get_clock().now().to_msg()
         goal_pose.pose.position.x = float(x)
         goal_pose.pose.position.y = float(y)
-        goal_pose.pose.position.z = 5.0
+        goal_pose.pose.position.z = 0.0
         goal_pose.pose.orientation.x = 0.0
         goal_pose.pose.orientation.y = 0.0
         goal_pose.pose.orientation.z = 0.0
