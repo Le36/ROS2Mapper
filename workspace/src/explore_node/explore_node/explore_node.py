@@ -10,11 +10,9 @@ from tf2_msgs.msg import TFMessage
 
 from builtin_interfaces.msg import Duration
 
-from geometry_msgs.msg import PoseStamped 
+from geometry_msgs.msg import PoseStamped
 
 from std_msgs.msg import String
-
-
 
 
 class ExploreNode(Node):
@@ -22,88 +20,99 @@ class ExploreNode(Node):
         """Create the publisher"""
         super().__init__("explore_node")
 
-        self.nav_to_pose_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
+        self.nav_to_pose_client = ActionClient(self, NavigateToPose, "navigate_to_pose")
         self.clear_costmap_global_srv = self.create_client(
-            ClearEntireCostmap, '/global_costmap/clear_entirely_global_costmap')
+            ClearEntireCostmap, "/global_costmap/clear_entirely_global_costmap"
+        )
         self.clear_costmap_local_srv = self.create_client(
-            ClearEntireCostmap, '/local_costmap/clear_entirely_local_costmap')
-        self.get_costmap_global_srv = self.create_client(GetCostmap, '/global_costmap/get_costmap')
-        self.get_costmap_local_srv = self.create_client(GetCostmap, '/local_costmap/get_costmap')
-        self.spin_client = ActionClient(self, Spin, 'spin')
-        
+            ClearEntireCostmap, "/local_costmap/clear_entirely_local_costmap"
+        )
+        self.get_costmap_global_srv = self.create_client(
+            GetCostmap, "/global_costmap/get_costmap"
+        )
+        self.get_costmap_local_srv = self.create_client(
+            GetCostmap, "/local_costmap/get_costmap"
+        )
+        self.spin_client = ActionClient(self, Spin, "spin")
 
         self.map_occupance_listener = self.create_subscription(
-            OccupancyGrid,
-            '/map',
-            self.map_listener_callback,
-            1)
-        
+            OccupancyGrid, "/map", self.map_listener_callback, 1
+        )
+
         self.tf_occupance_listener = self.create_subscription(
-            TFMessage,
-            '/tf',
-            self.tf_listener_callback,
-            1)
-        
+            TFMessage, "/tf", self.tf_listener_callback, 1
+        )
+
         self.robot_positon = [0.0, 0.0, 0.0]
+        self.x_index = -1
+        self.y_index = -1
 
         self.map = []
         self.copyOfMap = []
-
+        self.map_origin = []
         # print(self.getLocalCostmap())
 
         # print("--------")
 
         # print(self.getGlobalCostmap())
 
-        
     def map_listener_callback(self, msg):
         self.map = msg.data
         self.map_width = msg.info.width
         self.map_height = msg.info.height
-        self.map_origin = [msg.info.origin.position.x, msg.info.origin.position.y, msg.info.origin.position.z]
+        self.map_origin = [
+            msg.info.origin.position.x,
+            msg.info.origin.position.y,
+            msg.info.origin.position.z,
+        ]
         self.map_resolution = msg.info.resolution
-        
+
         # self.get_logger().info('I heard: "%s"' % [self.map_width, self.map_height, self.map_origin, self.map_resolution])
         self.make_map()
 
     def make_map(self):
 
-        map = []
-
-        print(self.map[1])
+        map = [[]]
 
         i = 0
 
-        for y in range(0,int(self.map_height)):
+        for y in range(0, int(self.map_height)):
             j = []
-            for x in range(0,int(self.map_width)):
+            for x in range(0, int(self.map_width)):
                 j.append(self.map[i])
                 i += 1
                 y += 1
             x += 1
             map.append(j)
-            print(j)
 
+        if self.x_index >= 0 and self.y_index >= 0:
+            map[self.y_index][self.x_index] = 999
+            print("testintg")
+
+        for i in map:
+            print(i)
 
     def tf_listener_callback(self, msg):
 
-        if msg.transforms[0].header.frame_id == 'odom':
+        if msg.transforms[0].header.frame_id == "odom":
             data = msg.transforms[0].transform.translation
             self.robot_positon = [data.x, data.y, data.z]
+            self.transform_coordinates_into_grid()
 
             # self.get_logger().info('I heard: "%s"' % self.robot_positon)
 
     def transform_coordinates_into_grid(self):
-        # self.map_origin
-        # self.map_resolution
-        # self.robot_positon
 
-        distance_x = self.robot_positon[0] - self.map_origin[0]
-        distance_y = self.robot_positon[1] - self.map_origin[1]
-        
+        if self.map_origin:
+            distance_x = abs(self.robot_positon[0] - self.map_origin[0])
+            distance_y = abs(self.robot_positon[1] - self.map_origin[1])
+            self.x_index = round(distance_x / self.map_resolution)
+            self.y_index = round(distance_y / self.map_resolution)
+            print(round(self.x_index), round(self.y_index))
+
     def explore(self):
 
-        while(self.check_exploration_status()):
+        while self.check_exploration_status():
 
             self.move()
 
@@ -115,17 +124,14 @@ class ExploreNode(Node):
 
         return False
 
-
     def move(self, x, y) -> None:
         """Pose to X,Y location"""
-        
+
         goal_msg = NavigateToPose.Goal()
-        
-        
-   
+
         goal_pose = PoseStamped()
-        goal_pose.header.frame_id = 'map'
-        #goal_pose.header.stamp = self.navigator.get_clock().now().to_msg()
+        goal_pose.header.frame_id = "map"
+        # goal_pose.header.stamp = self.navigator.get_clock().now().to_msg()
         goal_pose.pose.position.x = float(x)
         goal_pose.pose.position.y = float(y)
         goal_pose.pose.position.z = 0.0
@@ -139,10 +145,7 @@ class ExploreNode(Node):
 
         return self.nav_to_pose_client.send_goal_async(goal_msg)
 
-
         self.nav_to_pose_client.NavigateToPose(goal_pose)
-
-
 
     def getGlobalCostmap(self):
         """Get the global costmap."""
@@ -170,16 +173,16 @@ class ExploreNode(Node):
     def spin(self, spin_dist=6.28318531):
 
         self.nav_to_pose_client.wait_for_server()
-        
+
         goal_msg = Spin.Goal()
         goal_msg.target_yaw = spin_dist
-        
+
         send_goal_future = self.spin_client.send_goal_async(goal_msg)
         rclpy.spin_until_future_complete(self, send_goal_future)
         self.goal_handle = send_goal_future.result()
 
         if not self.goal_handle.accepted:
-            self.error('Spin request was rejected!')
+            self.error("Spin request was rejected!")
             return False
 
         self.result_future = self.goal_handle.get_result_async()
@@ -194,7 +197,7 @@ class ExploreNode(Node):
     def clearLocalCostmap(self):
         """Clear local costmap."""
         while not self.clear_costmap_local_srv.wait_for_service(timeout_sec=1.0):
-            self.info('Clear local costmaps service not available, waiting...')
+            self.info("Clear local costmaps service not available, waiting...")
         req = ClearEntireCostmap.Request()
         future = self.clear_costmap_local_srv.call_async(req)
         rclpy.spin_until_future_complete(self, future)
@@ -203,13 +206,14 @@ class ExploreNode(Node):
     def clearGlobalCostmap(self):
         """Clear global costmap."""
         while not self.clear_costmap_global_srv.wait_for_service(timeout_sec=1.0):
-            self.info('Clear global costmaps service not available, waiting...')
+            self.info("Clear global costmaps service not available, waiting...")
         req = ClearEntireCostmap.Request()
         future = self.clear_costmap_global_srv.call_async(req)
         rclpy.spin_until_future_complete(self, future)
         return
 
-def main(args=None) -> None:  
+
+def main(args=None) -> None:
     """Run the node"""
     rclpy.init(args=args)
     explore_node = ExploreNode()
@@ -218,5 +222,5 @@ def main(args=None) -> None:
     rclpy.shutdown()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
