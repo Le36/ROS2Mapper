@@ -18,33 +18,33 @@ def generate_launch_description():
     world_file_name = "test_world_2/test_world_2.world"
     world = os.path.join(file_dir, "..", "worlds", world_file_name)
 
-    home_dir = os.path.expanduser('~')
+    home_dir = os.path.expanduser("~")
     turtlebot3_launch_file_dir = os.path.join(
         home_dir,
         "turtlebot3_ws/src/turtlebot3/",
-        "turtlebot3_simulations/turtlebot3_gazebo/launch/"
+        "turtlebot3_simulations/turtlebot3_gazebo/launch/",
     )
 
     pkg_gazebo_ros = get_package_share_directory("gazebo_ros")
 
-    return LaunchDescription([
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                os.path.join(pkg_gazebo_ros, "launch", "gzserver.launch.py")
+    return LaunchDescription(
+        [
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    os.path.join(pkg_gazebo_ros, "launch", "gzserver.launch.py")
+                ),
+                launch_arguments={"world": world}.items(),
             ),
-            launch_arguments={"world": world}.items(),
-        ),
-
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                os.path.join(pkg_gazebo_ros, "launch", "gzclient.launch.py")
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    os.path.join(pkg_gazebo_ros, "launch", "gzclient.launch.py")
+                ),
             ),
-        ),
-
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([
-                turtlebot3_launch_file_dir, "/robot_state_publisher.launch.py"
-            ]),
-            launch_arguments={"use_sim_time": use_sim_time}.items(),
-        ),
-    ])
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    [turtlebot3_launch_file_dir, "/robot_state_publisher.launch.py"]
+                ),
+                launch_arguments={"use_sim_time": use_sim_time}.items(),
+            ),
+        ]
+    )
