@@ -52,11 +52,13 @@ class ExploreNode(Node):
         self.map = []
         self.copyOfMap = []
         self.map_origin = []
+
         # print(self.getLocalCostmap())
 
         # print("--------")
 
         # print(self.getGlobalCostmap())
+
 
     def map_listener_callback(self, msg):
         self.map = msg.data
@@ -100,6 +102,20 @@ class ExploreNode(Node):
 
             value = self.breadth_first_search(map, self.x_index, self.y_index)
             print("FOUNDFOUNDFOUND")
+            if(value == 9000):
+                print("Kaikki tutkittu")
+                return
+            map[value[1]][value[0]] = 12345
+
+            for i in map:
+                print(i)
+            target_x = self.map_origin[0] + value[0] * 0.05
+            target_y = self.map_origin[1] + value[1] * 0.05
+            print(str(target_x) + " ja " + str(target_y))
+            self.move(target_x, target_y)
+            #self.spin()
+
+
             print(self.x_index, self.y_index)
             print(value)
             if map[value[1]][value[0]] == -1:
@@ -107,8 +123,8 @@ class ExploreNode(Node):
             else:
                 print("FAIL")
 
-        # for i in map:
-        #     print(i)
+        for i in map:
+            print(i)
 
     def tf_listener_callback(self, msg):
 
@@ -128,6 +144,10 @@ class ExploreNode(Node):
             self.y_index = round(distance_y / self.map_resolution)
             # print(round(self.x_index), round(self.y_index))
 
+    def check_if_inside_map(self, s_x, s_y, i):
+        return -1 < s_y + i[0] < self.map_height-1 and -1 < s_x + i[1] < self.map_width -1         
+
+
     def breadth_first_search(self, map, x, y):
         visited = [[False for i in range(len(map[0]))] for j in range(len(map))]
         visited[y][x] = True
@@ -139,8 +159,14 @@ class ExploreNode(Node):
         while queue:
             s_x, s_y = queue.pop(0)
             for i in directions:
+                if not self.check_if_inside_map(s_x,s_y,i):
+                    continue
                 if map[s_y + i[0]][s_x + i[1]] == -1:
-                    return (s_x + i[1], s_y + i[0])
+                    if(abs(x - s_x + i[0]) < 10 or abs(y - s_y + i[1]) < 10):
+                        continue
+                    print(s_x + i[0])
+                    print(s_y + i[1])
+                    return [s_x + i[1], s_y + i[0]]
                 elif (
                     map[s_y + i[0]][s_x + i[1]] == 0
                     and visited[s_y + i[0]][s_x + i[1]] == False
@@ -148,11 +174,15 @@ class ExploreNode(Node):
                     visited[s_y + i[0]][s_x + i[1]] = True
                     queue.append((s_x + i[1], s_y + i[0]))
 
+        return 9000
+
+
     def explore(self):
+        print("test")
+        #while self.check_exploration_status():
+            #self.move(self.target_x, self.target_y)
+            #self.spin()
 
-        while self.check_exploration_status():
-
-            self.move()
 
     def check_exploration_status(self):
         self.copyOfMap = self.map
@@ -183,7 +213,13 @@ class ExploreNode(Node):
 
         return self.nav_to_pose_client.send_goal_async(goal_msg)
 
-        self.nav_to_pose_client.NavigateToPose(goal_pose)
+        send_goal_future = self.nav_to_pose_client.send_goal_async(goal_msg)
+        #rclpy.spin_until_future_complete(self, send_goal_future)
+        #self.goal_handle = send_goal_future.result()
+
+
+        #self.result_future = self.goal_handle.get_result_async()
+        #return True
 
     def getGlobalCostmap(self):
         """Get the global costmap."""
@@ -211,20 +247,23 @@ class ExploreNode(Node):
     def spin(self, spin_dist=6.28318531):
 
         self.nav_to_pose_client.wait_for_server()
+        self.spin_client.wait_for_server()
 
         goal_msg = Spin.Goal()
         goal_msg.target_yaw = spin_dist
 
-        send_goal_future = self.spin_client.send_goal_async(goal_msg)
-        rclpy.spin_until_future_complete(self, send_goal_future)
-        self.goal_handle = send_goal_future.result()
 
+        send_goal_future = self.spin_client.send_goal_async(goal_msg)
+        '''rclpy.spin_until_future_complete(self, send_goal_future)
+        self.goal_handle = send_goal_future.result()
+        print("testiä")
         if not self.goal_handle.accepted:
             self.error("Spin request was rejected!")
+            print("testiä")
             return False
 
         self.result_future = self.goal_handle.get_result_async()
-        return True
+        return True'''
 
     def clearAllCostmaps(self):
         """Clear all costmaps."""
