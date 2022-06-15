@@ -21,7 +21,6 @@ CTRL-C to quit
 
 
 class MainMenu:
-
     def __init__(self, publisher) -> None:
         self._publisher = publisher
         self._load_manual_control_view = None

@@ -19,7 +19,6 @@ CTRL-C to quit
 
 
 class QRMenu:
-
     def __init__(self, return_to_menu, publisher) -> None:
         self._return_to_menu = return_to_menu
         self._publisher = publisher
@@ -47,15 +46,25 @@ class QRMenu:
     def close(self):
         self._running = False
 
+    def clear_cli(self):
+        os.system("clear")
+        print(QR_MENU)
+
     def _main(self):
         settings = termios.tcgetattr(sys.stdin)
         os.system("clear")
         print(QR_MENU)
 
-        while(self._running):
+        while self._running:
             key = self._get_key(settings)
 
             if key == "\x03":
                 exit(0)
+            elif key.isdigit():
+                index = int(key)
+                if index < 1 or index > 9:
+                    self.clear_cli()
+                    print("QR code index error. Please input a number between 1-9.")
+
             elif key == "m":
                 self._return_to_menu()
