@@ -47,6 +47,8 @@ class ExploreNode(Node):
         self.x_index = -1
         self.y_index = -1
 
+        self.searching = False
+
         self.map = []
         self.copyOfMap = []
         self.map_origin = []
@@ -74,23 +76,39 @@ class ExploreNode(Node):
 
         map = [[]]
 
-        i = 0
+        # i = 0
 
-        for y in range(0, int(self.map_height)):
-            j = []
-            for x in range(0, int(self.map_width)):
-                j.append(self.map[i])
-                i += 1
-                y += 1
-            x += 1
-            map.append(j)
+        # for y in range(0, int(self.map_height)):
+        #     j = []
+        #     for x in range(0, int(self.map_width)):
+        #         j.append(self.map[i])
+        #         i += 1
+        #         y += 1
+        #     x += 1
+        #     map.append(j)
+
+        k = 0
+        for i in range(int(self.map_height)):
+            map.append([])
+            for j in range(int(self.map_width)):
+                map[i].append(self.map[k])
+                k += 1
 
         if self.x_index >= 0 and self.y_index >= 0:
             map[self.y_index][self.x_index] = 999
             print("testintg")
 
-        for i in map:
-            print(i)
+            value = self.breadth_first_search(map, self.x_index, self.y_index)
+            print("FOUNDFOUNDFOUND")
+            print(self.x_index, self.y_index)
+            print(value)
+            if map[value[1]][value[0]] == -1:
+                print("SUCCESS")
+            else:
+                print("FAIL")
+
+        # for i in map:
+        #     print(i)
 
     def tf_listener_callback(self, msg):
 
@@ -108,7 +126,27 @@ class ExploreNode(Node):
             distance_y = abs(self.robot_positon[1] - self.map_origin[1])
             self.x_index = round(distance_x / self.map_resolution)
             self.y_index = round(distance_y / self.map_resolution)
-            print(round(self.x_index), round(self.y_index))
+            # print(round(self.x_index), round(self.y_index))
+
+    def breadth_first_search(self, map, x, y):
+        visited = [[False for i in range(len(map[0]))] for j in range(len(map))]
+        visited[y][x] = True
+        queue = []
+        queue.append((x, y))
+        self.searching = True
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+
+        while queue:
+            s_x, s_y = queue.pop(0)
+            for i in directions:
+                if map[s_y + i[0]][s_x + i[1]] == -1:
+                    return (s_x + i[1], s_y + i[0])
+                elif (
+                    map[s_y + i[0]][s_x + i[1]] == 0
+                    and visited[s_y + i[0]][s_x + i[1]] == False
+                ):
+                    visited[s_y + i[0]][s_x + i[1]] = True
+                    queue.append((s_x + i[1], s_y + i[0]))
 
     def explore(self):
 
