@@ -11,6 +11,10 @@ TURTLEBOT3_MODEL = os.environ["TURTLEBOT3_MODEL"]
 QR_MENU = """
 List of observed QR codes
 ---------------------------
+%s
+---------------------------
+
+Press numbers 1-9 to navigate to a found QR code.
 
 m : return to main menu
 
@@ -23,8 +27,16 @@ class QRMenu:
         self._return_to_menu = return_to_menu
         self._publisher = publisher
         self._running = False
+        self._qr_codes = []
 
-    def qr_navigation_callback(self, msg_command: String) -> None:
+    def open(self):
+        self._running = True
+        self._main()
+
+    def close(self):
+        self._running = False
+
+    def _qr_navigation_callback(self, msg_command: String) -> None:
         """Publish user input for QR code id"""
         self._publisher.publish(String(data=msg_command))
 
@@ -39,21 +51,19 @@ class QRMenu:
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
         return key
 
-    def open(self):
-        self._running = True
-        self._main()
-
-    def close(self):
-        self._running = False
-
-    def clear_cli(self):
+    def _print_menu(self):
         os.system("clear")
-        print(QR_MENU)
+        if self._qr_codes:
+            formatted_list = [
+                f"{i+1}: '{data}'" for i, data in enumerate(self._qr_codes)
+            ]
+            print(QR_MENU % "\n".join(formatted_list))
+        else:
+            print(QR_MENU % "No QR codes found")
 
     def _main(self):
         settings = termios.tcgetattr(sys.stdin)
-        os.system("clear")
-        print(QR_MENU)
+        self._print_menu()
 
         while self._running:
             key = self._get_key(settings)
@@ -63,7 +73,7 @@ class QRMenu:
             elif key.isdigit():
                 index = int(key)
                 if index < 1 or index > 9:
-                    self.clear_cli()
+                    self._print_menu()
                     print("QR code index error. Please input a number between 1-9.")
 
             elif key == "m":

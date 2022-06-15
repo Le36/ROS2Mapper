@@ -63,6 +63,7 @@ Moving around:
         w
    a    s    d
         x
+---------------------------
 
 w/x : increase/decrease linear velocity
 a/d : increase/decrease angular velocity
