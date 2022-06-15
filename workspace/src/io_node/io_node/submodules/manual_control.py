@@ -99,7 +99,7 @@ class ManualControl:
         os.system("clear")
         print(CONTROL_MENU)
         print(
-            "currently:\tlinear velocity {0}\t angular velocity {1} ".format(
+            "currently:\tlinear velocity {:.2f}\t angular velocity {:.1f} ".format(
                 target_linear_velocity, target_angular_velocity
             )
         )
