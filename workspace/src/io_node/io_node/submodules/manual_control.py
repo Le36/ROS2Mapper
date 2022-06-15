@@ -63,6 +63,7 @@ Moving around:
         w
    a    s    d
         x
+---------------------------
 
 w/x : increase/decrease linear velocity
 a/d : increase/decrease angular velocity
@@ -79,7 +80,6 @@ Communications Failed
 
 
 class ManualControl:
-
     def __init__(self, return_to_menu) -> None:
         self._return_to_menu = return_to_menu
         self._running = False
@@ -98,9 +98,11 @@ class ManualControl:
     def _print_vels(self, target_linear_velocity, target_angular_velocity):
         os.system("clear")
         print(CONTROL_MENU)
-        print("currently:\tlinear velocity {0}\t angular velocity {1} ".format(
-            target_linear_velocity,
-            target_angular_velocity))
+        print(
+            "currently:\tlinear velocity {0}\t angular velocity {1} ".format(
+                target_linear_velocity, target_angular_velocity
+            )
+        )
 
     def _make_simple_profile(self, output, input, slop):
         if input > output:
@@ -156,39 +158,34 @@ class ManualControl:
         os.system("clear")
         print(CONTROL_MENU)
 
-        while(self._running):
+        while self._running:
             key = self._get_key(settings)
             if key == "w":
-                target_linear_velocity =\
-                    self._check_linear_limit_velocity(
-                        target_linear_velocity + LIN_VEL_STEP_SIZE)
-                self._print_vels(target_linear_velocity,
-                                 target_angular_velocity)
+                target_linear_velocity = self._check_linear_limit_velocity(
+                    target_linear_velocity + LIN_VEL_STEP_SIZE
+                )
+                self._print_vels(target_linear_velocity, target_angular_velocity)
             elif key == "x":
-                target_linear_velocity =\
-                    self._check_linear_limit_velocity(
-                        target_linear_velocity - LIN_VEL_STEP_SIZE)
-                self._print_vels(target_linear_velocity,
-                                 target_angular_velocity)
+                target_linear_velocity = self._check_linear_limit_velocity(
+                    target_linear_velocity - LIN_VEL_STEP_SIZE
+                )
+                self._print_vels(target_linear_velocity, target_angular_velocity)
             elif key == "a":
-                target_angular_velocity =\
-                    self._check_angular_limit_velocity(
-                        target_angular_velocity + ANG_VEL_STEP_SIZE)
-                self._print_vels(target_linear_velocity,
-                                 target_angular_velocity)
+                target_angular_velocity = self._check_angular_limit_velocity(
+                    target_angular_velocity + ANG_VEL_STEP_SIZE
+                )
+                self._print_vels(target_linear_velocity, target_angular_velocity)
             elif key == "d":
-                target_angular_velocity =\
-                    self._check_angular_limit_velocity(
-                        target_angular_velocity - ANG_VEL_STEP_SIZE)
-                self._print_vels(target_linear_velocity,
-                                 target_angular_velocity)
+                target_angular_velocity = self._check_angular_limit_velocity(
+                    target_angular_velocity - ANG_VEL_STEP_SIZE
+                )
+                self._print_vels(target_linear_velocity, target_angular_velocity)
             elif key == " " or key == "s":
                 target_linear_velocity = 0.0
                 control_linear_velocity = 0.0
                 target_angular_velocity = 0.0
                 control_angular_velocity = 0.0
-                self._print_vels(target_linear_velocity,
-                                 target_angular_velocity)
+                self._print_vels(target_linear_velocity, target_angular_velocity)
             elif key == "m":
                 self._return_to_menu()
             elif key == "\x03":
@@ -199,7 +196,8 @@ class ManualControl:
             control_linear_velocity = self._make_simple_profile(
                 control_linear_velocity,
                 target_linear_velocity,
-                (LIN_VEL_STEP_SIZE / 2.0))
+                (LIN_VEL_STEP_SIZE / 2.0),
+            )
 
             twist.linear.x = control_linear_velocity
             twist.linear.y = 0.0
@@ -208,7 +206,8 @@ class ManualControl:
             control_angular_velocity = self._make_simple_profile(
                 control_angular_velocity,
                 target_angular_velocity,
-                (ANG_VEL_STEP_SIZE / 2.0))
+                (ANG_VEL_STEP_SIZE / 2.0),
+            )
 
             twist.angular.x = 0.0
             twist.angular.y = 0.0

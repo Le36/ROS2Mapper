@@ -1,8 +1,8 @@
 import os
 import rclpy
-from .submodules.manual_control import ManualControl
-from .submodules.qr_menu import QRMenu
-from .submodules.main_menu import MainMenu
+from submodules.manual_control import ManualControl
+from submodules.qr_menu import QRMenu
+from submodules.main_menu import MainMenu
 
 from rclpy.node import Node
 from std_msgs.msg import String
@@ -11,23 +11,26 @@ TURTLEBOT3_MODEL = os.environ["TURTLEBOT3_MODEL"]
 
 
 class IONode(Node):
-
     def __init__(self):
-        super().__init__('io_node')
+        super().__init__("io_node")
 
         """Create the autonomous exploration publisher"""
-        self.main_menu_publisher_ = self.create_publisher(String, '/autonomous_exploration', 5)
+        self.main_menu_publisher_ = self.create_publisher(
+            String, "/autonomous_exploration", 5
+        )
         self.main_menu = MainMenu(self.main_menu_publisher_)
 
         """Create the QR navigator publisher"""
-        self.qr_menu_publisher_ = self.create_publisher(String, '/qr_navigator', 5)
-        self.qr_menu = QRMenu(lambda: self.load_view(self.main_menu),self.qr_menu_publisher_)
+        self.qr_menu_publisher_ = self.create_publisher(String, "/qr_navigator", 5)
+        self.qr_menu = QRMenu(
+            lambda: self.load_view(self.main_menu), self.qr_menu_publisher_
+        )
 
         self.manual_control = ManualControl(lambda: self.load_view(self.main_menu))
 
         self.main_menu.set_load_functions(
             lambda: self.load_view(self.manual_control),
-            lambda: self.load_view(self.qr_menu)
+            lambda: self.load_view(self.qr_menu),
         )
 
         self.view = self.main_menu
@@ -48,5 +51,5 @@ def main(args=None):
     rclpy.shutdown()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1815,7 +1815,7 @@
           <cast_shadows>0</cast_shadows>
           <geometry>
             <box>
-              <size>0.01 0.25 0.25</size>
+              <size>0.01 0.20 0.20</size>
             </box>
           </geometry>
           <material>
@@ -1839,7 +1839,7 @@
           <cast_shadows>0</cast_shadows>
           <geometry>
             <box>
-              <size>0.01 0.25 0.25</size>
+              <size>0.01 0.20 0.20</size>
             </box>
           </geometry>
           <material>
@@ -1863,7 +1863,7 @@
           <cast_shadows>0</cast_shadows>
           <geometry>
             <box>
-              <size>0.01 0.25 0.25</size>
+              <size>0.01 0.20 0.20</size>
             </box>
           </geometry>
           <material>
@@ -1887,7 +1887,7 @@
           <cast_shadows>0</cast_shadows>
           <geometry>
             <box>
-              <size>0.01 0.25 0.25</size>
+              <size>0.01 0.20 0.20</size>
             </box>
           </geometry>
           <material>
@@ -1911,7 +1911,7 @@
           <cast_shadows>0</cast_shadows>
           <geometry>
             <box>
-              <size>0.01 0.25 0.25</size>
+              <size>0.01 0.20 0.20</size>
             </box>
           </geometry>
           <material>

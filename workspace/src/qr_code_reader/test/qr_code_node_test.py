@@ -70,15 +70,15 @@ class QRCodeNodeTest(unittest.TestCase):
     def test_sending_image_with_a_qr_code(self):
         self.test_node.send_image("qr-code.jpg")
         time.sleep(self.delay)
-        self.subscriber_mock.assert_called_once_with(String(
-            data='{"name": "STATION", "id": "1"}'
-        ))
+        self.subscriber_mock.assert_called_once_with(
+            String(data='{"name": "STATION", "id": "1"}')
+        )
 
     def test_sending_image_with_the_same_qr_code_twice(self):
         self.test_node.send_image("qr-code.jpg")
         time.sleep(self.delay)
         self.test_node.send_image("qr-code.jpg")
         time.sleep(self.delay)
-        self.subscriber_mock.assert_called_once_with(String(
-            data='{"name": "STATION", "id": "1"}'
-        ))
+        self.subscriber_mock.assert_called_once_with(
+            String(data='{"name": "STATION", "id": "1"}')
+        )
