@@ -2,6 +2,7 @@
 source = src
 omit = 
     **/__init__.py,
-    src/**/setup.py
-    src/**/test/**
+    src/**/setup.py,
+    src/**/test/**,
+    src/io_node/
 
