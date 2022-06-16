@@ -50,3 +50,17 @@ __Positives__:
 
 __Negatives__:
  - I feel like I should be getting to know some nodes/packages more in-depth to know how they are working, but I am feeling a bit overwhelmed to do so as we are continuously implementing more and more of them
+
+
+## Sprint 3 (08.06. - 21.06.)
+Our 3rd and so far the longest sprint provided me with an opportunity develop a node from the ground up. I was tasked with creating the I/O node that would be used to control all the functions of the robot; starting/stopping autonomous exploration, viewing observed QR codes, navigating to observed QR codes, stopping the navigation to a QR code, and a manual override using a slightly modified version of the existing [turtlebot3 teleop node](https://github.com/ROBOTIS-GIT/turtlebot3/blob/foxy-devel/turtlebot3_teleop/turtlebot3_teleop/script/teleop_keyboard.py).
+
+To start off I revised [the tutorial of writing a simple publisher and subscriber](https://docs.ros.org/en/foxy/Tutorials/Writing-A-Simple-Py-Publisher-And-Subscriber.html). By following the tutorial and using the tutorial files ([publisher](https://raw.githubusercontent.com/ros2/examples/foxy/rclpy/topics/minimal_publisher/examples_rclpy_minimal_publisher/publisher_member_function.py), [subscriber](https://raw.githubusercontent.com/ros2/examples/foxy/rclpy/topics/minimal_subscriber/examples_rclpy_minimal_subscriber/subscriber_member_function.py)) as a base, I was able to make a crude version in no time at all. When I was happy with the messages published to the topic, I continued with creating the CLI. This forced me to make some refactoring to adhere to even the most basic concepts of good code. I divided the starting of the node to it's own class and [submodules/views](https://github.com/Le36/ros2-mapper/tree/main/workspace/src/io_node/io_node/submodules) (main menu, QR code menu, manual override menu) to their own classes. Doing this made the node not work anymore. This was due to submodules not inheriting the Node class. Initializing the publishers in the main class and passing the to the submodules as parameters fixed this issue and everything works as intended.
+
+Next up is connecting the I/O node to the other nodes.
+
+__Positives__:
+ - Writing a publisher was easy using [the tutorial](https://docs.ros.org/en/foxy/Tutorials/Writing-A-Simple-Py-Publisher-And-Subscriber.html)
+
+__Negatives__:
+ - TBD
