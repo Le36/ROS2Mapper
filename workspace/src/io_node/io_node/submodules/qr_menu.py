@@ -14,7 +14,8 @@ List of observed QR codes
 %s
 ---------------------------
 
-Press numbers 1-9 to navigate to a found QR code.
+1-9 : navigate to a found QR code
+0 : stop navigation
 
 m : return to main menu
 
@@ -72,9 +73,19 @@ class QRMenu:
                 exit(0)
             elif key.isdigit():
                 index = int(key)
-                if index < 1 or index > 9:
+                if index < 0 or index > 9:
                     self._print_menu()
                     print("QR code index error. Please input a number between 1-9.")
-
+                elif index == 0:
+                    self._qr_navigation_callback("0")
+                    self._print_menu()
+                    print("Navigation stopped")
+                else:
+                    self._qr_navigation_callback(str(index))
+                    self._print_menu()
+                    print("Navigating to", index)
             elif key == "m":
                 self._return_to_menu()
+            elif key:
+                self._print_menu()
+                print("Input not recognized")
