@@ -190,6 +190,8 @@ class ManualControl:
                 self._return_to_menu()
             elif key == "\x03":
                 exit(0)
+            elif key:
+                print("Input not recognized")
 
             twist = Twist()
 
