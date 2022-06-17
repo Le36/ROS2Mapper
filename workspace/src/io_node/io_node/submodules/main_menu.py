@@ -81,3 +81,6 @@ class MainMenu:
                 self._load_qr_view()
             elif key == "4":
                 self._load_manual_control_view()
+            elif key:
+                self._print_menu()
+                print("Input not recognized")

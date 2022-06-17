@@ -3,6 +3,7 @@ install
 log
 __pycache__
 htmlcov
+venv
 
 test.db
 .pytest_cache

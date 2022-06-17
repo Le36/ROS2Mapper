@@ -92,12 +92,7 @@ echo "export ROS_DOMAIN_ID=$((1 + $RANDOM % 232))" >> ~/.bashrc
 
 ### Setup Gazebo
 
-1. Install the camera node
-    ```
-    apt-get install ros-foxy-v4l2-camera
-    ```
-2. Add the following lines
-   to `~/turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot3_gazebo/models/turtlebot3_burger/model.sdf`
+1. Add the following lines to `~/turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot3_gazebo/models/turtlebot3_burger/model.sdf`
     ```xml
         <joint name="camera_joint" type="fixed">
           <parent>base_link</parent>
@@ -133,12 +128,12 @@ echo "export ROS_DOMAIN_ID=$((1 + $RANDOM % 232))" >> ~/.bashrc
           </sensor>
         </link>
     ```
-3. Recompile the turtlebot3 models
+2. Recompile the turtlebot3 models
     ```
     cd ~/turtlebot3_ws
     colcon build --symlink-install
     ```
-4. Add the QR code models to the Gazebo models directory
+3. Add the QR code models to the Gazebo models directory
     ```
     cp models/qr_code_* ~/.gazebo/models/ -r
     ```
@@ -275,17 +270,22 @@ ros2 launch explore_lite explore.launch.py
 
 ### Initialization
 
-1. Install the dependencies
+1. Create and source venv
+    ```
+    python3 -m venv venv
+    source venv/bin/activate
+    ```
+2. Install the dependencies
     ```
     rosdep install -i --from-path src --rosdistro foxy -y
-    sudo apt install pycodestyle libzbar-dev python3-opencv -y
-    pip3 install pyzbar pytest-env
-    pip3 install pytest coverage -U
+    pip3 install -r requirements.txt
     ```
-2. Build
+3. Build
     ```
     colcon build --symlink-install
     ```
+
+**Note: Remember to source venv before running any of the commands**
 
 ### Running the project
 
@@ -320,9 +320,10 @@ coverage run --branch -m pytest src && coverage html
     cd ~
     git clone https://github.com/Le36/ros2-mapper.git
     cd ros2-mapper/workspace
+    python3 -m venv venv
+    source venv/bin/activate
+    pip3 install -r requirements.txt
     rosdep install -i --from-path src --rosdistro foxy -y
-    sudo apt install libzbar-dev python3-opencv -y
-    pip3 install pyzbar
     ```
 
 ### Running the project
