@@ -7,6 +7,7 @@ on:
       - "workspace/lint.sh"
       - "workspace/pytest.ini"
       - "workspace/.coveragerc"
+      - "workspace/requirements.txt"
       - "codecov.yml"
       - ".github/workflows/main.yml"
 
@@ -19,9 +20,8 @@ jobs:
       - uses: ros-tooling/setup-ros@master
       - name: Install dependencies
         run: |
-          sudo apt install libzbar-dev pycodestyle python3-opencv ros-foxy-ros-base -y
-          pip3 install -U pytest
-          pip3 install pyzbar pytest-env
+          sudo apt install ros-foxy-ros-base -y
+          pip install -r requirements.txt
           rosdep update
           cd workspace && rosdep install -i --from-path src --rosdistro foxy -y
       - name: Build
