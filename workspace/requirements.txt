@@ -12,7 +12,6 @@ pytest==7.1.2
 pytest-env==0.6.2
 PyYAML==6.0
 pyzbar==0.1.9
-rosidl-runtime-py==0.9.1
 rpyutils==0.2.0
 tomli==2.0.1
 topic-monitor==0.9.3
