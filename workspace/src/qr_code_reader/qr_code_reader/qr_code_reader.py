@@ -2,6 +2,7 @@ import math
 from typing import List, Optional, Tuple
 
 import cv2
+import cv2.aruco as aruco
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,12 +12,10 @@ from geometry_msgs.msg import TransformStamped
 from interfaces.msg import QRCode
 from mpl_toolkits import mplot3d
 from numpy import ndarray
-from pyzbar import pyzbar
 from rclpy.clock import ClockType
 from rclpy.node import Node
 from rclpy.time import Time
 from sensor_msgs.msg import Image
-from std_msgs.msg import String
 from tf2_ros import TransformException
 from tf2_ros.buffer import Buffer
 from tf2_ros.transform_listener import TransformListener
@@ -80,6 +79,18 @@ class QRCodeReader(Node):
             image, CAMERA_MATRIX, DISTORTION, None, new_camera_matrix
         )
         return undistorted
+
+    def detect_code(self, image: ndarray) -> Tuple[ndarray, ndarray]:
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        key = getattr(aruco, f"DICT_{4}X{4}_{250}")
+        arucoDict = aruco.Dictionary_get(key)
+        arucoParam = aruco.DetectorParameters_create()
+        bboxs, ids, rejected = aruco.detectMarkers(
+            gray, arucoDict, parameters=arucoParam
+        )
+        if DRAW:
+            aruco.drawDetectedMarkers(image, bboxs)
+        return ids, bboxs
 
     def get_vectors(self, points: List) -> List[ndarray]:
         rotation_matrix = get_rotation_matrix(self.rotation + self.rotation_offset)
@@ -247,24 +258,26 @@ class QRCodeReader(Node):
 
         image = self.bridge.imgmsg_to_cv2(msg_image, "bgr8")
         image = self.undistort_image(image)
-        codes = pyzbar.decode(image)
-        for code in codes:
-            qr_code_points = list(code.polygon)
-            qr_code_points.sort()
+        data_list, corners_list = self.detect_code(image)
+        if DRAW:
+            cv2.imshow("Camera view", image)
+            cv2.waitKey(50)
+        for i, corners in enumerate(corners_list):
+            code_id = int(data_list[i][0])
+            corners = sorted(corners[0], key=lambda corner: (corner[0], corner[1]))
 
             if not self.update_position():
                 continue
-            vectors = self.get_vectors(qr_code_points)
+            vectors = self.get_vectors(corners)
             center, normal_vector, rotation = self.calculate(vectors)
 
-            data = code.data.decode()
-            if data in self.found_codes:
+            if code_id in self.found_codes:
                 continue
-            self.found_codes.append(data)
-            self.get_logger().info(f"Found new a QR code with data '{data}'")
+            self.found_codes.append(code_id)
+            self.get_logger().info(f"Found new a QR code with data '{code_id}'")
             self.publisher.publish(
                 QRCode(
-                    data=data,
+                    id=code_id,
                     center=center,
                     normal_vector=normal_vector,
                     rotation=rotation,
