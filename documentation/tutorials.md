@@ -275,12 +275,16 @@ ros2 launch explore_lite explore.launch.py
     python3 -m venv venv
     source venv/bin/activate
     ```
-2. Install the dependencies
+2. Make sure that colcon doesn’t try to build the venv
+    ```
+    touch venv/COLCON_IGNORE
+    ```
+3. Install the dependencies
     ```
     rosdep install -i --from-path src --rosdistro foxy -y
     pip3 install -r requirements.txt
     ```
-3. Build
+4. Build
     ```
     colcon build --symlink-install
     ```
