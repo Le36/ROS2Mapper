@@ -1,35 +1,35 @@
 # Table of contents
 
 - [VS Code](#vs-code)
-    - [Configuring markdown autoformat in VS Code](#configuring-markdown-autoformat-in-vs-code)
+  - [Configuring markdown autoformat in VS Code](#configuring-markdown-autoformat-in-vs-code)
 - [Remote Ros2 setup](#remote-ros2-setup)
-    - [Install Ros2 and Gazebo](#install-ros2-and-gazebo)
-    - [Install turtlebot3](#install-turtlebot3)
-    - [Install m-explore-ros2](#install-m-explore-ros2)
-    - [Setup Ros2](#setup-ros2)
-    - [Setup Gazebo](#setup-gazebo)
+  - [Install Ros2 and Gazebo](#install-ros2-and-gazebo)
+  - [Install turtlebot3](#install-turtlebot3)
+  - [Install m-explore-ros2](#install-m-explore-ros2)
+  - [Setup Ros2](#setup-ros2)
+  - [Setup Gazebo](#setup-gazebo)
 - [Raspi Ros 2 setup](#raspi-ros-2-setup)
-    - [Install Ros 2](#install-ros-2)
-    - [Install m-explore-ros2](#install-m-explore-ros2-1)
-    - [Setup the turtlebot 3](#setup-the-turtlebot-3)
-    - [Setup the Raspberry Pi camera](#setup-the-raspberry-pi-camera)
-    - [Add your ssh key to the Raspberry Pi](#add-your-ssh-key-to-the-raspberry-pi)
+  - [Install Ros 2](#install-ros-2)
+  - [Install m-explore-ros2](#install-m-explore-ros2-1)
+  - [Setup the turtlebot 3](#setup-the-turtlebot-3)
+  - [Setup the Raspberry Pi camera](#setup-the-raspberry-pi-camera)
+  - [Add your ssh key to the Raspberry Pi](#add-your-ssh-key-to-the-raspberry-pi)
 - [Gazebo](#gazebo)
-    - [SLAM in the Gazebo simulation](#slam-in-the-gazebo-simulation)
-    - [Autonomous exploration in the Gazebo simulator](#autonomous-exploration-in-the-gazebo-simulator)
+  - [SLAM in the Gazebo simulation](#slam-in-the-gazebo-simulation)
+  - [Autonomous exploration in the Gazebo simulator](#autonomous-exploration-in-the-gazebo-simulator)
 - [Physical robot](#physical-robot)
-    - [Nav2 and SLAM on the physical robot](#nav2-and-slam-on-the-physical-robot)
-    - [Getting the output from the Raspberry Pi camera](#getting-the-output-from-the-raspberry-pi-camera)
-    - [Autonomous exploration on the physical robot](#autonomous-exploration-on-the-physical-robot)
+  - [Nav2 and SLAM on the physical robot](#nav2-and-slam-on-the-physical-robot)
+  - [Getting the output from the Raspberry Pi camera](#getting-the-output-from-the-raspberry-pi-camera)
+  - [Autonomous exploration on the physical robot](#autonomous-exploration-on-the-physical-robot)
 - [Project in Gazebo](#project-in-gazebo)
-    - [Initialization](#initialization)
-    - [Running the project](#running-the-project)
-    - [Running the linter](#running-the-linter)
-    - [Running the tests](#running-the-tests)
-    - [Generating the coverage report](#generating-the-coverage-report)
+  - [Initialization](#initialization)
+  - [Running the project](#running-the-project)
+  - [Running the linter](#running-the-linter)
+  - [Running the tests](#running-the-tests)
+  - [Generating the coverage report](#generating-the-coverage-report)
 - [Project on the physical robot](#project-on-the-physical-robot)
-    - [Initialization](#initialization-1)
-    - [Running the project](#running-the-project-1)
+  - [Initialization](#initialization-1)
+  - [Running the project](#running-the-project-1)
 
 # Tutorials
 
@@ -108,13 +108,32 @@ echo "export ROS_DOMAIN_ID=$((1 + $RANDOM % 232))" >> ~/.bashrc
 
           <sensor type="camera" name="camera_sensor">
             <update_rate>30</update_rate>
-            <camera name="camera_name">
+            <camera name='camera_name'>
               <horizontal_fov>1.086</horizontal_fov>
               <image>
-                <width>1024</width>
-                <height>768</height>
+                <width>480</width>
+                <height>640</height>
                 <format>R8G8B8</format>
               </image>
+              <clip>
+                <near>0.1</near>
+                <far>100</far>
+              </clip>
+              <distortion>
+                <k1>0.25106112</k1>
+                <k2>-0.6379611</k2>
+                <k3>0.40809116</k3>
+                <p1>0.0069353</p1>
+                <p2>0.01579591</p2>
+              </distortion>
+              <lens>
+                <intrinsics>
+                  <fx>525.44920374</fx>
+                  <fy>526.37302771</fy>
+                  <cx>330.24175119</cx>
+                  <cy>243.26842016</cy>
+                </intrinsics>
+              </lens>
             </camera>
 
             <plugin name="camera_controller" filename="libgazebo_ros_camera.so">

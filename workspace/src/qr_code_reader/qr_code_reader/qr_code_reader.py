@@ -24,9 +24,14 @@ from tf2_ros.transform_listener import TransformListener
 from .math import *
 
 QR_CODE_SIZE = 200 / 1000
-WIDTH, HEIGHT = 1024, 768
-CAMERA_MATRIX = np.array([[612.48, 0, WIDTH / 2], [0, 612.29, HEIGHT / 2], [0, 0, 1]])
-
+CAMERA_MATRIX = np.array(
+    [
+        [525.44920374, 0.0, 330.24175119],
+        [0.0, 526.37302771, 243.26842016],
+        [0.0, 0.0, 1.0],
+    ]
+)
+DISTORTION = np.array([[0.25106112, -0.6379611, 0.0069353, 0.01579591, 0.40809116]])
 INVERSE_CAMERA_MATRIX = np.linalg.inv(CAMERA_MATRIX)
 
 DRAW = True
@@ -66,15 +71,15 @@ class QRCodeReader(Node):
             plt.draw()
             plt.pause(0.01)
 
-    # def undistort_image(self, image: ndarray) -> ndarray:
-    #     h, w = image.shape[:2]
-    #     new_camera_matrix, roi = cv2.getOptimalNewCameraMatrix(
-    #         CAMERA_MATRIX, DISTORTION, (w, h), 1, (w, h)
-    #     )
-    #     undistorted = cv2.undistort(
-    #         image, CAMERA_MATRIX, DISTORTION, None, new_camera_matrix
-    #     )
-    #     return undistorted
+    def undistort_image(self, image: ndarray) -> ndarray:
+        h, w = image.shape[:2]
+        new_camera_matrix, _ = cv2.getOptimalNewCameraMatrix(
+            CAMERA_MATRIX, DISTORTION, (w, h), 1, (w, h)
+        )
+        undistorted = cv2.undistort(
+            image, CAMERA_MATRIX, DISTORTION, None, new_camera_matrix
+        )
+        return undistorted
 
     def get_vectors(self, points: List) -> List[ndarray]:
         rotation_matrix = get_rotation_matrix(self.rotation + self.rotation_offset)
@@ -241,7 +246,7 @@ class QRCodeReader(Node):
                 self.draw_robot()
 
         image = self.bridge.imgmsg_to_cv2(msg_image, "bgr8")
-        # image = self.undistort_image(image)
+        image = self.undistort_image(image)
         codes = pyzbar.decode(image)
         for code in codes:
             qr_code_points = list(code.polygon)

@@ -600,14 +600,29 @@
           <camera name='camera_name'>
             <horizontal_fov>1.086</horizontal_fov>
             <image>
-              <width>1024</width>
-              <height>768</height>
+              <width>480</width>
+              <height>640</height>
               <format>R8G8B8</format>
             </image>
             <clip>
               <near>0.1</near>
               <far>100</far>
             </clip>
+            <distortion>
+              <k1>0.25106112</k1>
+              <k2>-0.6379611</k2>
+              <k3>0.40809116</k3>
+              <p1>0.0069353</p1>
+              <p2>0.01579591</p2>
+            </distortion>
+            <lens>
+              <intrinsics>
+                <fx>525.44920374</fx>
+                <fy>526.37302771</fy>
+                <cx>330.24175119</cx>
+                <cy>243.26842016</cy>
+              </intrinsics>
+            </lens>
           </camera>
           <plugin name='camera_controller' filename='libgazebo_ros_camera.so'>
             <alwaysOn>1</alwaysOn>
