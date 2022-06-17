@@ -8,6 +8,7 @@ import numpy as np
 import rclpy
 from cv_bridge import CvBridge
 from geometry_msgs.msg import TransformStamped
+from interfaces.msg import QRCode
 from mpl_toolkits import mplot3d
 from numpy import ndarray
 from pyzbar import pyzbar
@@ -52,7 +53,7 @@ class QRCodeReader(Node):
         self.subscription = self.create_subscription(
             Image, "/camera/image_raw", self.image_callback, 10
         )
-        self.publisher = self.create_publisher(String, "/add_data", 10)
+        self.publisher = self.create_publisher(QRCode, "/add_data", 10)
 
         if DRAW:
             matplotlib.interactive(True)
@@ -256,7 +257,14 @@ class QRCodeReader(Node):
                 continue
             self.found_codes.append(data)
             self.get_logger().info(f"Found new a QR code with data '{data}'")
-            self.publisher.publish(String(data=data))
+            self.publisher.publish(
+                QRCode(
+                    data=data,
+                    center=center,
+                    normal_vector=normal_vector,
+                    rotation=rotation,
+                )
+            )
 
         if DRAW:
             plt.draw()
