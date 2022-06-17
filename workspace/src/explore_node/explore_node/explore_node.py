@@ -5,6 +5,8 @@ from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 from nav_msgs.msg import OccupancyGrid
 from tf2_msgs.msg import TFMessage
 
+from std_msgs.msg import String
+
 
 from geometry_msgs.msg import PoseStamped
 
@@ -24,16 +26,29 @@ class ExploreNode(Node):
             TFMessage, "/tf", self.tf_listener_callback, 1
         )
 
+        self.commander = self.create_subscription(
+            String, "/autonomous_exploration", self.commander_callback, 1
+        )
+
         self.robot_positon = [0.0, 0.0, 0.0]
         self.x_index = -1
         self.y_index = -1
 
         self.searching = False
+        self.grid_check = False
 
         self.map = []
         self.map_origin = []
 
+    def commander_callback(self, msg):
+        if msg.data == "1":
+            self.searching = True
+            self.explore()
+        if msg.data == "2":
+            self.cancel_explore()
+
     def map_listener_callback(self, msg):
+        self.grid_check = True
         self.map = msg.data
         self.map_width = msg.info.width
         self.map_height = msg.info.height
@@ -45,9 +60,13 @@ class ExploreNode(Node):
         self.map_resolution = msg.info.resolution
 
         # self.get_logger().info('I heard: "%s"' % [self.map_width, self.map_height, self.map_origin, self.map_resolution])
-        self.make_map()
 
     def make_map(self):
+        if not self.grid_check:
+            sleep(5)
+
+        if not self.grid_check:
+            print("Can't find occupance grid.")
 
         map = [[]]
 
@@ -61,31 +80,31 @@ class ExploreNode(Node):
         if self.x_index >= 0 and self.y_index >= 0:
             map[self.y_index][self.x_index] = 999
             print("testintg")
+            value = self.find_target(map)
+            return value
 
-            value = self.breadth_first_search(map, self.x_index, self.y_index)
-            print("FOUNDFOUNDFOUND")
-            if value == 9000:
-                print("Kaikki tutkittu")
-                return
-            map[value[1]][value[0]] = 12345
-
-            for i in map:
-                print(i)
-            target_x = self.map_origin[0] + value[0] * 0.05
-            target_y = self.map_origin[1] + value[1] * 0.05
-            print(str(target_x) + " ja " + str(target_y))
-            self.move(target_x, target_y)
-            # self.spin()
-
-            print(self.x_index, self.y_index)
-            print(value)
-            if map[value[1]][value[0]] == -1:
-                print("SUCCESS")
-            else:
-                print("FAIL")
+    def find_target(self, map):
+        value = self.breadth_first_search(map, self.x_index, self.y_index)
+        print("FOUNDFOUNDFOUND")
+        if value == 9000:
+            print("Kaikki tutkittu")
+            return
+        map[value[1]][value[0]] = 12345
 
         for i in map:
             print(i)
+        target_x = self.map_origin[0] + value[0] * 0.05
+        target_y = self.map_origin[1] + value[1] * 0.05
+        print(str(target_x) + " ja " + str(target_y))
+
+        print(self.x_index, self.y_index)
+        print(value)
+        if map[value[1]][value[0]] == -1:
+            print("SUCCESS")
+        else:
+            print("FAIL")
+
+        return (target_x, target_y)
 
     def tf_listener_callback(self, msg):
 
@@ -139,11 +158,25 @@ class ExploreNode(Node):
 
         return 9000
 
+    def cancel_explore(self):
+        self.searching = False
+        self.nav.cancelTask()
+
     def explore(self):
-        print("test")
-        # while self.check_exploration_status():
-        # self.move(self.target_x, self.target_y)
-        # self.spin()
+
+        while self.searching:
+            if not self.nav.isTaskComplete():
+                print("testi")
+                continue
+
+            target = self.make_map()
+            print(target)
+            if target == None:
+                print("testiä2345")
+                continue
+            print("testiä")
+            self.move(target[0], target[1])
+            # self.nav.spin()
 
     def move(self, x, y) -> None:
         """Pose to X,Y location"""
