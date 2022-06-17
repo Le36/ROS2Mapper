@@ -1,7 +1,6 @@
 import rclpy
+from interfaces.msg import QRCode
 from rclpy.node import Node
-
-from std_msgs.msg import String
 
 from .submodules.data_repository import data_repository
 
@@ -10,10 +9,10 @@ class MemoryNode(Node):
     def __init__(self) -> None:
         super().__init__("memory_node")
         self.add_data_subscription = self.create_subscription(
-            String, "/add_data", self.add_data_callback, 10
+            QRCode, "/add_data", self.add_data_callback, 10
         )
 
-    def add_data_callback(self, msg: String) -> None:
+    def add_data_callback(self, msg: QRCode) -> None:
         self.get_logger().info(f"Adding QR code with data '{msg.data}' to the database")
         data_repository.add_data(msg.data)
 
