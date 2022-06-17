@@ -13,4 +13,3 @@ pytest-env==0.6.2
 PyYAML==6.0
 pyzbar==0.1.9
 tomli==2.0.1
-topic-monitor==0.9.3
