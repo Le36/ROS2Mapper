@@ -19,9 +19,6 @@ setup(
     license="MIT",
     tests_require=["pytest"],
     entry_points={
-        "console_scripts": [
-            "control = io_node.io_node:main",
-            "listener = io_node.subscriber_member_function:main",
-        ],
+        "console_scripts": ["control = io_node.io_node:main"],
     },
 )

@@ -1,8 +1,8 @@
 import os
 import rclpy
-from submodules.manual_control import ManualControl
-from submodules.qr_menu import QRMenu
-from submodules.main_menu import MainMenu
+from .submodules.manual_control import ManualControl
+from .submodules.qr_menu import QRMenu
+from .submodules.main_menu import MainMenu
 
 from rclpy.node import Node
 from std_msgs.msg import String
