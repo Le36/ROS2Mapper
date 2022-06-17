@@ -1,35 +1,35 @@
 # Table of contents
 
 - [VS Code](#vs-code)
-  - [Configuring markdown autoformat in VS Code](#configuring-markdown-autoformat-in-vs-code)
+    - [Configuring markdown autoformat in VS Code](#configuring-markdown-autoformat-in-vs-code)
 - [Remote Ros2 setup](#remote-ros2-setup)
-  - [Install Ros2 and Gazebo](#install-ros2-and-gazebo)
-  - [Install turtlebot3](#install-turtlebot3)
-  - [Install m-explore-ros2](#install-m-explore-ros2)
-  - [Setup Ros2](#setup-ros2)
-  - [Setup Gazebo](#setup-gazebo)
+    - [Install Ros2 and Gazebo](#install-ros2-and-gazebo)
+    - [Install turtlebot3](#install-turtlebot3)
+    - [Install m-explore-ros2](#install-m-explore-ros2)
+    - [Setup Ros2](#setup-ros2)
+    - [Setup Gazebo](#setup-gazebo)
 - [Raspi Ros 2 setup](#raspi-ros-2-setup)
-  - [Install Ros 2](#install-ros-2)
-  - [Install m-explore-ros2](#install-m-explore-ros2-1)
-  - [Setup the turtlebot 3](#setup-the-turtlebot-3)
-  - [Setup the Raspberry Pi camera](#setup-the-raspberry-pi-camera)
-  - [Add your ssh key to the Raspberry Pi](#add-your-ssh-key-to-the-raspberry-pi)
+    - [Install Ros 2](#install-ros-2)
+    - [Install m-explore-ros2](#install-m-explore-ros2-1)
+    - [Setup the turtlebot 3](#setup-the-turtlebot-3)
+    - [Setup the Raspberry Pi camera](#setup-the-raspberry-pi-camera)
+    - [Add your ssh key to the Raspberry Pi](#add-your-ssh-key-to-the-raspberry-pi)
 - [Gazebo](#gazebo)
-  - [SLAM in the Gazebo simulation](#slam-in-the-gazebo-simulation)
-  - [Autonomous exploration in the Gazebo simulator](#autonomous-exploration-in-the-gazebo-simulator)
+    - [SLAM in the Gazebo simulation](#slam-in-the-gazebo-simulation)
+    - [Autonomous exploration in the Gazebo simulator](#autonomous-exploration-in-the-gazebo-simulator)
 - [Physical robot](#physical-robot)
-  - [Nav2 and SLAM on the physical robot](#nav2-and-slam-on-the-physical-robot)
-  - [Getting the output from the Raspberry Pi camera](#getting-the-output-from-the-raspberry-pi-camera)
-  - [Autonomous exploration on the physical robot](#autonomous-exploration-on-the-physical-robot)
+    - [Nav2 and SLAM on the physical robot](#nav2-and-slam-on-the-physical-robot)
+    - [Getting the output from the Raspberry Pi camera](#getting-the-output-from-the-raspberry-pi-camera)
+    - [Autonomous exploration on the physical robot](#autonomous-exploration-on-the-physical-robot)
 - [Project in Gazebo](#project-in-gazebo)
-  - [Initialization](#initialization)
-  - [Running the project](#running-the-project)
-  - [Running the linter](#running-the-linter)
-  - [Running the tests](#running-the-tests)
-  - [Generating the coverage report](#generating-the-coverage-report)
+    - [Initialization](#initialization)
+    - [Running the project](#running-the-project)
+    - [Running the linter](#running-the-linter)
+    - [Running the tests](#running-the-tests)
+    - [Generating the coverage report](#generating-the-coverage-report)
 - [Project on the physical robot](#project-on-the-physical-robot)
-  - [Initialization](#initialization-1)
-  - [Running the project](#running-the-project-1)
+    - [Initialization](#initialization-1)
+    - [Running the project](#running-the-project-1)
 
 # Tutorials
 
@@ -300,21 +300,24 @@ ros2 launch explore_lite explore.launch.py
     ```
 3. Check that your venv packages are in PYTHONPATH
     ```
-    echo $PYTHONPATH
+    echo $PYTHONPATH | sed -e "s/:/\n/g"
     ```
-    This should show the path to your ROS distro, e.g. ```opt/ros/foxy/lib/python3.6/site-packages```, and the path to your environment packages ```.../path-to-your-env/lib/python3.6/site-packages```
+    - This should show the path to your ROS distro, e.g. `opt/ros/foxy/lib/python3.8/site-packages`, and the path to your environment packages `path-to-your-env/lib/python3.8/site-packages`
 
-    If the env-package path is not present, add it using
-    ```
-    export PYTHONPATH='.../path-to-your-env/lib/python3.6/site-packages'
-    ```
-
-    To avoid adding the env-package path to $PYTHONPATH every single time, ```add export PYTHONPATH='.../path-to-your-env/lib/python3.6/site-packages'``` to your environment activate file.
+    - If the env-package path is not present, add it using
+        ```
+        export PYTHONPATH=$PYTHONPATH:$(pwd)/venv/lib/python3.8/site-packages
+        ```
+    - To avoid adding the env-package path to $PYTHONPATH every single time, add the following line to `venv/bin/activate`
+        ```
+        export PYTHONPATH=$PYTHONPATH:$(pwd)/venv/lib/python3.8/site-packages
+        ``` 
 4. Install the dependencies
     ```
     rosdep install -i --from-path src --rosdistro foxy -y
     pip3 install -r requirements.txt
     ```
+    - Installing the requirements with pip might give the error `ERROR: Failed building wheel for empy`, but it is probably safe to ignore
 5. Build
     ```
     colcon build --symlink-install
