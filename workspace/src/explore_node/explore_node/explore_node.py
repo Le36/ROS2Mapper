@@ -1,3 +1,4 @@
+import asyncio
 from time import sleep
 import rclpy
 from rclpy.node import Node
@@ -59,6 +60,11 @@ class ExploreNode(Node):
         ]
         self.map_resolution = msg.info.resolution
 
+        print("testiäatjekafeoagmeoaimf")
+
+        if self.searching:
+            self.explore()
+
         # self.get_logger().info('I heard: "%s"' % [self.map_width, self.map_height, self.map_origin, self.map_resolution])
 
     def make_map(self):
@@ -104,7 +110,7 @@ class ExploreNode(Node):
         else:
             print("FAIL")
 
-        return (target_x, target_y)
+        return [target_x, target_y]
 
     def tf_listener_callback(self, msg):
 
@@ -160,23 +166,17 @@ class ExploreNode(Node):
 
     def cancel_explore(self):
         self.searching = False
-        self.nav.cancelTask()
+        # self.nav.cancelTask()
+
+    def start_explore(self):
+        self.searching = True
 
     def explore(self):
-
-        while self.searching:
-            if not self.nav.isTaskComplete():
-                print("testi")
-                continue
-
-            target = self.make_map()
-            print(target)
-            if target == None:
-                print("testiä2345")
-                continue
-            print("testiä")
-            self.move(target[0], target[1])
-            # self.nav.spin()
+        if not self.nav.isTaskComplete():
+            return
+        target = self.make_map()
+        self.moveAndSpin(target[0], target[1])
+        # self.move(target[0], target[1])
 
     def move(self, x, y) -> None:
         """Pose to X,Y location"""
@@ -193,15 +193,28 @@ class ExploreNode(Node):
         goal_pose.pose.orientation.w = 1.0
         self.nav.goToPose(goal_pose)
 
-    # def spin(self, spin_dist=6.28318531):
+    def moveAndSpin(self, x, y) -> None:
+        """Pose to X,Y location"""
 
-    #     self.nav_to_pose_client.wait_for_server()
-    #     self.spin_client.wait_for_server()
+        goal_pose = PoseStamped()
+        goal_pose.header.frame_id = "map"
+        # goal_pose.header.stamp = self.nav.get_clock().now().to_msg()
+        goal_pose.pose.position.x = float(x)
+        goal_pose.pose.position.y = float(y)
+        goal_pose.pose.position.z = 0.0
+        goal_pose.pose.orientation.x = 0.0
+        goal_pose.pose.orientation.y = 0.0
+        goal_pose.pose.orientation.z = 0.0
+        goal_pose.pose.orientation.w = 1.0
+        self.nav.moveAndSpin(goal_pose)
 
-    #     goal_msg = Spin.Goal()
-    #     goal_msg.target_yaw = spin_dist
+    # def spin(self):
 
-    #     send_goal_future = self.spin_client.send_goal_async(goal_msg)
+    #    self.nav_to_pose_client.wait_for_server()
+    #    self.nav.spin()
+    #    self.spin_client.wait_for_server()
+
+    #    send_goal_future = self.spin_client.send_goal_async(goal_msg)
 
 
 def main(args=None) -> None:

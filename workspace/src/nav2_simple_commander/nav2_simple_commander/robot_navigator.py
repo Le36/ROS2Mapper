@@ -175,13 +175,12 @@ class BasicNavigator(Node):
         self.result_future = self.goal_handle.get_result_async()
         return True
 
-    def spin(self, spin_dist=1.57, time_allowance=10):
+    def spin(self, spin_dist=1.57):
         self.debug("Waiting for 'Spin' action server")
         while not self.spin_client.wait_for_server(timeout_sec=1.0):
             self.info("'Spin' action server not available, waiting...")
         goal_msg = Spin.Goal()
         goal_msg.target_yaw = spin_dist
-        goal_msg.time_allowance = Duration(sec=time_allowance)
 
         self.info(f"Spinning to angle {goal_msg.target_yaw}....")
         send_goal_future = self.spin_client.send_goal_async(
@@ -195,6 +194,61 @@ class BasicNavigator(Node):
             return False
 
         self.result_future = self.goal_handle.get_result_async()
+        return True
+
+    def moveAndSpin(self, pose, behavior_tree=""):
+        self.debug("Waiting for 'NavigateToPose' action server")
+        while not self.nav_to_pose_client.wait_for_server(timeout_sec=1.0):
+            self.info("'NavigateToPose' action server not available, waiting...")
+
+        goal_msg = NavigateToPose.Goal()
+        goal_msg.pose = pose
+        goal_msg.behavior_tree = behavior_tree
+
+        self.info(
+            "Navigating to goal: "
+            + str(pose.pose.position.x)
+            + " "
+            + str(pose.pose.position.y)
+            + "..."
+        )
+        send_goal_future = self.nav_to_pose_client.send_goal_async(
+            goal_msg, self._feedbackCallback
+        )
+        rclpy.spin_until_future_complete(self, send_goal_future)
+        self.goal_handle = send_goal_future.result()
+
+        if not self.goal_handle.accepted:
+            self.error(
+                "Goal to "
+                + str(pose.pose.position.x)
+                + " "
+                + str(pose.pose.position.y)
+                + " was rejected!"
+            )
+            return False
+
+        self.result_future = self.goal_handle.get_result_async()
+
+        self.debug("Waiting for 'Spin' action server")
+        while not self.spin_client.wait_for_server(timeout_sec=1.0):
+            self.info("'Spin' action server not available, waiting...")
+        goal_msg = Spin.Goal()
+        goal_msg.target_yaw = 6.28318531
+
+        self.info(f"Spinning to angle {goal_msg.target_yaw}....")
+        send_goal_future = self.spin_client.send_goal_async(
+            goal_msg, self._feedbackCallback
+        )
+        rclpy.spin_until_future_complete(self, send_goal_future)
+        self.goal_handle = send_goal_future.result()
+
+        if not self.goal_handle.accepted:
+            self.error("Spin request was rejected!")
+            return False
+
+        self.result_future = self.goal_handle.get_result_async()
+
         return True
 
     def backup(self, backup_dist=0.15, backup_speed=0.025, time_allowance=10):
