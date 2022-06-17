@@ -77,7 +77,3 @@ sros2==0.9.5
 teleop-twist-keyboard==2.3.2
 tomli==2.0.1
 topic-monitor==0.9.3
-# Editable install with no version control (turtlebot3-example==2.1.4)
--e /home/asianomainen/turtlebot3_ws/build/turtlebot3_example
-# Editable install with no version control (turtlebot3-teleop==2.1.4)
--e /home/asianomainen/turtlebot3_ws/build/turtlebot3_teleop
