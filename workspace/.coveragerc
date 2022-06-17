@@ -4,5 +4,4 @@ omit =
     **/__init__.py,
     src/**/setup.py,
     src/**/test/**,
-    src/io_node/
-
+    src/io_node/**
