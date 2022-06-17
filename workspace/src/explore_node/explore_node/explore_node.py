@@ -157,7 +157,7 @@ class ExploreNode(Node):
                     return [s_x + i[1], s_y + i[0]]
                 elif (
                     map[s_y + i[0]][s_x + i[1]] == 0
-                    and visited[s_y + i[0]][s_x + i[1]] == False
+                    and not visited[s_y + i[0]][s_x + i[1]]
                 ):
                     visited[s_y + i[0]][s_x + i[1]] = True
                     queue.append((s_x + i[1], s_y + i[0]))

@@ -10,7 +10,7 @@ import rclpy
 from cv_bridge import CvBridge
 from geometry_msgs.msg import TransformStamped
 from interfaces.msg import QRCode
-from mpl_toolkits import mplot3d
+from mpl_toolkits.mplot3d import Axes3D
 from numpy import ndarray
 from rclpy.clock import ClockType
 from rclpy.node import Node
@@ -39,7 +39,7 @@ PLOT_AXIS_SIZE = 5000 / 1000
 
 
 class QRCodeReader(Node):
-    def __init__(self) -> None:
+    def __init__(self, draw: bool = DRAW) -> None:
         """Create the subscriber and the publisher"""
         super().__init__("qr_code_reader")
 
@@ -59,7 +59,8 @@ class QRCodeReader(Node):
         )
         self.publisher = self.create_publisher(QRCode, "/add_data", 10)
 
-        if DRAW:
+        self.draw = draw
+        if self.draw:
             matplotlib.interactive(True)
             self.ax = plt.axes(projection="3d")
             self.ax.set_xlim3d(-PLOT_AXIS_SIZE, PLOT_AXIS_SIZE)
@@ -88,7 +89,7 @@ class QRCodeReader(Node):
         bboxs, ids, rejected = aruco.detectMarkers(
             gray, arucoDict, parameters=arucoParam
         )
-        if DRAW:
+        if self.draw:
             aruco.drawDetectedMarkers(image, bboxs)
         return ids, bboxs
 
@@ -237,7 +238,7 @@ class QRCodeReader(Node):
         rotation = quaternion_of_vectors(normal_vector, default_vector)
 
         center = (top_left + bottom_right) / 2
-        if DRAW:
+        if self.draw:
             self.draw_line(top_right, top_left)
             self.draw_line(top_right, bottom_right)
             self.draw_line(bottom_left, top_left)
@@ -251,15 +252,15 @@ class QRCodeReader(Node):
 
     def image_callback(self, msg_image: Image) -> None:
         """Find and publish QR code data"""
-        if DRAW:
+        if self.draw:
             self.draw_axes()
-            if DRAW_ROBOT and self.update_position():
+            if self.draw_ROBOT and self.update_position():
                 self.draw_robot()
 
         image = self.bridge.imgmsg_to_cv2(msg_image, "bgr8")
         image = self.undistort_image(image)
         data_list, corners_list = self.detect_code(image)
-        if DRAW:
+        if self.draw:
             cv2.imshow("Camera view", image)
             cv2.waitKey(50)
         for i, corners in enumerate(corners_list):
@@ -284,7 +285,7 @@ class QRCodeReader(Node):
                 )
             )
 
-        if DRAW:
+        if self.draw:
             plt.draw()
             plt.pause(0.01)
 
