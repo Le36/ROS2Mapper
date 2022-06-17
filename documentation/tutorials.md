@@ -279,12 +279,24 @@ ros2 launch explore_lite explore.launch.py
     ```
     touch venv/COLCON_IGNORE
     ```
-3. Install the dependencies
+3. Check that your venv packages are in PYTHONPATH
+    ```
+    echo $PYTHONPATH
+    ```
+    This should show the path to your ROS distro, e.g. ```opt/ros/foxy/lib/python3.6/site-packages```, and the path to your environment packages ```.../path-to-your-env/lib/python3.6/site-packages```
+
+    If the env-package path is not present, add it using
+    ```
+    export PYTHONPATH='.../path-to-your-env/lib/python3.6/site-packages'
+    ```
+
+    To avoid adding the env-package path to $PYTHONPATH every single time, ```add export PYTHONPATH='.../path-to-your-env/lib/python3.6/site-packages'``` to your environment activate file.
+4. Install the dependencies
     ```
     rosdep install -i --from-path src --rosdistro foxy -y
     pip3 install -r requirements.txt
     ```
-4. Build
+5. Build
     ```
     colcon build --symlink-install
     ```
