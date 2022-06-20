@@ -1,15 +1,15 @@
 import asyncio
 from math import inf
 from time import sleep, time
+
 import rclpy
-from rclpy.node import Node
+from geometry_msgs.msg import PoseStamped
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 from nav_msgs.msg import OccupancyGrid
-from tf2_msgs.msg import TFMessage
-
+from rclpy.node import Node
 from std_msgs.msg import String
-
-from geometry_msgs.msg import PoseStamped
+from tf2_msgs.msg import TFMessage
+from interfaces.srv import GetQRCodes
 
 
 class ExploreNode(Node):
@@ -31,6 +31,9 @@ class ExploreNode(Node):
             String, "/autonomous_exploration", self.commander_callback, 1
         )
 
+        self.cli = self.create_client(GetQRCodes, "get_qr_codes")
+        self.req = GetQRCodes.Request()
+
         self.robot_positon = [0.36864271262317333, -4.516364632261731, 0.0]
         self.x_index = -1
         self.y_index = -1
@@ -47,6 +50,15 @@ class ExploreNode(Node):
         self.map = []
         self.map_origin = []
 
+    def moveToQrCode(self) -> None:
+        future = self.cli.call_async(self.req)
+
+        rclpy.spin_until_future_complete(self, future)
+
+        response = future.result()
+
+        print(response)
+
     def set_initial_pose(self, position):
         self.initial_pose = PoseStamped()
         self.initial_pose.header.frame_id = "map"
@@ -61,8 +73,10 @@ class ExploreNode(Node):
         if msg.data == "1":
             self.searching = True
             self.explore()
-        if msg.data == "2":
+        if msg.data == "3":
             self.cancel_explore()
+        if msg.data == "2":
+            self.moveToQrCode()
 
     def map_listener_callback(self, msg):
         self.grid_check = True
