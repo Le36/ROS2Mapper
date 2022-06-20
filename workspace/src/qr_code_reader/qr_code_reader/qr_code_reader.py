@@ -131,8 +131,7 @@ class QRCodeReader(Node):
         # self.get_logger().info(f"Now:       {now}")
         # self.get_logger().info(f"Diff:      {diff}")
 
-        # if abs(diff) > 0.1:
-        if abs(diff) > 1:
+        if abs(diff) > 0.1:
             return False
 
         position = transform.transform.translation
@@ -254,7 +253,7 @@ class QRCodeReader(Node):
         """Find and publish QR code data"""
         if self.draw:
             self.draw_axes()
-            if self.draw_ROBOT and self.update_position():
+            if DRAW_ROBOT and self.update_position():
                 self.draw_robot()
 
         image = self.bridge.imgmsg_to_cv2(msg_image, "bgr8")
