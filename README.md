@@ -10,7 +10,7 @@ University of Helsinki, Ohjelmistotuotantoprojekti (Software Engineering Project
 - [Architecture diagram](documentation/images/ros2.drawio.png)
 - [Timesheet](documentation/timesheet.md)
 - [Product and sprint backlogs](https://github.com/Le36/ros2-mapper/projects)
-- [Sprint 2 burndown chart](documentation/images/sprint2.png)
+- [Sprint 3 burndown chart](documentation/images/sprint3.png)
 
 ## Dev documents
 
