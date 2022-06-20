@@ -1,5 +1,5 @@
 import math
-from typing import Callable, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
 
 import cv2
 import cv2.aruco as aruco
@@ -50,7 +50,7 @@ class QRCodeReader(Node):
         self.draw = draw
         self.get_position = get_position if get_position else self.get_position_from_tf
 
-        self.found_codes = []
+        self.found_codes: Dict[int, QRCode] = {}
         self.bridge = CvBridge()
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
@@ -285,25 +285,31 @@ class QRCodeReader(Node):
             vectors = self.get_vectors(corners)
             center, normal_vector, rotation = self.calculate(vectors)
 
-            if code_id in self.found_codes:
-                continue
-            self.found_codes.append(code_id)
-            self.get_logger().info(f"Found a new QR code with id {code_id}")
-            self.publisher.publish(
-                QRCode(
-                    id=code_id,
-                    center=center,
-                    normal_vector=normal_vector,
-                    rotation=rotation,
-                )
+            qr_code = QRCode(
+                id=code_id,
+                center=center,
+                normal_vector=normal_vector,
+                rotation=rotation,
             )
+            if qr_code.id in self.found_codes:
+                old_center = self.found_codes[qr_code.id].center
+                dist = np.linalg.norm(qr_code.center - old_center)
+                if dist < 0.2:
+                    continue
+                self.get_logger().info(
+                    f"QR code with id {qr_code.id} has moved over 20cm!"
+                )
+            else:
+                self.get_logger().info(f"Found a new QR code with id {qr_code.id}")
+            self.found_codes[qr_code.id] = qr_code
+            self.publisher.publish(qr_code)
 
         if self.draw:  # pragma: no cover
             plt.draw()
             plt.pause(0.01)
 
     def reset_found_codes(self) -> None:
-        self.found_codes = []
+        self.found_codes = {}
 
 
 def main(args=None) -> None:  # pragma: no cover
