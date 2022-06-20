@@ -41,7 +41,7 @@ def initialize_database():
             rotation_x      FLOAT NOT NULL,
             rotation_y      FLOAT NOT NULL,
             rotation_z      FLOAT NOT NULL,
-            time            TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL 
+            time            TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
         );
         """,
     ]
