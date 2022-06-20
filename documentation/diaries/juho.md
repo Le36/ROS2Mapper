@@ -61,3 +61,49 @@ I tried to run the stuff on the physical robot but every time I ran it, I got a 
 ### Negatives
 - No tutorials about how to test nodes
 - Random errors on the TurtleBot3 even though the code works in Gazebo
+
+## Sprint 3
+When trying to run nav2 and slam on the physical robot, I got multiple different errors:
+```
+[controller_server-1] [INFO] [1654783491.286673323] [local_costmap.local_costmap]: Timed out waiting for transform from base_link to odom to become available, tf error: Invalid frame ID "base_link" passed to canTransform argument source_frame - frame does not exist
+```
+```
+[controller_server-1] terminate called after throwing an instance of 'std::bad_alloc'
+[controller_server-1]   what():  std::bad_alloc
+```
+```
+[planner_server-5] [INFO] [1654784138.185491793] [global_costmap.global_costmap]: Timed out waiting for transform from base_link to map to become available, tf error: Invalid frame ID "map" passed to canTransform argument target_frame - frame does not exist
+[controller_server-4] [WARN] [1654784138.332260559] [nav2_costmap_2d]: Robot is out of bounds of the costmap!
+[controller_server-4] [WARN] [1654784138.332493952] [local_costmap.local_costmap]: Sensor origin: (0.10, -403336888441395376578708244190451660626474919528593484057303141346297197999760575394529983230900174848.00, 0.18), out of map bounds. The costmap can't raytrace for it.
+```
+```
+# Before setting the initial pose
+[planner_server-5] [INFO] [1654783732.368384161] [global_costmap.global_costmap]: Timed out waiting for transform from base_link to map to become available, tf error: Lookup would require extrapolation into the past.  Requested time 0.200000 but the earliest data is at time 1654783727.100093, when looking up transform from frame [base_link] to frame [map]
+
+# After setting the initial pose
+Warning: TF_OLD_DATA ignoring data from the past for frame odom at time 0.200000 according to authority Authority undetectable
+Possible reasons are listed at http://wiki.ros.org/tf/Errors%20explained
+         at line 332 in /tmp/binarydeb/ros-foxy-tf2-0.13.13/src/buffer_core.cpp
+```
+
+Googling those errors did not really help. Sometimes it gave a lot of errors but still worked and sometimes it didn't work at all. It's really annoying that it works differently on the physical robot than in the simulation. After trying for some time, I just gave up. I and Oskari also tried to fix this together later but didn't manage to fix it and because of this problem, we can't get the program working on the physical robot properly...
+
+Next, I did a lot of math to figure out how I would get the QR code positions from the images.
+I needed to calibrate the Raspberry Pi camera and I found [this](https://navigation.ros.org/tutorials/docs/camera_calibration.html) good tutorial from nav2, but of course, it didn't work but I managed to calibrate the camera by making my own script and running it on the TurtleBot3.
+
+Then I tried to combine the QR code position with the current position of the robot but I ran into a problem where Nav2 didn't publish the current location often enough. Later I found out that this is because I was visualizing the QR code positions with matplotlib. Because of that problem, I just decided to fetch the current position with `tf_buffer.lookup_transform`. Before I fixed the slowness, I was confused with `use_sim_time`. I don't know how to enable `use_sim_time` for all of the launch things and I wish I could just run `ros 2 param set use_sim_time true` and everything would use simulation time. Also, the lookup transform takes in `rclpy.time.Time()` which is always zero for some reason and I have to compare the time in the return value to `self.get_clock().now()` and this is pretty confusing.
+
+When googling answers for my problems, I often came across a tutorial for ROS 1. Also the error for TF_OLD_DATA links to a [ROS 1 page](https://wiki.ros.org/tf/Errors%20explained). Also in the [TurtleBot3 tutorial](https://emanual.robotis.com/docs/en/platform/turtlebot3/appendix_raspi_cam/), they say to run `sudo raspi-config` even though their **OWN** TurtleBot3 image doesn't have raspi-config.
+
+At multiple points during this project, I thought that I'd rather do some web development because I could at least get some coding done. At least VSCode supports Ros2 well and handles all of the imports well.
+
+
+### Positives
+- VSCode supports Ros2 well
+
+### Negatives
+- Everything is slow and painful to do
+- Nav2 and slam_toolbox don't work properly (on the robot)
+- Stuff works differently in the simulation than on the physical robot
+- Using simulation time is confusing
+- ROS 2 doesn't support the fish shell (no source file after colcon build)
