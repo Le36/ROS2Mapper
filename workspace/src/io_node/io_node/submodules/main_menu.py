@@ -70,11 +70,18 @@ class MainMenu:
         os.system("clear")
         print(MAIN_MENU)
 
-    def _handle_input(self):
+    def _handle_io(self):
+        self._print_menu()
+        log_count = 0
+
         settings = termios.tcgetattr(sys.stdin)
         while self._running:
             key = self._get_key(settings)
             if self._data_to_log:
+                if log_count == 10:
+                    self._print_menu()
+                    log_count = 0
+                log_count += 1
                 print(self._data_to_log)
                 self._data_to_log = None
 
@@ -97,7 +104,5 @@ class MainMenu:
                 print("Input not recognized")
 
     def _main(self):
-        self._print_menu()
-
-        self.thread = threading.Thread(target=self._handle_input)
+        self.thread = threading.Thread(target=self._handle_io)
         self.thread.start()
