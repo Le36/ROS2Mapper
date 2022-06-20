@@ -37,13 +37,12 @@
 import os
 import select
 import sys
-import rclpy
-
-from geometry_msgs.msg import Twist
-from rclpy.qos import QoSProfile
-
 import termios
 import tty
+
+import rclpy
+from geometry_msgs.msg import Twist
+from rclpy.qos import QoSProfile
 
 BURGER_MAX_LIN_VEL = 0.22
 BURGER_MAX_ANG_VEL = 2.84
@@ -82,6 +81,13 @@ Communications Failed
 class ManualControl:
     def __init__(self, return_to_menu) -> None:
         self._return_to_menu = return_to_menu
+        self._running = False
+
+    def open(self):
+        self._running = True
+        self._main()
+
+    def close(self):
         self._running = False
 
     def _get_key(self, settings):
@@ -135,13 +141,6 @@ class ManualControl:
             return self._constrain(velocity, -BURGER_MAX_ANG_VEL, BURGER_MAX_ANG_VEL)
         else:
             return self._constrain(velocity, -WAFFLE_MAX_ANG_VEL, WAFFLE_MAX_ANG_VEL)
-
-    def open(self):
-        self._running = True
-        self._main()
-
-    def close(self):
-        self._running = False
 
     def _main(self):
         settings = termios.tcgetattr(sys.stdin)

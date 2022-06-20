@@ -18,5 +18,11 @@ def generate_launch_description():
                 name="memory_node",
                 parameters=[{"use_sim_time": True}],
             ),
+            Node(
+                package="explore_node",
+                executable="launch",
+                name="explore_node",
+                parameters=[{"use_sim_time": True}],
+            ),
         ]
     )
