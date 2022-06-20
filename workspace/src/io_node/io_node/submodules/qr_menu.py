@@ -1,11 +1,13 @@
 import os
 import select
 import sys
+import termios
+import threading
+import tty
+from typing import List
 
 from interfaces.msg import QRCode
 from std_msgs.msg import String
-import termios
-import tty
 
 TURTLEBOT3_MODEL = os.environ["TURTLEBOT3_MODEL"]
 
@@ -14,13 +16,14 @@ List of observed QR codes
 ---------------------------
 %s
 ---------------------------
-
 1-9 : navigate to a found QR code
 0 : stop navigation
 
 m : return to main menu
 
 CTRL-C to quit
+---------------------------
+
 """
 
 
@@ -29,14 +32,30 @@ class QRMenu:
         self._return_to_menu = return_to_menu
         self._publisher = publisher
         self._running = False
-        self._qr_codes = []
+        self._data_to_log = None
+        self._reprint_menu = False
+        self._qr_codes: List[QRCode] = []
 
-    def open(self):
+    def open(self) -> None:
         self._running = True
         self._main()
 
-    def close(self):
+    def close(self) -> None:
         self._running = False
+
+    def log(self, data: str) -> None:
+        if self._running:
+            self._data_to_log = data
+
+    def qr_listener_callback(self, qr_code: QRCode) -> None:
+        """Listen for QR codes being found and add them to QR menu list"""
+        for local_qr_code in self._qr_codes:
+            if qr_code.id == local_qr_code.id:
+                return
+
+        self._qr_codes.append(qr_code)
+        if self._running:
+            self._reprint_menu = True
 
     def _qr_navigation_callback(self, msg_command: String) -> None:
         """Publish user input for QR code id"""
@@ -57,18 +76,23 @@ class QRMenu:
         os.system("clear")
         if self._qr_codes:
             formatted_list = [
-                f"{i+1}: '{data}'" for i, data in enumerate(self._qr_codes)
+                f"{i+1}: '{qr_code.id}'" for i, qr_code in enumerate(self._qr_codes)
             ]
             print(QR_MENU % "\n".join(formatted_list))
         else:
             print(QR_MENU % "No QR codes found")
 
-    def _main(self):
+    def _handle_input(self):
         settings = termios.tcgetattr(sys.stdin)
-        self._print_menu()
 
         while self._running:
             key = self._get_key(settings)
+            if self._reprint_menu:
+                self._print_menu()
+                self._reprint_menu = False
+            if self._data_to_log:
+                print(self._data_to_log)
+                self._data_to_log = None
 
             if key == "\x03":
                 exit(0)
@@ -90,3 +114,9 @@ class QRMenu:
             elif key:
                 self._print_menu()
                 print("Input not recognized")
+
+    def _main(self):
+        self._print_menu()
+
+        self.thread = threading.Thread(target=self._handle_input)
+        self.thread.start()
