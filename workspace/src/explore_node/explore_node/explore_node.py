@@ -207,7 +207,7 @@ class ExploreNode(Node):
         if self.retrace_index == len(self.retrace_coordinates):
             self.retrace_index = 0
         target = self.retrace_coordinates[self.retrace_index]
-        if not target == None:
+        if target is not None:
             self.move(target[0], target[1])
         self.retrace_index += 1
 
