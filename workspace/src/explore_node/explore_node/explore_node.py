@@ -1,5 +1,6 @@
 import asyncio
-from time import sleep
+from math import inf
+from time import sleep, time
 import rclpy
 from rclpy.node import Node
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
@@ -7,7 +8,6 @@ from nav_msgs.msg import OccupancyGrid
 from tf2_msgs.msg import TFMessage
 
 from std_msgs.msg import String
-
 
 from geometry_msgs.msg import PoseStamped
 
@@ -36,8 +36,14 @@ class ExploreNode(Node):
         self.y_index = -1
 
         self.searching = False
+        self.retracing = False
         self.grid_check = False
+        self.start_time = inf
+        self.target_cache = None
+        self.previous_target = None
 
+        self.retrace_index = 0
+        self.retrace_coordinates = []
         self.map = []
         self.map_origin = []
 
@@ -60,10 +66,13 @@ class ExploreNode(Node):
         ]
         self.map_resolution = msg.info.resolution
 
-        print("testiäatjekafeoagmeoaimf")
-
         if self.searching:
             self.explore()
+
+        if self.retracing:
+            print("RETRACING")
+            print(self.retrace_coordinates)
+            self.retrace()
 
         # self.get_logger().info('I heard: "%s"' % [self.map_width, self.map_height, self.map_origin, self.map_resolution])
 
@@ -84,8 +93,6 @@ class ExploreNode(Node):
                 k += 1
 
         if self.x_index >= 0 and self.y_index >= 0:
-            map[self.y_index][self.x_index] = 999
-            print("testintg")
             value = self.find_target(map)
             return value
 
@@ -94,17 +101,14 @@ class ExploreNode(Node):
         print("FOUNDFOUNDFOUND")
         if value == 9000:
             print("Kaikki tutkittu")
-            return
-        map[value[1]][value[0]] = 12345
+            return value
 
-        for i in map:
-            print(i)
+        # for i in map:
+        #     print(i)
+
         target_x = self.map_origin[0] + value[0] * 0.05
         target_y = self.map_origin[1] + value[1] * 0.05
-        print(str(target_x) + " ja " + str(target_y))
 
-        print(self.x_index, self.y_index)
-        print(value)
         if map[value[1]][value[0]] == -1:
             print("SUCCESS")
         else:
@@ -152,8 +156,6 @@ class ExploreNode(Node):
                 if map[s_y + i[0]][s_x + i[1]] == -1:
                     if abs(x - s_x + i[0]) < 10 or abs(y - s_y + i[1]) < 10:
                         continue
-                    print(s_x + i[0])
-                    print(s_y + i[1])
                     return [s_x + i[1], s_y + i[0]]
                 elif (
                     map[s_y + i[0]][s_x + i[1]] == 0
@@ -166,17 +168,42 @@ class ExploreNode(Node):
 
     def cancel_explore(self):
         self.searching = False
-        # self.nav.cancelTask()
+        self.retracing = False
+        self.nav.cancelTask()
 
     def start_explore(self):
         self.searching = True
 
     def explore(self):
+        print(time() - self.start_time > 15)
+        if not self.nav.isTaskComplete():
+            if 0 < time() - self.start_time < 15:
+                return
+
+        self.retrace_coordinates.append(self.target_cache)
+        target = self.make_map()
+
+        if self.previous_target == target or target == 9000:
+            self.searching = False
+            self.retracing = True
+            return
+
+        self.previous_target = target
+        self.target_cache = target
+
+        self.start_time = time()
+        self.move(target[0], target[1])
+        # self.move(target[0], target[1])
+
+    def retrace(self):
         if not self.nav.isTaskComplete():
             return
-        target = self.make_map()
-        self.moveAndSpin(target[0], target[1])
-        # self.move(target[0], target[1])
+        if self.retrace_index == len(self.retrace_coordinates):
+            self.retrace_index = 0
+        target = self.retrace_coordinates[self.retrace_index]
+        if not target == None:
+            self.move(target[0], target[1])
+        self.retrace_index += 1
 
     def move(self, x, y) -> None:
         """Pose to X,Y location"""
