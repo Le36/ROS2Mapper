@@ -15,6 +15,7 @@ from numpy import ndarray
 from rclpy.node import Node
 from rclpy.time import Time
 from sensor_msgs.msg import Image
+from std_msgs.msg import String
 from tf2_ros import TransformException
 from tf2_ros.buffer import Buffer
 from tf2_ros.transform_listener import TransformListener
@@ -66,6 +67,7 @@ class QRCodeReader(Node):
             Image, "/camera/image_raw", self.image_callback, 10
         )
         self.publisher = self.create_publisher(QRCode, "/qr_code", 10)
+        self.log_publisher = self.create_publisher(String, "/log", 10)
 
         if self.visualize:  # pragma: no cover
             matplotlib.interactive(True)
@@ -293,12 +295,16 @@ class QRCodeReader(Node):
                     angle_diff -= math.tau
 
                 if pos_diff >= 0.2:
-                    self.get_logger().info(
-                        f"QR code with id {qr_code.id} has moved over 20cm ({float(pos_diff):.2f}cm), updating position"
+                    self.log_publisher.publish(
+                        String(
+                            data=f"QR code with id {qr_code.id} has moved over 20cm ({float(pos_diff):.2f}cm), updating position"
+                        )
                     )
                 elif abs(angle_diff) > math.pi / 9:
-                    self.get_logger().info(
-                        f"QR code with id {qr_code.id} has turned over 20° ({abs(float(angle_diff/math.pi*180)):.2f}°), updating position"
+                    self.log_publisher.publish(
+                        String(
+                            data=f"QR code with id {qr_code.id} has turned over 20° ({abs(float(angle_diff/math.pi*180)):.2f}°), updating position"
+                        )
                     )
                 else:
                     self.get_logger().debug(
@@ -306,7 +312,9 @@ class QRCodeReader(Node):
                     )
                     continue
             else:
-                self.get_logger().info(f"Found a new QR code with id {qr_code.id}")
+                self.log_publisher.publish(
+                    String(data=f"Found a new QR code with id {qr_code.id}")
+                )
             self.found_codes[qr_code.id] = qr_code
             self.publisher.publish(qr_code)
 

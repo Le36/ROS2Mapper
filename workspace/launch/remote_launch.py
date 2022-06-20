@@ -1,5 +1,6 @@
-from launch import LaunchDescription
 from launch_ros.actions import Node
+
+from launch import LaunchDescription
 
 
 def generate_launch_description():
@@ -7,6 +8,6 @@ def generate_launch_description():
         [
             Node(package="qr_code_reader", executable="launch", name="qr_code_reader"),
             Node(package="memory_node", executable="listener", name="memory_node"),
-            Node(package="camera_node", executable="launch", name="camera_node"),
+            Node(package="explore_node", executable="launch", name="explore_node"),
         ]
     )
