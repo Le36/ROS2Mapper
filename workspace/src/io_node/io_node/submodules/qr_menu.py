@@ -28,9 +28,11 @@ CTRL-C to quit
 
 
 class QRMenu:
-    def __init__(self, return_to_menu, publisher) -> None:
+    def __init__(self, return_to_menu, stop_exploring, publisher) -> None:
         self._return_to_menu = return_to_menu
+        self._stop_exploring = stop_exploring
         self._publisher = publisher
+
         self._running = False
         self._data_to_log = None
         self._reprint_menu = False
@@ -57,9 +59,9 @@ class QRMenu:
         if self._running:
             self._reprint_menu = True
 
-    def _qr_navigation_callback(self, msg_command: String) -> None:
+    def _qr_navigation_callback(self, qr_code: QRCode) -> None:
         """Publish user input for QR code id"""
-        self._publisher.publish(String(data=msg_command))
+        self._publisher.publish(qr_code)
 
     def _get_key(self, settings):
         tty.setraw(sys.stdin.fileno())
@@ -102,13 +104,17 @@ class QRMenu:
                     self._print_menu()
                     print("QR code index error. Please input a number between 1-9.")
                 elif index == 0:
-                    self._qr_navigation_callback("0")
+                    self._stop_exploring()
                     self._print_menu()
                     print("Navigation stopped")
+                elif index > len(self._qr_codes):
+                    print("Index out of range")
                 else:
-                    self._qr_navigation_callback(str(index))
+                    self._qr_navigation_callback(self._qr_codes[index - 1])
                     self._print_menu()
-                    print("Navigating to", index)
+                    print(
+                        f"Navigating to QR code with id {self._qr_codes[index - 1].id}"
+                    )
             elif key == "m":
                 self._return_to_menu()
             elif key:

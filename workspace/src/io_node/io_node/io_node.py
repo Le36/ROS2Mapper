@@ -17,15 +17,17 @@ class IONode(Node):
         super().__init__("io_node")
 
         # Publishers
-        self.qr_menu_publisher_ = self.create_publisher(String, "/qr_navigator", 5)
-        self.main_menu_publisher_ = self.create_publisher(
+        self.qr_menu_publisher = self.create_publisher(QRCode, "/qr_navigator", 5)
+        self.exploration_publisher = self.create_publisher(
             String, "/autonomous_exploration", 5
         )
 
         # Views
-        self.main_menu = MainMenu(self.main_menu_publisher_)
+        self.main_menu = MainMenu(self.exploration_publisher)
         self.qr_menu = QRMenu(
-            lambda: self.load_view(self.main_menu), self.qr_menu_publisher_
+            lambda: self.load_view(self.main_menu),
+            lambda: self.exploration_publisher.publish(String(data="2")),
+            self.qr_menu_publisher,
         )
         self.manual_control = ManualControl(lambda: self.load_view(self.main_menu))
 
