@@ -34,7 +34,7 @@ class ExploreNode(Node):
         self.robot_positon = [0.0, 0.0, 0.0]
         self.x_index = -1
         self.y_index = -1
-
+        self.set_initial_pose()
         self.searching = False
         self.retracing = False
         self.grid_check = False
@@ -46,6 +46,16 @@ class ExploreNode(Node):
         self.retrace_coordinates = []
         self.map = []
         self.map_origin = []
+
+    def set_initial_pose(self):
+        initial_pose = PoseStamped()
+        initial_pose.header.frame_id = "map"
+        initial_pose.header.stamp = self.nav.get_clock().now().to_msg()
+        initial_pose.pose.position.x = 3.45
+        initial_pose.pose.position.y = 2.15
+        initial_pose.pose.orientation.z = 1.0
+        initial_pose.pose.orientation.w = 0.0
+        self.nav.setInitialPose(initial_pose)
 
     def commander_callback(self, msg):
         if msg.data == "1":
@@ -70,8 +80,6 @@ class ExploreNode(Node):
             self.explore()
 
         if self.retracing:
-            print("RETRACING")
-            print(self.retrace_coordinates)
             self.retrace()
 
         # self.get_logger().info('I heard: "%s"' % [self.map_width, self.map_height, self.map_origin, self.map_resolution])
@@ -98,7 +106,6 @@ class ExploreNode(Node):
 
     def find_target(self, map):
         value = self.breadth_first_search(map, self.x_index, self.y_index)
-        print("FOUNDFOUNDFOUND")
         if value == 9000:
             print("Kaikki tutkittu")
             return value
@@ -193,7 +200,6 @@ class ExploreNode(Node):
 
         self.start_time = time()
         self.move(target[0], target[1])
-        # self.move(target[0], target[1])
 
     def retrace(self):
         if not self.nav.isTaskComplete():
