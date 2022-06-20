@@ -1,5 +1,5 @@
 import math
-from typing import List, Optional, Tuple
+from typing import Callable, List, Optional, Tuple
 
 import cv2
 import cv2.aruco as aruco
@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import rclpy
 from cv_bridge import CvBridge
-from geometry_msgs.msg import TransformStamped
+from geometry_msgs.msg import Quaternion, TransformStamped, Vector3
 from interfaces.msg import QRCode
 from mpl_toolkits.mplot3d import Axes3D
 from numpy import ndarray
@@ -39,9 +39,16 @@ PLOT_AXIS_SIZE = 5000 / 1000
 
 
 class QRCodeReader(Node):
-    def __init__(self, draw: bool = DRAW) -> None:
+    def __init__(
+        self,
+        draw: bool = DRAW,
+        get_position: Callable[[], Optional[Tuple[Vector3, Quaternion]]] = None,
+    ) -> None:
         """Create the subscriber and the publisher"""
         super().__init__("qr_code_reader")
+
+        self.draw = draw
+        self.get_position = get_position if get_position else self.get_position_from_tf
 
         self.found_codes = []
         self.bridge = CvBridge()
@@ -59,8 +66,7 @@ class QRCodeReader(Node):
         )
         self.publisher = self.create_publisher(QRCode, "/add_data", 10)
 
-        self.draw = draw
-        if self.draw:
+        if self.draw:  # pragma: no cover
             matplotlib.interactive(True)
             self.ax = plt.axes(projection="3d")
             self.ax.set_xlim3d(-PLOT_AXIS_SIZE, PLOT_AXIS_SIZE)
@@ -89,7 +95,7 @@ class QRCodeReader(Node):
         bboxs, ids, rejected = aruco.detectMarkers(
             gray, arucoDict, parameters=arucoParam
         )
-        if self.draw:
+        if self.draw:  # pragma: no cover
             aruco.drawDetectedMarkers(image, bboxs)
         return ids, bboxs
 
@@ -111,7 +117,9 @@ class QRCodeReader(Node):
             vectors.append(vector)
         return vectors
 
-    def update_position(self) -> bool:
+    def get_position_from_tf(
+        self,
+    ) -> Optional[Tuple[Vector3, Quaternion]]:
         try:
             transform: TransformStamped = self.tf_buffer.lookup_transform(
                 "odom", "base_footprint", Time()
@@ -131,19 +139,23 @@ class QRCodeReader(Node):
         # self.get_logger().info(f"Now:       {now}")
         # self.get_logger().info(f"Diff:      {diff}")
 
-        # if abs(diff) > 0.1:
-        if abs(diff) > 1:
+        if abs(diff) > 0.1:
+            return None
+        return (transform.transform.translation, transform.transform.rotation)
+
+    def update_position(self) -> bool:
+        pos = self.get_position()
+        if not pos:
             return False
 
-        position = transform.transform.translation
-        rotation = transform.transform.rotation
+        position, rotation = pos
         self.position = np.array([[position.x], [position.y], [position.z]])
         self.rotation = quaternion_to_euler(
             np.array([rotation.w, rotation.x, rotation.y, rotation.z])
         )
         return True
 
-    def draw_line(self, point1, point2, color="blue") -> None:
+    def draw_line(self, point1, point2, color="blue") -> None:  # pragma: no cover
         self.ax.plot(
             [point1[0], point2[0]],
             [point1[1], point2[1]],
@@ -151,7 +163,7 @@ class QRCodeReader(Node):
             color=color,
         )
 
-    def draw_axes(self) -> None:
+    def draw_axes(self) -> None:  # pragma: no cover
         self.draw_line(
             np.array([-PLOT_AXIS_SIZE, 0, 0]),
             np.array([PLOT_AXIS_SIZE, 0, 0]),
@@ -168,7 +180,7 @@ class QRCodeReader(Node):
             "black",
         )
 
-    def draw_robot(self) -> None:
+    def draw_robot(self) -> None:  # pragma: no cover
         self.get_vectors([])  # Update camera position and camera vector
         new_cam_world = self.camera_position
         new_cam_world.shape = (1, 3)
@@ -238,7 +250,7 @@ class QRCodeReader(Node):
         rotation = quaternion_of_vectors(normal_vector, default_vector)
 
         center = (top_left + bottom_right) / 2
-        if self.draw:
+        if self.draw:  # pragma: no cover
             self.draw_line(top_right, top_left)
             self.draw_line(top_right, bottom_right)
             self.draw_line(bottom_left, top_left)
@@ -252,17 +264,18 @@ class QRCodeReader(Node):
 
     def image_callback(self, msg_image: Image) -> None:
         """Find and publish QR code data"""
-        if self.draw:
-            self.draw_axes()
-            if self.draw_ROBOT and self.update_position():
-                self.draw_robot()
 
         image = self.bridge.imgmsg_to_cv2(msg_image, "bgr8")
         image = self.undistort_image(image)
         data_list, corners_list = self.detect_code(image)
-        if self.draw:
+
+        if self.draw:  # pragma: no cover
+            self.draw_axes()
+            if DRAW_ROBOT and self.update_position():
+                self.draw_robot()
             cv2.imshow("Camera view", image)
             cv2.waitKey(50)
+
         for i, corners in enumerate(corners_list):
             code_id = int(data_list[i][0])
             corners = sorted(corners[0], key=lambda corner: (corner[0], corner[1]))
@@ -285,7 +298,7 @@ class QRCodeReader(Node):
                 )
             )
 
-        if self.draw:
+        if self.draw:  # pragma: no cover
             plt.draw()
             plt.pause(0.01)
 
