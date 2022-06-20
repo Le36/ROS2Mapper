@@ -64,7 +64,7 @@ class QRCodeReader(Node):
         self.subscription = self.create_subscription(
             Image, "/camera/image_raw", self.image_callback, 10
         )
-        self.publisher = self.create_publisher(QRCode, "/add_data", 10)
+        self.publisher = self.create_publisher(QRCode, "/qr_code", 10)
 
         if self.draw:  # pragma: no cover
             matplotlib.interactive(True)
@@ -288,7 +288,7 @@ class QRCodeReader(Node):
             if code_id in self.found_codes:
                 continue
             self.found_codes.append(code_id)
-            self.get_logger().info(f"Found new a QR code with data '{code_id}'")
+            self.get_logger().info(f"Found a new QR code with id {code_id}")
             self.publisher.publish(
                 QRCode(
                     id=code_id,

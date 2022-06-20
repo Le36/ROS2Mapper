@@ -27,7 +27,7 @@ class NodeNode(Node):
 
         self.publisher = self.create_publisher(Image, "/camera/image_raw", 10)
         self.subscription = self.create_subscription(
-            QRCode, "/add_data", subscriber_callback, 10
+            QRCode, "/qr_code", subscriber_callback, 10
         )
 
     def send_image(self, image_filename: str):
@@ -72,26 +72,29 @@ class QRCodeNodeTest(unittest.TestCase):
     def setUp(self):
         self.subscriber.calls = []
         self.qr_code_reader_node.reset_found_codes()
+        self.qr_code = QRCode(
+            id=1,
+            center=np.array([1.08456, 0.341482, 0.010306]),
+            normal_vector=np.array([-0.716183, 0.69788, -0.006722]),
+            rotation=np.array([0.0, -0.006722, -0.69788, 0.283817]),
+        )
 
     @classmethod
     def tearDownClass(self):
         rclpy.shutdown()
         self.executor_thread.join()
 
-    def assert_call(
+    def assert_qr_codes_equal(
         self,
-        subscriber_call: call,
-        id: int,
-        center: ndarray,
-        normal_vector: ndarray,
-        rotation: ndarray,
+        qr_code_1: QRCode,
+        qr_code_2: QRCode,
     ):
-        self.assertEqual(id, subscriber_call.id)
-        np.testing.assert_array_almost_equal(center, subscriber_call.center)
+        self.assertEqual(qr_code_1.id, qr_code_2.id)
+        np.testing.assert_array_almost_equal(qr_code_1.center, qr_code_2.center)
         np.testing.assert_array_almost_equal(
-            normal_vector, subscriber_call.normal_vector
+            qr_code_1.normal_vector, qr_code_2.normal_vector
         )
-        np.testing.assert_array_almost_equal(rotation, subscriber_call.rotation)
+        np.testing.assert_array_almost_equal(qr_code_1.rotation, qr_code_2.rotation)
 
     def test_sending_image_without_a_qr_code(self):
         self.test_node.send_image("no-aruco.jpg")
@@ -103,13 +106,7 @@ class QRCodeNodeTest(unittest.TestCase):
         time.sleep(self.delay)
 
         self.assertEqual(len(self.subscriber.calls), 1)
-        self.assert_call(
-            self.subscriber.calls[0],
-            1,
-            np.array([1.08456, 0.341482, 0.010306]),
-            np.array([-0.716183, 0.69788, -0.006722]),
-            np.array([0.0, -0.006722, -0.69788, 0.283817]),
-        )
+        self.assert_qr_codes_equal(self.subscriber.calls[0], self.qr_code)
 
     def test_sending_image_with_the_same_qr_code_twice(self):
         self.test_node.send_image("aruco.png")
@@ -118,10 +115,4 @@ class QRCodeNodeTest(unittest.TestCase):
         time.sleep(self.delay)
 
         self.assertEqual(len(self.subscriber.calls), 1)
-        self.assert_call(
-            self.subscriber.calls[0],
-            1,
-            np.array([1.08456, 0.341482, 0.010306]),
-            np.array([-0.716183, 0.69788, -0.006722]),
-            np.array([0.0, -0.006722, -0.69788, 0.283817]),
-        )
+        self.assert_qr_codes_equal(self.subscriber.calls[0], self.qr_code)
