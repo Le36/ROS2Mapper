@@ -11,7 +11,6 @@ import rclpy
 from cv_bridge import CvBridge
 from geometry_msgs.msg import Quaternion, Vector3
 from interfaces.msg import QRCode
-from numpy import ndarray
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 from sensor_msgs.msg import Image
@@ -58,7 +57,9 @@ class QRCodeNodeTest(unittest.TestCase):
 
         self.subscriber = Subscriber()
         self.test_node = NodeNode(self.subscriber.callback)
-        self.qr_code_reader_node = QRCodeReader(draw=False, get_position=get_position)
+        self.qr_code_reader_node = QRCodeReader(
+            visualize=False, threshold=-1, get_position=get_position
+        )
         self.qr_code_reader_node.get_logger().set_level(40)
 
         executor = MultiThreadedExecutor()
@@ -72,11 +73,12 @@ class QRCodeNodeTest(unittest.TestCase):
     def setUp(self):
         self.subscriber.calls = []
         self.qr_code_reader_node.reset_found_codes()
+        self.qr_code_reader_node.get_position = get_position
         self.qr_code = QRCode(
             id=1,
             center=np.array([1.08456, 0.341482, 0.010306]),
             normal_vector=np.array([-0.716183, 0.69788, -0.006722]),
-            rotation=np.array([0.0, -0.006722, -0.69788, 0.283817]),
+            rotation=np.array([0.283817, 0.0, -0.006722, -0.69788]),
         )
 
     @classmethod
@@ -116,3 +118,16 @@ class QRCodeNodeTest(unittest.TestCase):
 
         self.assertEqual(len(self.subscriber.calls), 1)
         self.assert_qr_codes_equal(self.subscriber.calls[0], self.qr_code)
+
+    def test_sending_image_twice_but_changing_robot_position(self):
+        self.test_node.send_image("aruco.png")
+        time.sleep(self.delay)
+
+        self.qr_code_reader_node.get_position = lambda: (
+            Vector3(x=1.0, y=0.0, z=0.0),
+            Quaternion(w=0.0, x=0.0, y=0.0, z=0.0),
+        )
+        self.test_node.send_image("aruco.png")
+        time.sleep(self.delay)
+
+        self.assertEqual(len(self.subscriber.calls), 2)

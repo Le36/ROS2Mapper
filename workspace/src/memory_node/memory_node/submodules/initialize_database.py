@@ -13,7 +13,7 @@ def initialize_database():
         """
         CREATE TABLE IF NOT EXISTS qr_codes
         (
-            id              INT UNIQUE PRIMARY KEY,
+            id              INT   PRIMARY KEY,
             center_x        FLOAT NOT NULL,
             center_y        FLOAT NOT NULL,
             center_z        FLOAT NOT NULL,
@@ -29,7 +29,8 @@ def initialize_database():
         """
         CREATE TABLE IF NOT EXISTS history
         (
-            id              INT,
+            pk              INT   PRIMARY KEY,
+            id              INT   NOT NULL,
             center_x        FLOAT NOT NULL,
             center_y        FLOAT NOT NULL,
             center_z        FLOAT NOT NULL,
@@ -40,7 +41,7 @@ def initialize_database():
             rotation_x      FLOAT NOT NULL,
             rotation_y      FLOAT NOT NULL,
             rotation_z      FLOAT NOT NULL,
-            time            TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL PRIMARY KEY
+            time            TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
         );
         """,
     ]
