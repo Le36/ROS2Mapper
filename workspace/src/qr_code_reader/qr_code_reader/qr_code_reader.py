@@ -12,7 +12,6 @@ from geometry_msgs.msg import Quaternion, TransformStamped, Vector3
 from interfaces.msg import QRCode
 from mpl_toolkits.mplot3d import Axes3D
 from numpy import ndarray
-from rclpy.clock import ClockType
 from rclpy.node import Node
 from rclpy.time import Time
 from sensor_msgs.msg import Image
@@ -33,21 +32,22 @@ CAMERA_MATRIX = np.array(
 DISTORTION = np.array([[0.25106112, -0.6379611, 0.0069353, 0.01579591, 0.40809116]])
 INVERSE_CAMERA_MATRIX = np.linalg.inv(CAMERA_MATRIX)
 
-DRAW = True
-DRAW_ROBOT = False
+VISUALIZE = False
 PLOT_AXIS_SIZE = 5000 / 1000
+THRESHOLD = 0.01
 
 
 class QRCodeReader(Node):
     def __init__(
         self,
-        draw: bool = DRAW,
+        visualize: bool = VISUALIZE,
+        threshold: float = THRESHOLD,
         get_position: Callable[[], Optional[Tuple[Vector3, Quaternion]]] = None,
     ) -> None:
-        """Create the subscriber and the publisher"""
         super().__init__("qr_code_reader")
 
-        self.draw = draw
+        self.visualize = visualize
+        self.threshold = threshold
         self.get_position = get_position if get_position else self.get_position_from_tf
 
         self.found_codes: Dict[int, QRCode] = {}
@@ -56,6 +56,7 @@ class QRCodeReader(Node):
         self.tf_listener = TransformListener(self.tf_buffer, self)
 
         np.set_printoptions(suppress=True, precision=3)
+        self.last_update = self.get_clock().now()
         self.position = np.array([[0], [0], [0]])
         self.rotation = np.array([[0], [0], [0]])
         self.rotation_offset = np.array([[-math.pi / 2], [0], [-math.pi / 2]])
@@ -66,7 +67,7 @@ class QRCodeReader(Node):
         )
         self.publisher = self.create_publisher(QRCode, "/qr_code", 10)
 
-        if self.draw:  # pragma: no cover
+        if self.visualize:  # pragma: no cover
             matplotlib.interactive(True)
             self.ax = plt.axes(projection="3d")
             self.ax.set_xlim3d(-PLOT_AXIS_SIZE, PLOT_AXIS_SIZE)
@@ -95,7 +96,7 @@ class QRCodeReader(Node):
         bboxs, ids, rejected = aruco.detectMarkers(
             gray, arucoDict, parameters=arucoParam
         )
-        if self.draw:  # pragma: no cover
+        if self.visualize:  # pragma: no cover
             aruco.drawDetectedMarkers(image, bboxs)
         return ids, bboxs
 
@@ -131,64 +132,16 @@ class QRCodeReader(Node):
             return
         now = self.get_clock().now()
         stamp = transform.header.stamp
-        transform_time = Time(
-            seconds=stamp.sec, nanoseconds=stamp.nanosec, clock_type=ClockType.ROS_TIME
+        self.last_update = Time(
+            seconds=stamp.sec, nanoseconds=stamp.nanosec, clock_type=now.clock_type
         )
-        diff = (now.nanoseconds - transform_time.nanoseconds) / 1e9
-        # self.get_logger().info(f"Transform: {transform_time}")
-        # self.get_logger().info(f"Now:       {now}")
-        # self.get_logger().info(f"Diff:      {diff}")
-
-        if abs(diff) > 0.1:
-            return None
         return (transform.transform.translation, transform.transform.rotation)
 
-    def update_position(self) -> bool:
-        pos = self.get_position()
-        if not pos:
-            return False
-
-        position, rotation = pos
+    def update_position(self) -> None:
+        position, rotation = self.get_position()
         self.position = np.array([[position.x], [position.y], [position.z]])
         self.rotation = quaternion_to_euler(
             np.array([rotation.w, rotation.x, rotation.y, rotation.z])
-        )
-        return True
-
-    def draw_line(self, point1, point2, color="blue") -> None:  # pragma: no cover
-        self.ax.plot(
-            [point1[0], point2[0]],
-            [point1[1], point2[1]],
-            [point1[2], point2[2]],
-            color=color,
-        )
-
-    def draw_axes(self) -> None:  # pragma: no cover
-        self.draw_line(
-            np.array([-PLOT_AXIS_SIZE, 0, 0]),
-            np.array([PLOT_AXIS_SIZE, 0, 0]),
-            "black",
-        )
-        self.draw_line(
-            np.array([0, -PLOT_AXIS_SIZE, 0]),
-            np.array([0, PLOT_AXIS_SIZE, 0]),
-            "black",
-        )
-        self.draw_line(
-            np.array([0, 0, -PLOT_AXIS_SIZE]),
-            np.array([0, 0, PLOT_AXIS_SIZE]),
-            "black",
-        )
-
-    def draw_robot(self) -> None:  # pragma: no cover
-        self.get_vectors([])  # Update camera position and camera vector
-        new_cam_world = self.camera_position
-        new_cam_world.shape = (1, 3)
-        new_cam_world = new_cam_world[0]
-
-        self.draw_line(new_cam_world, self.camera_vector)
-        self.ax.scatter(
-            new_cam_world[0], new_cam_world[1], new_cam_world[2], color="g", s=100
         )
 
     def calculate(
@@ -250,17 +203,52 @@ class QRCodeReader(Node):
         rotation = quaternion_of_vectors(normal_vector, default_vector)
 
         center = (top_left + bottom_right) / 2
-        if self.draw:  # pragma: no cover
-            self.draw_line(top_right, top_left)
-            self.draw_line(top_right, bottom_right)
-            self.draw_line(bottom_left, top_left)
-            self.draw_line(bottom_left, bottom_right)
+        return center, normal_vector, rotation
+
+    def draw_line(self, point1, point2, color="blue") -> None:  # pragma: no cover
+        self.ax.plot(
+            [point1[0], point2[0]],
+            [point1[1], point2[1]],
+            [point1[2], point2[2]],
+            color=color,
+        )
+
+    def draw_axes(self) -> None:  # pragma: no cover
+        self.draw_line(
+            np.array([-PLOT_AXIS_SIZE, 0, 0]),
+            np.array([PLOT_AXIS_SIZE, 0, 0]),
+            "black",
+        )
+        self.draw_line(
+            np.array([0, -PLOT_AXIS_SIZE, 0]),
+            np.array([0, PLOT_AXIS_SIZE, 0]),
+            "black",
+        )
+        self.draw_line(
+            np.array([0, 0, -PLOT_AXIS_SIZE]),
+            np.array([0, 0, PLOT_AXIS_SIZE]),
+            "black",
+        )
+
+    def draw_robot(self) -> None:  # pragma: no cover
+        self.get_vectors([])  # Update camera position and camera vector
+        new_cam_world = self.camera_position
+        new_cam_world.shape = (1, 3)
+        new_cam_world = new_cam_world[0]
+
+        self.draw_line(new_cam_world, self.camera_vector)
+        self.ax.scatter(
+            new_cam_world[0], new_cam_world[1], new_cam_world[2], color="g", s=100
+        )
+
+    def draw_qr_codes(self) -> None:  # pragma: no cover
+        for key, qr_code in self.found_codes.items():
+            center = qr_code.center
+            self.ax.scatter(center[0], center[1], center[2], color="b", s=100)
 
             self.draw_line(
-                center, center + normal_vector * (PLOT_AXIS_SIZE * 2) / 10, "red"
+                center, center + qr_code.normal_vector * PLOT_AXIS_SIZE / 5, "red"
             )
-
-        return center, normal_vector, rotation
 
     def image_callback(self, msg_image: Image) -> None:
         """Find and publish QR code data"""
@@ -269,19 +257,20 @@ class QRCodeReader(Node):
         image = self.undistort_image(image)
         data_list, corners_list = self.detect_code(image)
 
-        if self.draw:  # pragma: no cover
-            self.draw_axes()
-            if DRAW_ROBOT and self.update_position():
-                self.draw_robot()
-            cv2.imshow("Camera view", image)
-            cv2.waitKey(50)
-
         for i, corners in enumerate(corners_list):
             code_id = int(data_list[i][0])
             corners = sorted(corners[0], key=lambda corner: (corner[0], corner[1]))
 
-            if not self.update_position():
+            self.update_position()
+            now = self.get_clock().now()
+            diff = (now.nanoseconds - self.last_update.nanoseconds) / 1e9
+
+            if self.threshold >= 0 and abs(diff) > self.threshold:
+                self.get_logger().debug(
+                    f"Transform too old ({diff} > {self.threshold}), cannot get accurate location for QR code"
+                )
                 continue
+
             vectors = self.get_vectors(corners)
             center, normal_vector, rotation = self.calculate(vectors)
 
@@ -292,19 +281,46 @@ class QRCodeReader(Node):
                 rotation=rotation,
             )
             if qr_code.id in self.found_codes:
-                old_center = self.found_codes[qr_code.id].center
-                dist = np.linalg.norm(qr_code.center - old_center)
-                if dist < 0.2:
+                old_qr_code = self.found_codes[qr_code.id]
+
+                pos_diff = np.linalg.norm(qr_code.center - old_qr_code.center)
+                old_angle = quaternion_to_euler(old_qr_code.rotation)[2]
+                new_angle = quaternion_to_euler(qr_code.rotation)[2]
+                angle_diff = new_angle - old_angle
+                while angle_diff < -math.pi:
+                    angle_diff += math.tau
+                while angle_diff > math.pi:
+                    angle_diff -= math.tau
+
+                if pos_diff >= 0.2:
+                    self.get_logger().info(
+                        f"QR code with id {qr_code.id} has moved over 20cm ({float(pos_diff):.2f}cm), updating position"
+                    )
+                elif abs(angle_diff) > math.pi / 9:
+                    self.get_logger().info(
+                        f"QR code with id {qr_code.id} has turned over 20° ({abs(float(angle_diff/math.pi*180)):.2f}°), updating position"
+                    )
+                else:
+                    self.get_logger().debug(
+                        f"QR code with id {qr_code.id} is in the same position"
+                    )
                     continue
-                self.get_logger().info(
-                    f"QR code with id {qr_code.id} has moved over 20cm!"
-                )
             else:
                 self.get_logger().info(f"Found a new QR code with id {qr_code.id}")
             self.found_codes[qr_code.id] = qr_code
             self.publisher.publish(qr_code)
 
-        if self.draw:  # pragma: no cover
+        if self.visualize:  # pragma: no cover
+            self.update_position()
+
+            self.ax.clear()
+            self.draw_axes()
+            self.draw_robot()
+            self.draw_qr_codes()
+
+            cv2.imshow("Camera view", image)
+            cv2.waitKey(1000 // 30)
+
             plt.draw()
             plt.pause(0.01)
 

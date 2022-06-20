@@ -60,9 +60,9 @@ def quaternion_of_vectors(v1: ndarray, v2: ndarray) -> ndarray:
     a = np.cross(v1, v2)
     return np.array(
         [
+            np.linalg.norm(v1) * np.linalg.norm(v2) + np.dot(v1, v2),
             a[0],
             a[1],
             a[2],
-            np.linalg.norm(v1) * np.linalg.norm(v2) + np.dot(v1, v2),
         ]
     )

@@ -58,7 +58,9 @@ class QRCodeNodeTest(unittest.TestCase):
 
         self.subscriber = Subscriber()
         self.test_node = NodeNode(self.subscriber.callback)
-        self.qr_code_reader_node = QRCodeReader(draw=False, get_position=get_position)
+        self.qr_code_reader_node = QRCodeReader(
+            visualize=False, threshold=-1, get_position=get_position
+        )
         self.qr_code_reader_node.get_logger().set_level(40)
 
         executor = MultiThreadedExecutor()
@@ -76,7 +78,7 @@ class QRCodeNodeTest(unittest.TestCase):
             id=1,
             center=np.array([1.08456, 0.341482, 0.010306]),
             normal_vector=np.array([-0.716183, 0.69788, -0.006722]),
-            rotation=np.array([0.0, -0.006722, -0.69788, 0.283817]),
+            rotation=np.array([0.283817, 0.0, -0.006722, -0.69788]),
         )
 
     @classmethod
