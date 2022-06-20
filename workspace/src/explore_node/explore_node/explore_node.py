@@ -34,7 +34,7 @@ class ExploreNode(Node):
         self.robot_positon = [0.0, 0.0, 0.0]
         self.x_index = -1
         self.y_index = -1
-        self.set_initial_pose()
+        self.initial_pose = None
         self.searching = False
         self.retracing = False
         self.grid_check = False
@@ -47,15 +47,15 @@ class ExploreNode(Node):
         self.map = []
         self.map_origin = []
 
-    def set_initial_pose(self):
-        initial_pose = PoseStamped()
-        initial_pose.header.frame_id = "map"
-        initial_pose.header.stamp = self.nav.get_clock().now().to_msg()
-        initial_pose.pose.position.x = 0.0
-        initial_pose.pose.position.y = 0.0
-        initial_pose.pose.orientation.z = 0.0
-        initial_pose.pose.orientation.w = 0.0
-        self.nav.setInitialPose(initial_pose)
+    def set_initial_pose(self, position):
+        self.initial_pose = PoseStamped()
+        self.initial_pose.header.frame_id = "map"
+        self.initial_pose.header.stamp = self.nav.get_clock().now().to_msg()
+        self.initial_pose.pose.position.x = position[0]
+        self.initial_pose.pose.position.y = position[1]
+        self.initial_pose.pose.orientation.z = position[2]
+        self.initial_pose.pose.orientation.w = 0.0
+        self.nav.setInitialPose(self.initial_pose)
 
     def commander_callback(self, msg):
         if msg.data == "1":
@@ -76,11 +76,12 @@ class ExploreNode(Node):
         ]
         self.map_resolution = msg.info.resolution
 
-        if self.searching:
-            self.explore()
+        if self.initial_pose is not None:
+            if self.searching:
+                self.explore()
 
-        if self.retracing:
-            self.retrace()
+            if self.retracing:
+                self.retrace()
 
         # self.get_logger().info('I heard: "%s"' % [self.map_width, self.map_height, self.map_origin, self.map_resolution])
 
@@ -128,6 +129,8 @@ class ExploreNode(Node):
         if msg.transforms[0].header.frame_id == "odom":
             data = msg.transforms[0].transform.translation
             self.robot_positon = [data.x, data.y, data.z]
+            if self.initial_pose is None:
+                self.set_initial_pose(self.robot_positon)
             self.transform_coordinates_into_grid()
 
             # self.get_logger().info('I heard: "%s"' % self.robot_positon)
