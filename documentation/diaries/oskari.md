@@ -59,6 +59,8 @@ To start off I revised [the tutorial of writing a simple publisher and subscribe
 
 Next up is connecting the I/O node to the other nodes.
 
+Python virtual environment: ROS2 seems to mess up venv when using pip freeze > requirements.txt by e.g. adding relative path to my own computer and adding unnecessary dependencies. After setting up venv building did not work anymore. Following [these instructions](https://docs.ros.org/en/foxy/How-To-Guides/Using-Python-Packages.html) most of the errors were corrected.
+
 __Positives__:
  - Writing a publisher was easy using [the tutorial](https://docs.ros.org/en/foxy/Tutorials/Writing-A-Simple-Py-Publisher-And-Subscriber.html)
 

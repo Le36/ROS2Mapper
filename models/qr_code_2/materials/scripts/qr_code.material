@@ -6,7 +6,7 @@ material QRCode2/Image
     {
       texture_unit
       {
-        texture qr_code_2.png
+        texture 4x4_1000-2.png
       }
     }
   }
