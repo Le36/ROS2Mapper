@@ -52,7 +52,7 @@ class ExploreNode(Node):
         initial_pose.header.frame_id = "map"
         initial_pose.header.stamp = self.nav.get_clock().now().to_msg()
         initial_pose.pose.position.x = 0.0
-        initial_pose.pose.position.y = 0.0
+        initial_pose.pose.position.y = 2.0
         initial_pose.pose.orientation.z = 0.0
         initial_pose.pose.orientation.w = 0.0
         self.nav.setInitialPose(initial_pose)
