@@ -1,5 +1,6 @@
 import os
 import rclpy
+from interfaces.msg import QRCode
 from .submodules.manual_control import ManualControl
 from .submodules.qr_menu import QRMenu
 from .submodules.main_menu import MainMenu
@@ -25,6 +26,9 @@ class IONode(Node):
         self.qr_menu = QRMenu(
             lambda: self.load_view(self.main_menu), self.qr_menu_publisher_
         )
+        self.qr_code_subscription_ = self.create_subscription(
+            QRCode, "qr_list", self.qr_listener_callback, 10
+        )
 
         self.manual_control = ManualControl(lambda: self.load_view(self.main_menu))
 
@@ -40,6 +44,10 @@ class IONode(Node):
         self.view.close()
         self.view = view
         self.view.open()
+
+    def qr_listener_callback(self, qr_code: QRCode):
+        """Listen for QR codes being found and add them to QR menu list"""
+        print("I found", qr_code)
 
 
 def main(args=None):

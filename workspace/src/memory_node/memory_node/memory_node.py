@@ -10,14 +10,16 @@ class MemoryNode(Node):
     def __init__(self) -> None:
         super().__init__("memory_node")
         self.qr_code_subscription = self.create_subscription(
-            QRCode, "/qr_code", self.add_qr_code_callback, 10
+            QRCode, "qr_code", self.add_qr_code_callback, 10
         )
         self.srv = self.create_service(
             GetQRCodes, "get_qr_codes", self.get_qr_codes_callback
         )
+        self.publisher = self.create_publisher(QRCode, "qr_list", 10)
 
     def add_qr_code_callback(self, qr_code: QRCode) -> None:
         self.get_logger().info(f"Adding QR code with id {qr_code.id} to the database")
+        self.send_qr_code_callback(qr_code)
         data_repository.add_qr_code(qr_code)
         data_repository.add_qr_code_to_history(qr_code)
 
@@ -27,6 +29,10 @@ class MemoryNode(Node):
         self.get_logger().info(f"Returning the list of QR codes")
         response.qr_codes = data_repository.get_qr_codes()
         return response
+
+    def send_qr_code_callback(self, qr_code: QRCode) -> None:
+        self.get_logger().info(f"Publishing")
+        self.publisher.publish(qr_code)
 
 
 def main(args=None) -> None:  # pragma: no cover

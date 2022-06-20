@@ -2,6 +2,7 @@ import os
 import select
 import sys
 
+from interfaces.msg import QRCode
 from std_msgs.msg import String
 import termios
 import tty
