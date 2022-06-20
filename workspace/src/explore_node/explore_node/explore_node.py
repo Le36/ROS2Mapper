@@ -31,7 +31,7 @@ class ExploreNode(Node):
             String, "/autonomous_exploration", self.commander_callback, 1
         )
 
-        self.robot_positon = [0.0, 0.0, 0.0]
+        self.robot_positon = [0.36864271262317333, -4.516364632261731, 0.0]
         self.x_index = -1
         self.y_index = -1
         self.initial_pose = None
@@ -47,6 +47,7 @@ class ExploreNode(Node):
         self.map = []
         self.map_origin = []
 
+<<<<<<< HEAD
     def set_initial_pose(self, position):
         self.initial_pose = PoseStamped()
         self.initial_pose.header.frame_id = "map"
@@ -56,6 +57,17 @@ class ExploreNode(Node):
         self.initial_pose.pose.orientation.z = position[2]
         self.initial_pose.pose.orientation.w = 0.0
         self.nav.setInitialPose(self.initial_pose)
+=======
+    def set_initial_pose(self):
+        initial_pose = PoseStamped()
+        initial_pose.header.frame_id = "map"
+        initial_pose.header.stamp = self.nav.get_clock().now().to_msg()
+        initial_pose.pose.position.x = 0.0
+        initial_pose.pose.position.y = 0.0
+        initial_pose.pose.orientation.z = 0.0
+        initial_pose.pose.orientation.w = 1.0
+        self.nav.setInitialPose(initial_pose)
+>>>>>>> 65e917569b0ed5f5337081f386cb6a5bc604d9bc
 
     def commander_callback(self, msg):
         if msg.data == "1":
