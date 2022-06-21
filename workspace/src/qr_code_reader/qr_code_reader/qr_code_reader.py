@@ -131,7 +131,7 @@ class QRCodeReader(Node):
             self.get_logger().info(
                 f"Could not transform odom to base_footprint: {exception}"
             )
-            return
+            return None
         now = self.get_clock().now()
         stamp = transform.header.stamp
         self.last_update = Time(
@@ -140,7 +140,10 @@ class QRCodeReader(Node):
         return (transform.transform.translation, transform.transform.rotation)
 
     def update_position(self) -> None:
-        position, rotation = self.get_position()
+        pos = self.get_position()
+        if not pos:
+            return
+        position, rotation = pos
         self.position = np.array([[position.x], [position.y], [position.z]])
         self.rotation = quaternion_to_euler(
             np.array([rotation.w, rotation.x, rotation.y, rotation.z])
