@@ -55,8 +55,11 @@ class ExploreNode(Node):
         self.map_origin = []
 
     def get_qr_code(self, qrcode):
-
-        print(qrcode)
+        self.get_logger().info(str(qrcode))
+        self.move(
+            qrcode.center[0] + qrcode.normal_vector[0] * 0.2,
+            qrcode.center[1] + qrcode.normal_vector[1] * 0.2,
+        )
 
     def moveToQrCode(self) -> None:
 
