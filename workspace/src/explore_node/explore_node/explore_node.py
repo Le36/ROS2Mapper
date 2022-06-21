@@ -10,6 +10,7 @@ from rclpy.node import Node
 from std_msgs.msg import String
 from tf2_msgs.msg import TFMessage
 from interfaces.srv import GetQRCodes
+from interfaces.msg import QRCode
 
 
 class ExploreNode(Node):
@@ -32,7 +33,10 @@ class ExploreNode(Node):
         )
 
         self.cli = self.create_client(GetQRCodes, "get_qr_codes")
-        self.req = GetQRCodes.Request()
+
+        self.get_qr_code_test = self.create_subscription(
+            QRCode, "/qr_navigator", self.get_qr_code, 1
+        )
 
         self.robot_positon = [0.36864271262317333, -4.516364632261731, 0.0]
         self.x_index = -1
@@ -50,12 +54,37 @@ class ExploreNode(Node):
         self.map = []
         self.map_origin = []
 
+    def get_qr_code(self, qrcode):
+
+        print(qrcode)
+
     def moveToQrCode(self) -> None:
-        future = self.cli.call_async(self.req)
+
+        req = GetQRCodes.Request()
+        future = self.cli.call_async(req)
+
+        print("testi")
 
         rclpy.spin_until_future_complete(self, future)
 
-        response = future.result()
+        print(future.result())
+        self.goal_handle = future.result()
+
+        print("testi2")
+
+        response = self.goal_handle.get_result_async()
+
+        goal_pose = PoseStamped()
+        goal_pose.header.frame_id = "map"
+        # goal_pose.header.stamp = self.navigator.get_clock().now().to_msg()
+        goal_pose.pose.position.x = response[0]
+        goal_pose.pose.position.y = response[1]
+        goal_pose.pose.position.z = response[2]
+        goal_pose.pose.orientation.x = response[3]
+        goal_pose.pose.orientation.y = response[4]
+        goal_pose.pose.orientation.z = response[5]
+        goal_pose.pose.orientation.w = response[6]
+        self.nav.goToPose(goal_pose)
 
         print(response)
 
@@ -73,10 +102,8 @@ class ExploreNode(Node):
         if msg.data == "1":
             self.searching = True
             self.explore()
-        if msg.data == "3":
-            self.cancel_explore()
         if msg.data == "2":
-            self.moveToQrCode()
+            self.cancel_explore()
 
     def map_listener_callback(self, msg):
         self.grid_check = True
@@ -143,8 +170,8 @@ class ExploreNode(Node):
         if msg.transforms[0].header.frame_id == "odom":
             data = msg.transforms[0].transform.translation
             self.robot_positon = [data.x, data.y, data.z]
-            if self.initial_pose is None:
-                self.set_initial_pose(self.robot_positon)
+            # if self.initial_pose is None:
+            #    self.set_initial_pose(self.robot_positon)
             self.transform_coordinates_into_grid()
 
             # self.get_logger().info('I heard: "%s"' % self.robot_positon)
