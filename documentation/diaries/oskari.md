@@ -69,3 +69,4 @@ __Positives__:
 
 __Negatives__:
  - Issues with setting up Python venv with ROS2 even when following the official tutorial
+ - Nav2 some a tendency to do very weird things, e.g. crashing, working differently at diffferent times despite using same commands
