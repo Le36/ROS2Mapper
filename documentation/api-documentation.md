@@ -1,104 +1,41 @@
 # Table of contents
 - [Interfaces](#interfaces)
-    - [interfaces/srv/QRCode](#interfacessrvqrcode)
-    - [interfaces/srv/GetQRCodes](#interfacessrvgetqrcodes)
+    - [Msg](#msg)
+        - [interfaces/msg/QRCode](#interfacesmsgqrcode)
+    - [Srv](#srv)
+        - [interfaces/srv/GetQRCodes](#interfacessrvgetqrcodes)
 - [Topics](#topics)
-    - [/qr_code](#qr_code)
-    - [/log](#log)
-    - [/camera/image_raw](#cameraimage_raw)
-    - [/autonomous_exploration](#autonomous_exploration)
-    - [/qr_navigator](#qr_navigator)
-    - [/qr_list](#qr_list)
 - [Services](#services)
-    - [get_qr_codes](#get_qr_codes)
 
 # API documentation
 ## Interfaces
-### interfaces/srv/QRCode
-- int32 id
-    - Id of QR code
-- float64[3] center
-    - Center of the QR code in NAV2 coordinates
-- float64[3] normal_vector
-    - Vector pointing outwards of the QR code. Useful for getting the coordinates of the point in front of the QR code
-- float64[4] rotation
-    - Quaternion orientation facing the QR code
+### Msg
+#### interfaces/msg/QRCode
+| Data          | Type       | Description                                                                                                      |
+| ------------- | ---------- | ---------------------------------------------------------------------------------------------------------------- |
+| id            | int32      | Id of QR code                                                                                                    |
+| center        | float64[3] | Center of the QR code in NAV2 coordinates                                                                        |
+| normal_vector | float64[3] | Vector pointing outwards of the QR code. Useful for getting the coordinates of the point in front of the QR code |
+| rotation      | float64[4] | Quaternion orientation facing the QR code                                                                        |
 
-### interfaces/srv/GetQRCodes
-- Request
-    - std_msgs/msg/Empty
-- Response
-    - QRCode[] qr_codes
-        - List of QR codes
+### Srv
+#### interfaces/srv/GetQRCodes
+| Request/Response | Data     | Type               | Description      |
+| ---------------- | -------- | ------------------ | ---------------- |
+| Request          |          | std_msgs/msg/Empty |                  |
+| Response         | qr_codes | QRCode[]           | List of QR codes |
 
 ## Topics
-### /qr_code
-- Type
-    - interfaces/msg/QRCode
-- Description
-    - Every time a new QR code is found or an existing QR code has moved over 20cm or rotated over 20°, the QR code is published here
-- Publishers
-    - QRCodeReader
-- Subscribers
-    - MemoryNode
-
-### /log
-- Type
-    - std_msgs/msg/String
-- Description
-    - Everything published here will be logged by the I/O node
-- Publishers
-    - QRCodeReader
-- Subscribers
-    - IONode
-
-### /camera/image_raw
-- Type
-    - sensor_msgs/msg/Image
-- Description
-    - The camera node publishes images from the camera here with resolution 480x640
-- Publishers
-    - CameraNode
-- Subscribers
-    - QRCodeReader
-
-### /autonomous_exploration
-- Type
-    - std_msgs/msg/String
-- Description
-    - The I/O node uses this topic to command the exploration node
-- Publishers
-    - IONode
-- Subscribers
-    - ExploreNode
-
-### /qr_navigator
-- Type
-    - interfaces/msg/QRCode
-- Description
-    - The I/O node uses this topic to command the explore node to navigate to the given QR code
-- Publishers
-    - IONode
-- Subscribers
-    - ExploreNode
-
-### /qr_list
-- Type
-    - interfaces/msg/QRCode
-- Description
-    - Every time a QR code is saved to the database it is published here
-- Publishers
-    - MemoryNode
-- Subscribers
-    - IONode
+| Topic                   | Type                  | Publishers     | Subscribers    | Description                                                                                                                     |
+| ----------------------- | --------------------- | -------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| /qr_code                | interfaces/msg/QRCode | `QRCodeReader` | `MemoryNode`   | Every time a new QR code is found or an existing QR code has moved over 20cm or rotated over 20°, the QR code is published here |
+| /log                    | std_msgs/msg/String   | `QRCodeReader` | `IONode`       | Everything published here will be logged by the I/O node                                                                        |
+| /camera/image_raw       | sensor_msgs/msg/Image | `CameraNode`   | `QRCodeReader` | The camera node publishes images from the camera here with resolution 480x640                                                   |
+| /autonomous_exploration | std_msgs/msg/String   | `IONode`       | `ExploreNode`  | The I/O node uses this topic to command the exploration node                                                                    |
+| /qr_navigator           | interfaces/msg/QRCode | `IONode`       | `ExploreNode`  | The I/O node uses this topic to command the explore node to navigate to the given QR code                                       |
+| /qr_list                | interfaces/msg/QRCode | `MemoryNode`   | `IONode`       | Every time a QR code is saved to the database it is published here                                                              |
 
 ## Services
-### get_qr_codes
-- Type
-    - interfaces/srv/GetQRCodes
-- Description
-    - This service can be called to get all of the QR codes from the database
-- Service
-    - MemoryNode
-- Clients
-    - N/A
+| Service      | Type                      | Service      | Clients | Description                                                             |
+| ------------ | ------------------------- | ------------ | ------- | ----------------------------------------------------------------------- |
+| get_qr_codes | interfaces/srv/GetQRCodes | `MemoryNode` |         | This service can be called to get all of the QR codes from the database |
