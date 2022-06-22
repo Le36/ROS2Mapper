@@ -28,67 +28,67 @@
 4. [Remote] Setup Gazebo
     1. Add the following lines to `~/turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot3_gazebo/models/turtlebot3_burger/model.sdf`
         ```xml
-      <joint name='camera_joint' type='fixed'>
-        <parent>base_link</parent>
-        <child>camera_link</child>
-        <pose>0 0 0 0 -0 0</pose>
-      </joint>
-      <link name='camera_link'>
-        <pose>0.04 0 0.13 0 -0 0</pose>
-        <inertial>
-          <mass>1e-18</mass>
-          <pose>0 0 0 0 -0 0</pose>
-          <inertia>
-            <ixx>1</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>1</iyy>
-            <iyz>0</iyz>
-            <izz>1</izz>
-          </inertia>
-        </inertial>
-        <sensor name='camera_sensor' type='camera'>
-          <update_rate>30</update_rate>
-          <camera name='camera_name'>
-            <horizontal_fov>1.086</horizontal_fov>
-            <image>
-              <width>480</width>
-              <height>640</height>
-              <format>R8G8B8</format>
-            </image>
-            <clip>
-              <near>0.1</near>
-              <far>100</far>
-            </clip>
-            <distortion>
-              <k1>0.25106112</k1>
-              <k2>-0.6379611</k2>
-              <k3>0.40809116</k3>
-              <p1>0.0069353</p1>
-              <p2>0.01579591</p2>
-            </distortion>
-            <lens>
-              <intrinsics>
-                <fx>525.44920374</fx>
-                <fy>526.37302771</fy>
-                <cx>330.24175119</cx>
-                <cy>243.26842016</cy>
-              </intrinsics>
-            </lens>
-          </camera>
-          <plugin name='camera_controller' filename='libgazebo_ros_camera.so'>
-            <alwaysOn>1</alwaysOn>
-            <updateRate>0.0</updateRate>
-            <camera_name>camera</camera_name>
-            <imageTopicName>image_raw</imageTopicName>
-            <frame_name>camera_link</frame_name>
-            <hack_baseline>0.07</hack_baseline>
-          </plugin>
-        </sensor>
-        <self_collide>0</self_collide>
-        <enable_wind>0</enable_wind>
-        <kinematic>0</kinematic>
-      </link>
+              <joint name='camera_joint' type='fixed'>
+                <parent>base_link</parent>
+                <child>camera_link</child>
+                <pose>0 0 0 0 -0 0</pose>
+              </joint>
+              <link name='camera_link'>
+                <pose>0.04 0 0.13 0 -0 0</pose>
+                <inertial>
+                  <mass>1e-18</mass>
+                  <pose>0 0 0 0 -0 0</pose>
+                  <inertia>
+                    <ixx>1</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>1</iyy>
+                    <iyz>0</iyz>
+                    <izz>1</izz>
+                  </inertia>
+                </inertial>
+                <sensor name='camera_sensor' type='camera'>
+                  <update_rate>30</update_rate>
+                  <camera name='camera_name'>
+                    <horizontal_fov>1.086</horizontal_fov>
+                    <image>
+                      <width>480</width>
+                      <height>640</height>
+                      <format>R8G8B8</format>
+                    </image>
+                    <clip>
+                      <near>0.1</near>
+                      <far>100</far>
+                    </clip>
+                    <distortion>
+                      <k1>0.25106112</k1>
+                      <k2>-0.6379611</k2>
+                      <k3>0.40809116</k3>
+                      <p1>0.0069353</p1>
+                      <p2>0.01579591</p2>
+                    </distortion>
+                    <lens>
+                      <intrinsics>
+                        <fx>525.44920374</fx>
+                        <fy>526.37302771</fy>
+                        <cx>330.24175119</cx>
+                        <cy>243.26842016</cy>
+                      </intrinsics>
+                    </lens>
+                  </camera>
+                  <plugin name='camera_controller' filename='libgazebo_ros_camera.so'>
+                    <alwaysOn>1</alwaysOn>
+                    <updateRate>0.0</updateRate>
+                    <camera_name>camera</camera_name>
+                    <imageTopicName>image_raw</imageTopicName>
+                    <frame_name>camera_link</frame_name>
+                    <hack_baseline>0.07</hack_baseline>
+                  </plugin>
+                </sensor>
+                <self_collide>0</self_collide>
+                <enable_wind>0</enable_wind>
+                <kinematic>0</kinematic>
+              </link>
         ```
     2. Recompile the turtlebot3 models
         ```
