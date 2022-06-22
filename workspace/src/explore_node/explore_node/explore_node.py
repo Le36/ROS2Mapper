@@ -153,6 +153,10 @@ class ExploreNode(Node):
         queue = [(start_x, start_y)]
         self.searching = True
         directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        self.get_logger().info(
+            "Width " + str(self.map_width) + " Height " + str(self.map_height)
+        )
+        self.get_logger().info(str(len(map)) + " " + str(len(map[0])))
 
         while queue:
             x, y = queue.pop(0)
@@ -160,7 +164,15 @@ class ExploreNode(Node):
                 nx, ny = x + dir[0], y + dir[1]
                 if not (0 <= nx < self.map_width and 0 <= ny < self.map_height):
                     continue
-                elif map[ny][nx] == -1:
+                elif map[ny][nx] == -1 or (
+                    map[ny][nx] == 0
+                    and (
+                        ny == 0
+                        or ny == self.map_height - 1
+                        or nx == 0
+                        or nx == self.map_width - 1
+                    )
+                ):
                     if abs(start_x - nx) < 10 or abs(start_y - ny) < 10:
                         continue
                     return (nx, ny)
@@ -201,7 +213,7 @@ class ExploreNode(Node):
         self.previous_target = target
 
         self.start_time = time()
-        self.move_and_spin(target[0], target[1])
+        self.move(target[0], target[1])
 
     def retrace(self):
         """Retrace old explore coordinates"""

@@ -231,7 +231,10 @@ class BasicNavigator(Node):
         self.result_future = self.goal_handle.get_result_async()
 
         self.debug("Waiting for 'Spin' action server")
-        while not self.spin_client.wait_for_server(timeout_sec=1.0):
+        while (
+            not self.spin_client.wait_for_server(timeout_sec=1.0)
+            or not self.isTaskComplete()
+        ):
             self.info("'Spin' action server not available, waiting...")
         goal_msg = Spin.Goal()
         goal_msg.target_yaw = 6.28318531
