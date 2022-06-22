@@ -12,6 +12,9 @@ University of Helsinki, Ohjelmistotuotantoprojekti (Software Engineering Project
 - [Product and sprint backlogs](https://github.com/Le36/ros2-mapper/projects)
 - [Sprint 3 burndown chart](documentation/images/sprint3.png)
 
+## Project documentation
+- [API documentation](documentation/api-documentation.md)
+
 ## Dev documents
 
 - [Tutorials](documentation/tutorials.md)
