@@ -43,6 +43,8 @@ class IONode(Node):
             QRCode, "/qr_list", self.qr_menu.qr_listener_callback, 10
         )
 
+        self.timer = self.create_timer(0.1, self.check_quit)
+
         self.view = self.main_menu
         self.view.open()
 
@@ -50,6 +52,10 @@ class IONode(Node):
         self.view.close()
         self.view = view
         self.view.open()
+
+    def check_quit(self) -> None:
+        if not self.view.running:
+            exit(0)
 
     def log(self, msg: String) -> None:
         self.main_menu.log(msg.data)

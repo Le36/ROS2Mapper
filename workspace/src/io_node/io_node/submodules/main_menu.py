@@ -29,8 +29,8 @@ class MainMenu:
         self._publisher = publisher
         self._load_manual_control_view = None
         self._load_qr_view = None
-        self._running = False
         self._data_to_log = None
+        self.running = False
 
     def set_load_functions(
         self,
@@ -41,14 +41,14 @@ class MainMenu:
         self._load_qr_view = load_qr_view
 
     def open(self) -> None:
-        self._running = True
+        self.running = True
         self._main()
 
     def close(self) -> None:
-        self._running = False
+        self.running = False
 
     def log(self, data: str) -> None:
-        if self._running:
+        if self.running:
             self._data_to_log = data
 
     def _exploration_callback(self, msg_command: String) -> None:
@@ -75,7 +75,7 @@ class MainMenu:
         log_count = 0
 
         settings = termios.tcgetattr(sys.stdin)
-        while self._running:
+        while self.running:
             key = self._get_key(settings)
             if self._data_to_log:
                 if log_count == 10:
@@ -86,6 +86,7 @@ class MainMenu:
                 self._data_to_log = None
 
             if key == "\x03":
+                self.running = False
                 exit(0)
             elif key == "1":
                 self._exploration_callback("1")

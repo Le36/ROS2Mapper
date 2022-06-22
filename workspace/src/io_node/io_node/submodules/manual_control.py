@@ -81,14 +81,14 @@ Communications Failed
 class ManualControl:
     def __init__(self, return_to_menu) -> None:
         self._return_to_menu = return_to_menu
-        self._running = False
+        self.running = False
 
     def open(self):
-        self._running = True
+        self.running = True
         self._main()
 
     def close(self):
-        self._running = False
+        self.running = False
 
     def _get_key(self, settings):
         tty.setraw(sys.stdin.fileno())
@@ -157,7 +157,7 @@ class ManualControl:
         os.system("clear")
         print(CONTROL_MENU)
 
-        while self._running:
+        while self.running:
             key = self._get_key(settings)
             if key == "w":
                 target_linear_velocity = self._check_linear_limit_velocity(
@@ -188,6 +188,7 @@ class ManualControl:
             elif key == "m":
                 self._return_to_menu()
             elif key == "\x03":
+                self.running = False
                 exit(0)
             elif key:
                 print("Input not recognized")

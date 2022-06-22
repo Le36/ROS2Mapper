@@ -33,20 +33,20 @@ class QRMenu:
         self._stop_exploring = stop_exploring
         self._publisher = publisher
 
-        self._running = False
         self._data_to_log = None
         self._reprint_menu = False
         self._qr_codes: List[QRCode] = []
+        self.running = False
 
     def open(self) -> None:
-        self._running = True
+        self.running = True
         self._main()
 
     def close(self) -> None:
-        self._running = False
+        self.running = False
 
     def log(self, data: str) -> None:
-        if self._running:
+        if self.running:
             self._data_to_log = data
 
     def qr_listener_callback(self, qr_code: QRCode) -> None:
@@ -56,7 +56,7 @@ class QRMenu:
                 return
 
         self._qr_codes.append(qr_code)
-        if self._running:
+        if self.running:
             self._reprint_menu = True
 
     def _qr_navigation_callback(self, qr_code: QRCode) -> None:
@@ -90,7 +90,7 @@ class QRMenu:
 
         settings = termios.tcgetattr(sys.stdin)
 
-        while self._running:
+        while self.running:
             key = self._get_key(settings)
             if self._reprint_menu:
                 self._print_menu()
@@ -105,6 +105,7 @@ class QRMenu:
                 self._data_to_log = None
 
             if key == "\x03":
+                self.running = False
                 exit(0)
             elif key.isdigit():
                 index = int(key)
