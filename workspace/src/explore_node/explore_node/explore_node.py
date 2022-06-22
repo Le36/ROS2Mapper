@@ -64,9 +64,11 @@ class ExploreNode(Node):
             self.get_logger().warn(f"Unknown command code {msg}")
 
     def map_listener_callback(self, occupancy_grid: OccupancyGrid) -> None:
-        """Update map and run exploration/retracing"""
+        """Listen to occupance grid. Update map and run exploration/retracing"""
         if not self.map_set:
             self.get_logger().info("Ready to explore!")
+        if not occupancy_grid.header.frame_id == "map":
+            return
         self.map_set = True
         self.map = occupancy_grid.data
         self.map_width = occupancy_grid.info.width
@@ -77,6 +79,8 @@ class ExploreNode(Node):
             occupancy_grid.info.origin.position.z,
         ]
         self.map_resolution = occupancy_grid.info.resolution
+
+        self.get_logger().info(str(occupancy_grid))
 
         if self.initial_pose is not None:
             if self.searching:
@@ -108,9 +112,10 @@ class ExploreNode(Node):
         self.initial_pose.pose.orientation.w = rotation.w
 
         # Don't set initial pose, because it breaks in Gazebo
-        # self.nav.setInitialPose(self.initial_pose)
+        self.nav.setInitialPose(self.initial_pose)
 
     def make_map(self) -> Optional[Tuple[float, float]]:
+        """Turn occupance grid to matrix. Returns next explore target."""
         if not self.map_set:
             self.get_logger().info(str("Map has not been set yet"))
             return
@@ -121,11 +126,15 @@ class ExploreNode(Node):
             for x in range(self.map_width):
                 map[y].append(self.map[y * self.map_width + x])
 
+        for x in map:
+            self.get_logger().info(str(x))
+
         if self.pos_x >= 0 and self.pos_y >= 0:
             value = self.find_target(map)
             return value
 
     def find_target(self, map: List[List[int]]) -> Optional[Tuple[float, float]]:
+        """Find next explore target. Returns nav2 x,y cordinates."""
         value = self.breadth_first_search(map, self.pos_x, self.pos_y)
         if not value:
             self.get_logger().info("Finished exploring the whole area")
@@ -149,6 +158,15 @@ class ExploreNode(Node):
     ) -> Optional[Tuple[int, int]]:
         """Search for closest unexplored area"""
         visited = [[False for x in range(len(map[0]))] for y in range(len(map))]
+        self.get_logger().info(
+            str(len(visited))
+            + " ja "
+            + str(len(visited[0]))
+            + " ja x "
+            + str(start_x)
+            + " ja y "
+            + str(start_y)
+        )
         visited[start_y][start_x] = True
         queue = [(start_x, start_y)]
         self.searching = True
@@ -175,6 +193,7 @@ class ExploreNode(Node):
                 ):
                     if abs(start_x - nx) < 10 or abs(start_y - ny) < 10:
                         continue
+                    self.get_logger().info("Koordinaatin arvo: " + str(map[ny][nx]))
                     return (nx, ny)
                 elif map[ny][nx] == 0 and not visited[ny][nx]:
                     visited[ny][nx] = True
@@ -205,6 +224,8 @@ class ExploreNode(Node):
 
         target = self.make_map()
         if self.previous_target == target or not target:
+            if len(self.retrace_coordinates) == 0:
+                return
             self.searching = False
             self.retracing = True
             return
@@ -224,6 +245,8 @@ class ExploreNode(Node):
         target = self.retrace_coordinates[self.retrace_index]
         self.move_and_spin(target[0], target[1])
         self.retrace_index += 1
+
+        self.make_map()
 
     def move(self, x: float, y: float) -> None:
         """Move to pose (x, y)"""
