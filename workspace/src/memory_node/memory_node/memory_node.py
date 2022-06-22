@@ -10,7 +10,7 @@ class MemoryNode(Node):
     def __init__(self) -> None:
         super().__init__("memory_node")
         self.qr_code_subscription = self.create_subscription(
-            QRCode, "qr_code", self.add_qr_code_callback, 10
+            QRCode, "/qr_code", self.add_qr_code_callback, 10
         )
         self.srv = self.create_service(
             GetQRCodes, "get_qr_codes", self.get_qr_codes_callback
