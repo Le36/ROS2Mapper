@@ -79,8 +79,6 @@ class QRCodeReader(Node):
         bboxs, ids, rejected = aruco.detectMarkers(
             gray, arucoDict, parameters=arucoParam
         )
-        if self.visualize:  # pragma: no cover
-            aruco.drawDetectedMarkers(image, bboxs)
         return ids, bboxs
 
     def get_vectors(self, points: List) -> List[ndarray]:
