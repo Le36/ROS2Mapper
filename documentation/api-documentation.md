@@ -1,12 +1,3 @@
-# Table of contents
-- [Interfaces](#interfaces)
-    - [Msg](#msg)
-        - [interfaces/msg/QRCode](#interfacesmsgqrcode)
-    - [Srv](#srv)
-        - [interfaces/srv/GetQRCodes](#interfacessrvgetqrcodes)
-- [Topics](#topics)
-- [Services](#services)
-
 # API documentation
 ## Interfaces
 ### Msg

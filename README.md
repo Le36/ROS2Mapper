@@ -13,6 +13,7 @@ University of Helsinki, Ohjelmistotuotantoprojekti (Software Engineering Project
 - [Sprint 3 burndown chart](documentation/images/sprint3.png)
 
 ## Project documentation
+- [Install instructions](documentation/installation.md)
 - [API documentation](documentation/api-documentation.md)
 
 ## Dev documents
