@@ -57,9 +57,7 @@ class QRCodeNodeTest(unittest.TestCase):
 
         self.subscriber = Subscriber()
         self.test_node = NodeNode(self.subscriber.callback)
-        self.qr_code_reader_node = QRCodeReader(
-            visualize=False, threshold=-1, get_position=get_position
-        )
+        self.qr_code_reader_node = QRCodeReader(threshold=-1, get_position=get_position)
         self.qr_code_reader_node.get_logger().set_level(40)
 
         executor = MultiThreadedExecutor()

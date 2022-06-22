@@ -3,14 +3,11 @@ from typing import Callable, Dict, List, Optional, Tuple
 
 import cv2
 import cv2.aruco as aruco
-import matplotlib
-import matplotlib.pyplot as plt
 import numpy as np
 import rclpy
 from cv_bridge import CvBridge
 from geometry_msgs.msg import Quaternion, TransformStamped, Vector3
 from interfaces.msg import QRCode
-from mpl_toolkits.mplot3d import Axes3D
 from numpy import ndarray
 from rclpy.node import Node
 from rclpy.time import Time
@@ -32,22 +29,17 @@ CAMERA_MATRIX = np.array(
 )
 DISTORTION = np.array([[0.25106112, -0.6379611, 0.0069353, 0.01579591, 0.40809116]])
 INVERSE_CAMERA_MATRIX = np.linalg.inv(CAMERA_MATRIX)
-
-VISUALIZE = False
-PLOT_AXIS_SIZE = 5000 / 1000
-THRESHOLD = 0.01
+TF_THRESHOLD = 0.01
 
 
 class QRCodeReader(Node):
     def __init__(
         self,
-        visualize: bool = VISUALIZE,
-        threshold: float = THRESHOLD,
+        threshold: float = TF_THRESHOLD,
         get_position: Callable[[], Optional[Tuple[Vector3, Quaternion]]] = None,
     ) -> None:
         super().__init__("qr_code_reader")
 
-        self.visualize = visualize
         self.threshold = threshold
         self.get_position = get_position if get_position else self.get_position_from_tf
 
@@ -68,17 +60,6 @@ class QRCodeReader(Node):
         )
         self.publisher = self.create_publisher(QRCode, "/qr_code", 10)
         self.log_publisher = self.create_publisher(String, "/log", 10)
-
-        if self.visualize:  # pragma: no cover
-            matplotlib.interactive(True)
-            self.ax = plt.axes(projection="3d")
-            self.ax.set_xlim3d(-PLOT_AXIS_SIZE, PLOT_AXIS_SIZE)
-            self.ax.set_ylim3d(-PLOT_AXIS_SIZE, PLOT_AXIS_SIZE)
-            self.ax.set_zlim3d(-PLOT_AXIS_SIZE, PLOT_AXIS_SIZE)
-            self.draw_axes()
-            plt.show()
-            plt.draw()
-            plt.pause(0.01)
 
     def undistort_image(self, image: ndarray) -> ndarray:
         h, w = image.shape[:2]
@@ -210,51 +191,6 @@ class QRCodeReader(Node):
         center = (top_left + bottom_right) / 2
         return center, normal_vector, rotation
 
-    def draw_line(self, point1, point2, color="blue") -> None:  # pragma: no cover
-        self.ax.plot(
-            [point1[0], point2[0]],
-            [point1[1], point2[1]],
-            [point1[2], point2[2]],
-            color=color,
-        )
-
-    def draw_axes(self) -> None:  # pragma: no cover
-        self.draw_line(
-            np.array([-PLOT_AXIS_SIZE, 0, 0]),
-            np.array([PLOT_AXIS_SIZE, 0, 0]),
-            "black",
-        )
-        self.draw_line(
-            np.array([0, -PLOT_AXIS_SIZE, 0]),
-            np.array([0, PLOT_AXIS_SIZE, 0]),
-            "black",
-        )
-        self.draw_line(
-            np.array([0, 0, -PLOT_AXIS_SIZE]),
-            np.array([0, 0, PLOT_AXIS_SIZE]),
-            "black",
-        )
-
-    def draw_robot(self) -> None:  # pragma: no cover
-        self.get_vectors([])  # Update camera position and camera vector
-        new_cam_world = self.camera_position
-        new_cam_world.shape = (1, 3)
-        new_cam_world = new_cam_world[0]
-
-        self.draw_line(new_cam_world, self.camera_vector)
-        self.ax.scatter(
-            new_cam_world[0], new_cam_world[1], new_cam_world[2], color="g", s=100
-        )
-
-    def draw_qr_codes(self) -> None:  # pragma: no cover
-        for key, qr_code in self.found_codes.items():
-            center = qr_code.center
-            self.ax.scatter(center[0], center[1], center[2], color="b", s=100)
-
-            self.draw_line(
-                center, center + qr_code.normal_vector * PLOT_AXIS_SIZE / 5, "red"
-            )
-
     def image_callback(self, msg_image: Image) -> None:
         """Find and publish QR code data"""
 
@@ -320,20 +256,6 @@ class QRCodeReader(Node):
                 )
             self.found_codes[qr_code.id] = qr_code
             self.publisher.publish(qr_code)
-
-        if self.visualize:  # pragma: no cover
-            self.update_position()
-
-            self.ax.clear()
-            self.draw_axes()
-            self.draw_robot()
-            self.draw_qr_codes()
-
-            cv2.imshow("Camera view", image)
-            cv2.waitKey(1000 // 30)
-
-            plt.draw()
-            plt.pause(0.01)
 
     def reset_found_codes(self) -> None:
         self.found_codes = {}
