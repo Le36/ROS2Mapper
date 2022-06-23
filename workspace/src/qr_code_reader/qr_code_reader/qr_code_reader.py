@@ -62,6 +62,7 @@ class QRCodeReader(Node):
         self.log_publisher = self.create_publisher(String, "/log", 10)
 
     def undistort_image(self, image: ndarray) -> ndarray:
+        """Return undistorted image"""
         h, w = image.shape[:2]
         new_camera_matrix, _ = cv2.getOptimalNewCameraMatrix(
             CAMERA_MATRIX, DISTORTION, (w, h), 1, (w, h)
@@ -72,6 +73,7 @@ class QRCodeReader(Node):
         return undistorted
 
     def detect_code(self, image: ndarray) -> Tuple[ndarray, ndarray]:
+        """Detect aruco codes from the image and return the corners and ids"""
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         key = getattr(aruco, f"DICT_{4}X{4}_{250}")
         arucoDict = aruco.Dictionary_get(key)
@@ -82,6 +84,7 @@ class QRCodeReader(Node):
         return ids, bboxs
 
     def get_vectors(self, points: List) -> List[ndarray]:
+        """Get the vectors pointing from the camera to the corners of the aruco code"""
         rotation_matrix = get_rotation_matrix(self.rotation + self.rotation_offset)
         translational_matrix = self.position
 
@@ -102,6 +105,7 @@ class QRCodeReader(Node):
     def get_position_from_tf(
         self,
     ) -> Optional[Tuple[Vector3, Quaternion]]:
+        """Get current robot position from tf_buffer.lookup_transform"""
         try:
             transform: TransformStamped = self.tf_buffer.lookup_transform(
                 "odom", "base_footprint", Time()
@@ -119,6 +123,7 @@ class QRCodeReader(Node):
         return (transform.transform.translation, transform.transform.rotation)
 
     def update_position(self) -> None:
+        """Get current robot position"""
         pos = self.get_position()
         if not pos:
             return
@@ -131,6 +136,7 @@ class QRCodeReader(Node):
     def calculate(
         self, points: List[ndarray]
     ) -> Optional[Tuple[ndarray, ndarray, ndarray]]:
+        """Calculate the center, normal_vector and rotation of the aruco code"""
         # Change points to format [x, y, z]
         formatted_points = []
         for point in points:
@@ -142,6 +148,7 @@ class QRCodeReader(Node):
         top_right = formatted_points[2]
         bottom_right = formatted_points[3]
 
+        # Check that the top points are actually higher than the bottom points
         if top_left[2] < bottom_left[2]:
             top_left, bottom_left = bottom_left, top_left
         if top_right[2] < bottom_right[2]:
@@ -190,7 +197,7 @@ class QRCodeReader(Node):
         return center, normal_vector, rotation
 
     def image_callback(self, msg_image: Image) -> None:
-        """Find and publish QR code data"""
+        """Find and publish aruco code data and position from the image"""
 
         image = self.bridge.imgmsg_to_cv2(msg_image, "bgr8")
         image = self.undistort_image(image)
@@ -256,6 +263,7 @@ class QRCodeReader(Node):
             self.publisher.publish(qr_code)
 
     def reset_found_codes(self) -> None:
+        """Clear list of found aruco codes"""
         self.found_codes = {}
 
 
