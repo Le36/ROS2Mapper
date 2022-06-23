@@ -56,7 +56,7 @@ class QRCodeReader(Node):
         self.camera_position = np.array([[0], [0], [0]])
 
         self.subscription = self.create_subscription(
-            Image, "/camera/image_raw", self.image_callback, 10
+            Image, "/image_raw", self.image_callback, 10
         )
         self.publisher = self.create_publisher(QRCode, "/qr_code", 10)
         self.log_publisher = self.create_publisher(String, "/log", 10)

@@ -112,7 +112,7 @@ class ExploreNode(Node):
         self.initial_pose.pose.orientation.w = rotation.w
 
         # Don't set initial pose, because it breaks in Gazebo
-        self.nav.setInitialPose(self.initial_pose)
+        # self.nav.setInitialPose(self.initial_pose)
 
     def make_map(self) -> Optional[Tuple[float, float]]:
         """Turn occupance grid to matrix. Returns next explore target."""
@@ -157,7 +157,7 @@ class ExploreNode(Node):
         self, map: List[List[int]], start_x: int, start_y: int
     ) -> Optional[Tuple[int, int]]:
         """Search for closest unexplored area"""
-        visited = [[False for x in range(len(map[0]))] for y in range(len(map))]
+        visited = [[False for x in range(len(map))] for y in range(len(map[0]))]
         self.get_logger().info(
             str(len(visited))
             + " ja "
@@ -183,7 +183,7 @@ class ExploreNode(Node):
                 if not (0 <= nx < self.map_width and 0 <= ny < self.map_height):
                     continue
                 elif map[ny][nx] == -1 or (
-                    map[ny][nx] == 0
+                    map[ny][nx] < 50
                     and (
                         ny == 0
                         or ny == self.map_height - 1
@@ -191,11 +191,11 @@ class ExploreNode(Node):
                         or nx == self.map_width - 1
                     )
                 ):
-                    if abs(start_x - nx) < 10 or abs(start_y - ny) < 10:
-                        continue
+                    # if abs(start_x - nx) < 10 or abs(start_y - ny) < 10:
+                    #    continue
                     self.get_logger().info("Koordinaatin arvo: " + str(map[ny][nx]))
                     return (nx, ny)
-                elif map[ny][nx] == 0 and not visited[ny][nx]:
+                elif map[ny][nx] < 70 and not visited[ny][nx]:
                     visited[ny][nx] = True
                     queue.append((nx, ny))
 
@@ -223,6 +223,10 @@ class ExploreNode(Node):
             self.get_logger().info("Task **is** complete")
 
         target = self.make_map()
+
+        if not target:
+            target = self.make_map()
+
         if self.previous_target == target or not target:
             if len(self.retrace_coordinates) == 0:
                 return
