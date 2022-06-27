@@ -148,6 +148,7 @@
 3. [Remote] Create the virtual environment
     1. Create the virtual environment
         ```
+        sudo apt install python3.8-venv
         python3 -m venv venv
         source venv/bin/activate
         ```
@@ -190,6 +191,7 @@
 7. [TurtleBot3] Create the virtual environment
     1. Create the virtual environment
         ```
+        sudo apt install python3.8-venv
         python3 -m venv venv
         source venv/bin/activate
         ```
