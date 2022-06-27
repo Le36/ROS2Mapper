@@ -8,7 +8,7 @@ Nav2 is commanded with our version of [nav2 simple commander](../nav2_simple_com
 
 Explore node finds targets using slam toolbox's occupancy grid. Grid is read from topic /map. 
 
-## Prerequires
+## Requirements
 
 Explore node needs slam and nav2 to funtion properly. 
 

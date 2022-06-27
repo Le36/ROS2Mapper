@@ -16,6 +16,15 @@ University of Helsinki, Ohjelmistotuotantoprojekti (Software Engineering Project
 - [Install instructions](documentation/installation.md)
 - [API documentation](documentation/api-documentation.md)
 
+## Nodes
+- [Camera node](workspace/src/camera_node/)
+- [Explore node](workspace/src/explore_node/)
+- [Interfaces](workspace/src/interfaces/)
+- [IO node](workspace/src/io_node/)
+- [Memory node](workspace/src/memory_node/)
+- [Nav2 simple commander](workspace/src/nav2_simple_commander/)
+- [QR Code reader](workspace/src/qr_code_reader/)
+
 ## Dev documents
 
 - [Tutorials](documentation/tutorials.md)
