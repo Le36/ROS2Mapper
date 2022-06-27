@@ -216,6 +216,8 @@
 8.  [TurtleBot3] install the dependencies
     ```
     pip3 install -r requirements.txt
+    sudo apt install python3-rosdep2
+    rosdep update
     rosdep install -i --from-path src --rosdistro foxy -y
     ```
     - Installing the requirements with pip might give the error `ERROR: Failed building wheel for empy`, but it is probably safe to ignore
