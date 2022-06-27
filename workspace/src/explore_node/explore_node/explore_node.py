@@ -147,7 +147,17 @@ class ExploreNode(Node):
 
     def transform_coordinates_into_grid(self) -> None:
         """Convert map coordinate to occupancy grid coordinate"""
+
         if self.map_origin:
+            self.get_logger().info(
+                str(self.robot_position[0])
+                + " robot x ja robot y "
+                + str(self.robot_position[1])
+                + " ja map x "
+                + str(self.map_origin[0])
+                + " ja map y "
+                + str(self.map_origin[1])
+            )
             distance_x = abs(self.robot_position[0] - self.map_origin[0])
             distance_y = abs(self.robot_position[1] - self.map_origin[1])
             self.pos_x = round(distance_x / self.map_resolution)
