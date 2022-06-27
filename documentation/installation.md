@@ -1,12 +1,18 @@
 # Installation
 ## Installing dependencies
-1. [Remote] Install Ros2 and Gazebo
+1. [Remote] Add the apt repository
     ```
-    sudo apt install ros-foxy-desktop python3-colcon-common-extension -y
-    sudo apt install gazebo11 ros-foxy-gazebo-ros-pkgs -y
-    sudo apt install ros-foxy-cartographer ros-foxy-cartographer-ros ros-foxy-navigation2 ros-foxy-nav2-bringup -y
+    sudo apt update && sudo apt install curl gnupg2 lsb-release
+    sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key  -o /usr/share/keyrings/ros-archive-keyring.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
     ```
-2. [Remote] Install TurtleBot3
+2. [Remote] Install Ros2 and Gazebo
+    ```
+    sudo apt install ros-foxy-desktop  -y
+    source /opt/ros/foxy/setup.bash
+    sudo apt install python3-colcon-common-extension gazebo11 ros-foxy-gazebo-ros-pkgs ros-foxy-cartographer ros-foxy-cartographer-ros ros-foxy-navigation2 ros-foxy-nav2-bringup -y
+    ```
+3. [Remote] Install TurtleBot3
     ```
     sudo apt install python3-vcstool
     mkdir -p ~/turtlebot3_ws/src
@@ -16,7 +22,7 @@
     vcs import src < turtlebot3.repos
     colcon build --symlink-install
     ```
-3. [Remote] Setup Ros2
+4. [Remote] Setup Ros2
     Add the source commands to `~/.bashrc` by running
     ```
     echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
@@ -25,7 +31,7 @@
     echo "export TURTLEBOT3_MODEL=burger" >> ~/.bashrc
     echo "export ROS_DOMAIN_ID=30" >> ~/.bashrc
     ```
-4. [Remote] Setup Gazebo
+5. [Remote] Setup Gazebo
     1. Add the following lines to `~/turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot3_gazebo/models/turtlebot3_burger/model.sdf`
         ```xml
               <joint name='camera_joint' type='fixed'>
@@ -99,25 +105,25 @@
         ```
         cp models/qr_code_* ~/.gazebo/models/ -r
         ```
-5. [TurtleBot3] Initial setup
+6. [TurtleBot3] Initial setup
     1. Build the robot
     2. Follow [this](https://emanual.robotis.com/docs/en/platform/turtlebot3/sbc_setup/) tutorial and remember to select `Foxy` as the version
-6. [TurtleBot3] Install Ros 2
+7. [TurtleBot3] Install Ros 2
     ```
     sudo apt install ros-foxy-desktop python3-colcon-common-extension -y
     sudo apt install ros-foxy-cartographer ros-foxy-cartographer-ros ros-foxy-navigation2 ros-foxy-nav2-bringup -y
     ```
-7. [TurtleBot3] Setup the turtlebot 3
+8. [TurtleBot3] Setup the turtlebot 3
     1. Add the source commands to `~/.bashrc` by running
         ```
         echo "source ~/m-explore-ros2/install/setup.bash" >> ~/.bashrc
         echo "export TURTLEBOT3_MODEL=burger" >> ~/.bashrc
         ```
     2. Edit the `~/.bashrc` file and set `ROS_DOMAIN_ID` to equal the value on the remote PC
-8. [TurtleBot3] Setup the Raspberry Pi camera
+9.  [TurtleBot3] Setup the Raspberry Pi camera
     1. Add `start_x=1` to the end of `/boot/firmware/config.txt`
     2. Reboot
-9.  [Remote] Add your ssh key to the Raspberry Pi
+10. [Remote] Add your ssh key to the Raspberry Pi
     1. Generate an ssh key if you already don't have one
     2. Add the public key to the TurtleBot3
         ```
