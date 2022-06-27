@@ -10,7 +10,7 @@
     ```
     sudo apt install ros-foxy-desktop  -y
     source /opt/ros/foxy/setup.bash
-    sudo apt install python3-colcon-common-extension gazebo11 ros-foxy-gazebo-ros-pkgs ros-foxy-cartographer ros-foxy-cartographer-ros ros-foxy-navigation2 ros-foxy-nav2-bringup -y
+    sudo apt install python3-colcon-common-extensions gazebo11 ros-foxy-gazebo-ros-pkgs ros-foxy-cartographer ros-foxy-cartographer-ros ros-foxy-navigation2 ros-foxy-nav2-bringup -y
     ```
 3. [Remote] Install TurtleBot3
     ```
