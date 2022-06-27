@@ -6,7 +6,7 @@
     sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key  -o /usr/share/keyrings/ros-archive-keyring.gpg
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
     ```
-2. [Remote] Install Ros2 and Gazebo
+2. [Remote] Install ROS2 and Gazebo
     ```
     sudo apt install ros-foxy-desktop  -y
     source /opt/ros/foxy/setup.bash
@@ -113,9 +113,9 @@
 7. [TurtleBot3] Initial setup
     1. Build the robot
     2. Follow [this](https://emanual.robotis.com/docs/en/platform/turtlebot3/sbc_setup/) tutorial and remember to select `Foxy` as the version
-8. [TurtleBot3] Install Ros 2
+8. [TurtleBot3] Install ROS2
     ```
-    sudo apt install ros-foxy-desktop python3-colcon-common-extension -y
+    sudo apt install ros-foxy-desktop python3-colcon-common-extensions -y
     sudo apt install ros-foxy-cartographer ros-foxy-cartographer-ros ros-foxy-navigation2 ros-foxy-nav2-bringup -y
     ```
 9.  [TurtleBot3] Setup the turtlebot 3
