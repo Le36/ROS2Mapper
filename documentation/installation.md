@@ -172,6 +172,7 @@
 4. [Remote] Install the dependencies
     ```
     sudo apt install python3-rosdep2
+    rosdep update
     rosdep install -i --from-path src --rosdistro foxy -y
     pip3 install -r requirements.txt
     ```
