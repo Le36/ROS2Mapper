@@ -13,7 +13,7 @@ class MemoryNode(Node):
             QRCode, "/qr_code", self.add_qr_code_callback, 10
         )
         self.srv = self.create_service(
-            GetQRCodes, "get_qr_codes", self.get_qr_codes_callback
+            GetQRCodes, "/get_qr_codes", self.get_qr_codes_callback
         )
         self.publisher = self.create_publisher(QRCode, "/qr_list", 10)
 
