@@ -18,7 +18,7 @@
     mkdir -p ~/turtlebot3_ws/src
     cd ~/turtlebot3_ws
     wget https://raw.githubusercontent.com/ROBOTIS-GIT/turtlebot3/ros2/turtlebot3.repos
-    sed -ie "s/ros2/foxy-devel/g" turtlebot3.repos
+    sed -ie "s/ros2-devel/foxy-devel/g" turtlebot3.repos && sed -ie "$ s/foxy-devel/ros2-devel/" turtlebot3.repos
     vcs import src < turtlebot3.repos
     colcon build --symlink-install
     ```
@@ -31,8 +31,13 @@
     echo "export TURTLEBOT3_MODEL=burger" >> ~/.bashrc
     echo "export ROS_DOMAIN_ID=30" >> ~/.bashrc
     ```
-5. [Remote] Setup Gazebo
-    1. Add the following lines to `~/turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot3_gazebo/models/turtlebot3_burger/model.sdf`
+5. [Remote] Clone the repository
+    ```
+    cd ~
+    git clone https://github.com/Le36/ros2-mapper.git
+    ```
+6. [Remote] Setup Gazebo
+    1. Add the following lines to `~/turtlebot3_ws/src/turtlebot3/turtlebot3_simulations/turtlebot3_gazebo/models/turtlebot3_burger/model.sdf` between the `<model>` tags
         ```xml
               <joint name='camera_joint' type='fixed'>
                 <parent>base_link</parent>
@@ -103,27 +108,27 @@
         ```
     3. Add the QR code models to the Gazebo models directory
         ```
-        cp models/qr_code_* ~/.gazebo/models/ -r
+        cp ~/ros2-mapper/models/qr_code_* ~/.gazebo/models/ -r
         ```
-6. [TurtleBot3] Initial setup
+7. [TurtleBot3] Initial setup
     1. Build the robot
     2. Follow [this](https://emanual.robotis.com/docs/en/platform/turtlebot3/sbc_setup/) tutorial and remember to select `Foxy` as the version
-7. [TurtleBot3] Install Ros 2
+8. [TurtleBot3] Install Ros 2
     ```
     sudo apt install ros-foxy-desktop python3-colcon-common-extension -y
     sudo apt install ros-foxy-cartographer ros-foxy-cartographer-ros ros-foxy-navigation2 ros-foxy-nav2-bringup -y
     ```
-8. [TurtleBot3] Setup the turtlebot 3
+9.  [TurtleBot3] Setup the turtlebot 3
     1. Add the source commands to `~/.bashrc` by running
         ```
         echo "source ~/m-explore-ros2/install/setup.bash" >> ~/.bashrc
         echo "export TURTLEBOT3_MODEL=burger" >> ~/.bashrc
         ```
     2. Edit the `~/.bashrc` file and set `ROS_DOMAIN_ID` to equal the value on the remote PC
-9.  [TurtleBot3] Setup the Raspberry Pi camera
+10. [TurtleBot3] Setup the Raspberry Pi camera
     1. Add `start_x=1` to the end of `/boot/firmware/config.txt`
     2. Reboot
-10. [Remote] Add your ssh key to the Raspberry Pi
+11. [Remote] Add your ssh key to the Raspberry Pi
     1. Generate an ssh key if you already don't have one
     2. Add the public key to the TurtleBot3
         ```
@@ -131,12 +136,16 @@
         ```
 
 ## Installing project
-1. [Remote] Clone the repository and go to the workspace
+1. [Remote] Clone the repository if you have not already
     ```
+    cd ~
     git clone https://github.com/Le36/ros2-mapper.git
-    cd ros2-mapper/workspace
     ```
-2. [Remote] Create the virtual environment
+2. [Remote] Go to the workspace
+    ```
+    cd ~/ros2-mapper/workspace
+    ```
+3. [Remote] Create the virtual environment
     1. Create the virtual environment
         ```
         python3 -m venv venv
@@ -160,23 +169,23 @@
             ```
             export PYTHONPATH=$PYTHONPATH:$(pwd)/venv/lib/python3.8/site-packages
             ``` 
-3. [Remote] Install the dependencies
+4. [Remote] Install the dependencies
     ```
     rosdep install -i --from-path src --rosdistro foxy -y
     pip3 install -r requirements.txt
     ```
     - Installing the requirements with pip might give the error `ERROR: Failed building wheel for empy`, but it is probably safe to ignore
-4. [Remote] Build
+5. [Remote] Build
     ```
     colcon build --symlink-install
     ```
-5. [TurtleBot3] Clone the repository
+6. [TurtleBot3] Clone the repository
     ```
     cd ~
     git clone https://github.com/Le36/ros2-mapper.git
     cd ros2-mapper/workspace
     ```
-6. [TurtleBot3] Create the virtual environment
+7. [TurtleBot3] Create the virtual environment
     1. Create the virtual environment
         ```
         python3 -m venv venv
@@ -200,7 +209,7 @@
             ```
             export PYTHONPATH=$PYTHONPATH:$(pwd)/venv/lib/python3.8/site-packages
             ``` 
-7.  [TurtleBot3] install the dependencies
+8.  [TurtleBot3] install the dependencies
     ```
     pip3 install -r requirements.txt
     rosdep install -i --from-path src --rosdistro foxy -y
