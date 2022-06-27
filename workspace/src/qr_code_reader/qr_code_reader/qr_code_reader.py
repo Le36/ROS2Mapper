@@ -139,10 +139,11 @@ class QRCodeReader(Node):
 
     def update_qr_code_cache(self) -> None:
         """Update QR code cache"""
-        if self.future is None:
-            while not self.qr_code_client.wait_for_service(timeout_sec=0.1):
-                self.get_logger().info("service not available, waiting again...")
-            self.future = self.qr_code_client.call_async(GetQRCodes.Request())
+        if self.future is not None:
+            return
+        while not self.qr_code_client.wait_for_service(timeout_sec=0.1):
+            self.get_logger().info("/get_qr_codes service not available, waiting...")
+        self.future = self.qr_code_client.call_async(GetQRCodes.Request())
 
     def spin(self):
         """Spin node and handle futures"""
@@ -257,7 +258,6 @@ class QRCodeReader(Node):
                 self.get_clock().now().nanoseconds - self.cache_time.nanoseconds
             )
             if cache_time > 5e9:
-                self.get_logger().info("Updating_cache!")
                 self.update_qr_code_cache()
                 continue
 
@@ -291,7 +291,6 @@ class QRCodeReader(Node):
                     )
                     continue
             else:
-                self.get_logger().info("NEW QR CODE")
                 self.log_publisher.publish(
                     String(data=f"Found a new QR code with id {qr_code.id}")
                 )
