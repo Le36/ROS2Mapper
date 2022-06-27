@@ -221,3 +221,8 @@
     rosdep install -i --from-path src --rosdistro foxy -y
     ```
     - Installing the requirements with pip might give the error `ERROR: Failed building wheel for empy`, but it is probably safe to ignore
+
+9. [TurtleBot3] Build
+    ```
+    colcon build --symlink-install
+    ```
