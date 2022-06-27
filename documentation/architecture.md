@@ -110,3 +110,109 @@ Collection of different diagrams
                                                     |__hash__(self): |                                                                                                                                                               
                                                     `----------------'                                                                                                                                                               
 ```
+
+### Database schema ###
+
+```
+,----------------------.                          
+|history               |  ,----------------------.
+|----------------------|  |qr_codes              |
+|id: int               |  |----------------------|
+|center_x: float       |  |center_x: float       |
+|center_y: float       |  |center_y: float       |
+|center_z: float       |  |center_z: float       |
+|normal_vector_x: float|  |normal_vector_x: float|
+|normal_vector_y: float|  |normal_vector_y: float|
+|normal_vector_z: float|  |normal_vector_z: float|
+|rotation_w: float     |  |rotation_w: float     |
+|rotation_x: float     |  |rotation_x: float     |
+|rotation_y: float     |  |rotation_y: float     |
+|rotation_z: float     |  |rotation_z: float     |
+|time: timestamp       |  |id: int               |
+|pk: int               |  `----------------------'
+`----------------------'                          
+                                                  
+                                                  
+    ,--------------.                              
+    |sqlite_master |                              
+    |--------------|                              
+    |type: text    |                              
+    |name: text    |                              
+    |tbl_name: text|                              
+    |rootpage: int |                              
+    |sql: text     |                              
+    `--------------'                              
+```
+
+### Memory node ###
+
+```
+                                                                                                                                                      ,--------------------------------------------------------------.
+                                                                                                                                                      |workspace.src.memory_node.test.memory_node_test.MemoryNodeTest|
+                                                                                                                                                      |--------------------------------------------------------------|
+                                                                                                                                                      |delay:                                                        |
+,---------------------------------------------------------------------.                                                                               |test_node:                                                    |
+|workspace.src.memory_node.memory_node.memory_node.MemoryNode         |                  ,--------------------------------------------------------.   |qr_code:                                                      |
+|---------------------------------------------------------------------|                  |workspace.src.memory_node.test.memory_node_test.NodeNode|   |executor_thread:                                              |
+|srv:                                                                 |                  |--------------------------------------------------------|   |memory_node:                                                  |
+|publisher:                                                           |                  |future:                                                 |   |setUpClass(self):                                             |
+|qr_code_subscription:                                                |                  |publisher:                                              |   |setUp(self):                                                  |
+|__init__(self):                                                      |                  |client:                                                 |   |tearDownClass(self):                                          |
+|add_qr_code_callback(self, qr_code: QRCode):                         |                  |__init__(self):                                         |   |assert_qr_codes_equal(                                        |
+|get_qr_codes_callback(                                               |                  |add_qr_code(self, qr_code: QRCode):                     |   |     self,                                                    |
+|     self, request: GetQRCodes.Request, response: GetQRCodes.Response|                  |get_qr_codes(self):                                     |   |     qr_code_1: QRCode,                                       |
+| ):                                                                  |                  `--------------------------------------------------------'   |     qr_code_2: QRCode,                                       |
+`---------------------------------------------------------------------'                                                                               | ):                                                           |
+                                                                                                                                                      |test_getting_data_when_no_qr_codes_have_been_added(self):     |
+                                                                                                                                                      |test_adding_data(self):                                       |
+                                                                                                                                                      `--------------------------------------------------------------'
+                                                                                                                                                                                                                      
+                                                                                                                                                                                                                      
+                                             ,-------------------------------------------------------------------------------.                                                                                        
+                                             |workspace.src.memory_node.memory_node.submodules.data_repository.DataRepository|                                                                                        
+                                             |-------------------------------------------------------------------------------|                                                                                        
+                                    ,----.   |__init__(self):                                                                |                                                                                        
+                                    |Node|   |qr_code_to_dict(qr_code: QRCode):                                              |                                                                                        
+                                    |----|   |row_to_qr_code(row: List):                                                     |                                                                                        
+                                    `----'   |add_qr_code_to_history(self, qr_code: QRCode):                                 |                                                                                        
+                                             |add_qr_code(self, qr_code: QRCode):                                            |                                                                                        
+                                             |get_qr_codes(self):                                                            |                                                                                        
+                                             |delete_all(self):                                                              |                                                                                        
+                                             `-------------------------------------------------------------------------------'                                                                                        
+                                                                                                                                                                                                                      
+                                      ,----------------------------------------------.                                                                                                                                
+                                      |object                                        |                                                                                                                                
+                                      |----------------------------------------------|                                                                                                                                
+                                      |__doc__:                                      |                                                                                                                                
+                                      |__dict__:                                     |                                                                                                                                
+                                      |__slots__:                                    |                                                                                                                                
+                                      |__module__:                                   |                                                                                                                                
+                                      |__annotations__:                              |                                                                                                                                
+                                      |__class__(self: _T):                          |                                                                                                                                
+                                      |__class__(self, __type: Type[object]):        |                                                                                                                                
+                                      |__init__(self):                               |                                                                                                                                
+                                      |__new__(cls: Type[_T]):                       |                                                                                                                                
+                                      |__setattr__(self, name: str, value: Any):     |                                                                                                                                
+                                      |__eq__(self, o: object):                      |                                                                                                                                
+                                      |__ne__(self, o: object):                      |                                                                                                                                
+                                      |__str__(self):                                |                                                                                                                                
+                                      |__repr__(self):                               |                                                                                                                                
+                                      |__hash__(self):                               |                                                                                                                                
+                                      |__format__(self, format_spec: str):           |                                                                                                                                
+                                      |__getattribute__(self, name: str):            |                                                                                                                                
+                                      |__delattr__(self, name: str):                 |                                                                                                                                
+                                      |__sizeof__(self):                             |                                                                                                                                
+                                      |__reduce__(self):                             |                                                                                                                                
+                                      |__reduce_ex__(self, protocol: SupportsIndex): |                                                                                                                                
+                                      |__reduce_ex__(self, protocol: int):           |                                                                                                                                
+                                      |__dir__(self):                                |                                                                                                                                
+                                      |__init_subclass__(cls):                       |                                                                                                                                
+                                      `----------------------------------------------'                                                                                                                                
+                                                              |                                                                                                                                                       
+                                                                                                                                                                                                                      
+                                                     ,----------------.                                                                                                                                               
+                                                     |typing.Hashable |                                                                                                                                               
+                                                     |----------------|                                                                                                                                               
+                                                     |__hash__(self): |                                                                                                                                               
+                                                     `----------------'                                                                                                                                               
+```
