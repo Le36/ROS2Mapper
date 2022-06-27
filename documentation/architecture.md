@@ -216,3 +216,148 @@ Collection of different diagrams
                                                      |__hash__(self): |                                                                                                                                               
                                                      `----------------'                                                                                                                                               
 ```
+
+### QR reader ###
+
+```
+,-----------------------------------------------------------------------------.                                                                                                                                       
+|workspace.src.qr_code_reader.qr_code_reader.qr_code_reader.QRCodeReader      |                                                                                                                                       
+|-----------------------------------------------------------------------------|                                                                                                                                       
+|get_position:                                                                |                                                                                                                                       
+|qr_code_cache:                                                               |                                                                                                                                       
+|camera_position:                                                             |                                                                                                                                       
+|tf_listener:                                                                 |                                                                                                                                       
+|rotation:                                                                    |                                                                                                                                       
+|tf_buffer:                                                                   |                                                                                                                                       
+|threshold:                                                                   |                                                                                                                                       
+|subscription:                                                                |                                                                   ,------------------------------------------------------------------.
+|cache_time:                                                                  |                                                                   |workspace.src.qr_code_reader.test.qr_code_node_test.QRCodeNodeTest|
+|cv_bridge:                                                                   |                                                                   |------------------------------------------------------------------|
+|future:                                                                      |                                                                   |delay:                                                            |
+|qr_code_client:                                                              |                                                                   |subscriber:                                                       |
+|log_publisher:                                                               |                                                                   |qr_code_reader_node:                                              |
+|last_update:                                                                 |  ,------------------------------------------------------------.   |test_node:                                                        |
+|rotation_offset:                                                             |  |workspace.src.qr_code_reader.test.qr_code_node_test.NodeNode|   |qr_code:                                                          |
+|camera_vector:                                                               |  |------------------------------------------------------------|   |executor_thread:                                                  |
+|publisher:                                                                   |  |publisher:                                                  |   |setUpClass(self):                                                 |
+|position:                                                                    |  |bridge:                                                     |   |setUp(self):                                                      |
+|__init__(                                                                    |  |subscription:                                               |   |tearDownClass(self):                                              |
+|     self,                                                                   |  |__init__(self, subscriber_callback):                        |   |assert_qr_codes_equal(                                            |
+|     threshold: float = TF_THRESHOLD,                                        |  |send_image(self, image_filename: str):                      |   |     self,                                                        |
+|     get_position: Callable[[], Optional[Tuple[Vector3, Quaternion]]] = None,|  `------------------------------------------------------------'   |     qr_code_1: QRCode,                                           |
+| ):                                                                          |                                                                   |     qr_code_2: QRCode,                                           |
+|undistort_image(self, image: ndarray):                                       |                                                                   | ):                                                               |
+|detect_code(self, image: ndarray):                                           |                                                                   |test_sending_image_without_a_qr_code(self):                       |
+|get_vectors(self, points: List):                                             |                                                                   |test_sending_image_with_a_qr_code(self):                          |
+|get_position_from_tf(                                                        |                                                                   |test_sending_image_with_the_same_qr_code_twice(self):             |
+|     self,                                                                   |                                                                   |test_sending_image_twice_but_changing_robot_position(self):       |
+| ):                                                                          |                                                                   `------------------------------------------------------------------'
+|update_position(self):                                                       |                                                                                                                                       
+|update_qr_code_cache(self):                                                  |                                                                                                                                       
+|spin(self):                                                                  |                                                                                                                                       
+|calculate(                                                                   |                                                                                                                                       
+|     self, points: List[ndarray]                                             |                                                                                                                                       
+| ):                                                                          |                                                                                                                                       
+|image_callback(self, msg_image: Image):                                      |                                                                                                                                       
+|reset_found_codes(self):                                                     |                                                                                                                                       
+`-----------------------------------------------------------------------------'                                                                                                                                       
+                                                                                                                                                                                                                      
+                                                                                                                                                                                                                      
+                                                                                                      ,--------------------------------------------------------------.                                                
+                                                                                       ,----.         |workspace.src.qr_code_reader.test.qr_code_node_test.Subscriber|                                                
+                                                                                       |Node|         |--------------------------------------------------------------|                                                
+                                                                                       |----|         |calls:                                                        |                                                
+                                                                                       `----'         |__init__(self):                                               |                                                
+                                                                                                      |callback(self, qr_code: QRCode):                              |                                                
+                                                                                                      `--------------------------------------------------------------'                                                
+                                                                                                                                                                                                                      
+                                                                      ,----------------------------------------------.                                                                                                
+                                                                      |object                                        |                                                                                                
+                                                                      |----------------------------------------------|                                                                                                
+                                                                      |__doc__:                                      |                                                                                                
+                                                                      |__dict__:                                     |                                                                                                
+                                                                      |__slots__:                                    |                                                                                                
+                                                                      |__module__:                                   |                                                                                                
+                                                                      |__annotations__:                              |                                                                                                
+                                                                      |__class__(self: _T):                          |                                                                                                
+                                                                      |__class__(self, __type: Type[object]):        |                                                                                                
+                                                                      |__init__(self):                               |                                                                                                
+                                                                      |__new__(cls: Type[_T]):                       |                                                                                                
+                                                                      |__setattr__(self, name: str, value: Any):     |                                                                                                
+                                                                      |__eq__(self, o: object):                      |                                                                                                
+                                                                      |__ne__(self, o: object):                      |                                                                                                
+                                                                      |__str__(self):                                |                                                                                                
+                                                                      |__repr__(self):                               |                                                                                                
+                                                                      |__hash__(self):                               |                                                                                                
+                                                                      |__format__(self, format_spec: str):           |                                                                                                
+                                                                      |__getattribute__(self, name: str):            |                                                                                                
+                                                                      |__delattr__(self, name: str):                 |                                                                                                
+                                                                      |__sizeof__(self):                             |                                                                                                
+                                                                      |__reduce__(self):                             |                                                                                                
+                                                                      |__reduce_ex__(self, protocol: SupportsIndex): |                                                                                                
+                                                                      |__reduce_ex__(self, protocol: int):           |                                                                                                
+                                                                      |__dir__(self):                                |                                                                                                
+                                                                      |__init_subclass__(cls):                       |                                                                                                
+                                                                      `----------------------------------------------'                                                                                                
+                                                                                              |                                                                                                                       
+                                                                                                                                                                                                                      
+                                                                                     ,----------------.                                                                                                               
+                                                                                     |typing.Hashable |                                                                                                               
+                                                                                     |----------------|                                                                                                               
+                                                                                     |__hash__(self): |                                                                                                               
+                                                                                     `----------------'                                                                                                               
+```
+
+### Explore node ###
+
+```
+,--------------------------------------------------------------------.
+|workspace.src.explore_node.explore_node.explore_node.ExploreNode    |
+|--------------------------------------------------------------------|
+|map_origin:                                                         |
+|nav:                                                                |
+|commander_subscription:                                             |
+|go_to_qr_code_subscription:                                         |
+|robot_position:                                                     |
+|map_resolution:                                                     |
+|tf_listener:                                                        |
+|searching:                                                          |
+|map_width:                                                          |
+|previous_target:                                                    |
+|pos_y:                                                              |
+|start_time:                                                         |
+|pos_x:                                                              |
+|map_occupancy_listener:                                             |
+|map_height:                                                         |
+|retrace_index:                                                      |
+|initial_pose:                                                       |
+|retrace_coordinates:                                                |
+|map_set:                                                            |
+|map:                                                                |
+|retracing:                                                          |
+|__init__(self, nav: BasicNavigator):                                |
+|go_to_qr_code(self, qrcode: QRCode):                                |
+|commander_callback(self, msg: String):                              |
+|map_listener_callback(self, occupancy_grid: OccupancyGrid):         |
+|tf_listener_callback(self, msg: TFMessage):                         |
+|set_initial_pose(self, translation: Vector3, rotation: Quaternion): |
+|make_map(self):                                                     |
+|find_target(self, map: List[List[int]]):                            |
+|transform_coordinates_into_grid(self):                              |
+|breadth_first_search(                                               |
+|     self, map: List[List[int]], start_x: int, start_y: int         |
+| ):                                                                 |
+|cancel_explore(self):                                               |
+|start_explore(self):                                                |
+|explore(self):                                                      |
+|retrace(self):                                                      |
+|move(self, x: float, y: float):                                     |
+|move_and_spin(self, x: float, y: float):                            |
+`--------------------------------------------------------------------'
+                                   |                                  
+                                   |                                  
+                                ,----.                                
+                                |Node|                                
+                                |----|                                
+                                `----'                                
+```
