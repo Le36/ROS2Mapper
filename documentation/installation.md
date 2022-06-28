@@ -170,25 +170,29 @@
             ```
             export PYTHONPATH=$PYTHONPATH:$(pwd)/venv/lib/python3.8/site-packages
             ``` 
-4. [Remote] Install the dependencies
+4. [Remote] Setup rosdep
     ```
-    sudo apt install python3-rosdep2
+    sudo apt install python3-rosdep2 -y
     rosdep update
+    ```
+5. [Remote] Install the dependencies
+    ```
+    sudo apt install pycodestyle python3-opencv -y
     rosdep install -i --from-path src --rosdistro foxy -y
     pip3 install -r requirements.txt
     ```
     - Installing the requirements with pip might give the error `ERROR: Failed building wheel for empy`, but it is probably safe to ignore
-5. [Remote] Build
+6. [Remote] Build
     ```
     colcon build --symlink-install
     ```
-6. [TurtleBot3] Clone the repository
+7. [TurtleBot3] Clone the repository
     ```
     cd ~
     git clone https://github.com/Le36/ros2-mapper.git
     cd ros2-mapper/workspace
     ```
-7. [TurtleBot3] Create the virtual environment
+8. [TurtleBot3] Create the virtual environment
     1. Create the virtual environment
         ```
         sudo apt install python3.8-venv
@@ -213,16 +217,20 @@
             ```
             export PYTHONPATH=$PYTHONPATH:$(pwd)/venv/lib/python3.8/site-packages
             ``` 
-8.  [TurtleBot3] install the dependencies
+9. [TurtleBot3] Setup rosdep
     ```
-    pip3 install -r requirements.txt
-    sudo apt install python3-rosdep2
+    sudo apt install python3-rosdep2 -y
     rosdep update
+    ```
+10. [TurtleBot3] install the dependencies
+    ```
+    sudo apt install python3-opencv -y
+    pip3 install -r requirements.txt
     rosdep install -i --from-path src --rosdistro foxy -y
     ```
     - Installing the requirements with pip might give the error `ERROR: Failed building wheel for empy`, but it is probably safe to ignore
 
-9. [TurtleBot3] Build
+11. [TurtleBot3] Build
     ```
     colcon build --symlink-install
     ```
