@@ -7,7 +7,6 @@ import tty
 from typing import List
 
 from interfaces.msg import QRCode
-from std_msgs.msg import String
 
 TURTLEBOT3_MODEL = os.environ["TURTLEBOT3_MODEL"]
 
@@ -117,8 +116,10 @@ class QRMenu:
                     self._print_menu()
                     print("Navigation stopped")
                 elif index > len(self._qr_codes):
+                    self._print_menu()
                     print("Index out of range")
                 else:
+                    self._stop_exploring()
                     self._qr_navigation_callback(self._qr_codes[index - 1])
                     self._print_menu()
                     print(
