@@ -4,7 +4,7 @@ import sys
 import termios
 import threading
 import tty
-from typing import Callable
+from typing import Callable, List
 
 from std_msgs.msg import String
 
@@ -55,7 +55,15 @@ class MainMenu:
         """Publish user input for starting/stopping autonomous exploration."""
         self._publisher.publish(String(data=msg_command))
 
-    def _get_key(self, settings):
+    def _get_key(self, settings: List) -> str:
+        """Interpret the key input by the user
+
+        Args:
+            settings (List): Settings fetched with termios.tcgetattr(sys.stdin)
+
+        Returns:
+            str: The key input by the user
+        """
         tty.setraw(sys.stdin.fileno())
         rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
         if rlist:
@@ -66,11 +74,13 @@ class MainMenu:
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
         return key
 
-    def _print_menu(self):
+    def _print_menu(self) -> None:
+        """Prints the main menu"""
         os.system("clear")
         print(MAIN_MENU)
 
-    def _handle_io(self):
+    def _handle_io(self) -> None:
+        """Handles the inputs of the user while in the menu"""
         self._print_menu()
         log_count = 0
 
