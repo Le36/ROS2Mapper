@@ -109,6 +109,7 @@
         ```
     3. Add the QR code models to the Gazebo models directory
         ```
+        mkdir -p ~/.gazebo/models
         cp ~/ros2-mapper/models/qr_code_* ~/.gazebo/models/ -r
         ```
 7. [TurtleBot3] Initial setup
