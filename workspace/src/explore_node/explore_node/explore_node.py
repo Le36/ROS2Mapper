@@ -80,8 +80,6 @@ class ExploreNode(Node):
         ]
         self.map_resolution = occupancy_grid.info.resolution
 
-        # self.get_logger().info(str(occupancy_grid))
-
         if self.initial_pose is not None:
             if self.searching:
                 self.explore()
@@ -126,9 +124,6 @@ class ExploreNode(Node):
             for x in range(self.map_width):
                 map[y].append(self.map[y * self.map_width + x])
 
-        # for x in map:
-        #    self.get_logger().info(str(x))
-
         if self.pos_x >= 0 and self.pos_y >= 0:
             value = self.find_target(map)
             return value
@@ -149,15 +144,6 @@ class ExploreNode(Node):
         """Convert map coordinate to occupancy grid coordinate"""
 
         if self.map_origin:
-            """self.get_logger().info(
-                str(self.robot_position[0])
-                + " robot x ja robot y "
-                + str(self.robot_position[1])
-                + " ja map x "
-                + str(self.map_origin[0])
-                + " ja map y "
-                + str(self.map_origin[1])
-            )"""
             distance_x = abs(self.robot_position[0] - self.map_origin[0])
             distance_y = abs(self.robot_position[1] - self.map_origin[1])
             self.pos_x = round(distance_x / self.map_resolution)
@@ -168,23 +154,10 @@ class ExploreNode(Node):
     ) -> Optional[Tuple[int, int]]:
         """Search for closest unexplored area"""
         visited = [[False for x in range(len(map[0]))] for y in range(len(map))]
-        """self.get_logger().info(
-            str(len(visited))
-            + " ja "
-            + str(len(visited[0]))
-            + " ja x "
-            + str(start_x)
-            + " ja y "
-            + str(start_y)
-        )"""
         visited[start_y][start_x] = True
         queue = [(start_x, start_y)]
         self.searching = True
         directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-        # self.get_logger().info(
-        #    "Width " + str(self.map_width) + " Height " + str(self.map_height)
-        # )
-        # self.get_logger().info(str(len(map)) + " " + str(len(map[0])))
 
         while queue:
             x, y = queue.pop(0)
@@ -207,11 +180,6 @@ class ExploreNode(Node):
                         mx, my = nx + dir[0], ny + dir[1]
                         if 0 <= mx < len(map[0]) and 0 <= my < len(map):
                             continue
-                        # if map[my][mx] == 100:
-                        #    self.get_logger().info("testing")
-                        # break
-
-                    self.get_logger().info("Koordinaatin arvo: " + str(map[ny][nx]))
                     return (nx, ny)
                 elif map[ny][nx] < 70 and not visited[ny][nx]:
                     visited[ny][nx] = True
