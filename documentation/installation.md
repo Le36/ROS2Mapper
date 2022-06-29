@@ -2,7 +2,7 @@
 ## Installing dependencies
 1. [Remote] Add the apt repository
     ```
-    sudo apt update && sudo apt install curl gnupg2 lsb-release
+    sudo apt update && sudo apt install curl gnupg2 lsb-release -y
     sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key  -o /usr/share/keyrings/ros-archive-keyring.gpg
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
     ```
@@ -14,7 +14,7 @@
     ```
 3. [Remote] Install TurtleBot3
     ```
-    sudo apt install python3-vcstool
+    sudo apt install python3-vcstool -y
     mkdir -p ~/turtlebot3_ws/src
     cd ~/turtlebot3_ws
     wget https://raw.githubusercontent.com/ROBOTIS-GIT/turtlebot3/ros2/turtlebot3.repos
@@ -150,7 +150,7 @@
 3. [Remote] Create the virtual environment
     1. Create the virtual environment
         ```
-        sudo apt install python3.8-venv
+        sudo apt install python3.8-venv -y
         python3 -m venv venv
         source venv/bin/activate
         ```
@@ -198,7 +198,7 @@
 8. [TurtleBot3] Create the virtual environment
     1. Create the virtual environment
         ```
-        sudo apt install python3.8-venv
+        sudo apt install python3.8-venv -y
         python3 -m venv venv
         source venv/bin/activate
         ```
