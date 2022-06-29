@@ -265,6 +265,7 @@ class ExploreNode(Node):
         if not self.spinning:
             self.spinning = True
             self.nav.spin(self.spin_dist)
+            return
 
         target = self.make_map()
 
