@@ -35,4 +35,8 @@ I also tried to look into a solution that would circumvent m-explorer completely
 
 - I've also noticed that jumping straight into Turtlebot without first e.g. creating your own super simple robot with a URDF-file can be a hassle. Without understanding the basics of how ros2 simulates robots and how it interacts with the robot's parts you can waste time on fairly simple issues.
 - https://automaticaddison.com/ provides nice tutorials that try to explain how ros2 works at least to some degree.
-- Even though I achieved literally nothing I feel like I learned more this week than the two weeks before it 
+- Even though I achieved literally nothing I feel like I learned more this week than the two weeks before it
+
+# Sprint 3
+
+I'm doing this after the fact due to my work week being cut short by covid, so sorry for the brevity. The third sprint proved to be the biggest challenge as we had to move from the third party explorer_lite package to our own package due to explorer_lite not being cofigurable at all. Once we got the node started (Sami initialized it) we managed to add some functionality everyday, which was a big departure from the usual. Biggest things I made during the sprint were the breadth first search, subscription to /tf topic and installing a slightly modified simple commander api from nav2. There was a lot of time spent looking into which topics were relevant to our issues and working with the data we got from them. New issues popped constantly due to nav being  cumbersome, especially with the physical robot, which I don't think we got working in time for the customer meeting.
