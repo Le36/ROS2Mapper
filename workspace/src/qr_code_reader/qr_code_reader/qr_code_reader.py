@@ -20,7 +20,8 @@ from tf2_ros.transform_listener import TransformListener
 
 from .math import *
 
-QR_CODE_SIZE = 200 / 1000
+DEFAULT_QR_CODE_SIZE = 200 / 1000
+DEFAULT_TF_THRESHOLD = 0.01
 CAMERA_MATRIX = np.array(
     [
         [525.44920374, 0.0, 330.24175119],
@@ -30,18 +31,16 @@ CAMERA_MATRIX = np.array(
 )
 DISTORTION = np.array([[0.25106112, -0.6379611, 0.0069353, 0.01579591, 0.40809116]])
 INVERSE_CAMERA_MATRIX = np.linalg.inv(CAMERA_MATRIX)
-TF_THRESHOLD = 0.01
 
 
 class QRCodeReader(Node):
     def __init__(
         self,
-        threshold: float = TF_THRESHOLD,
+        default_tf_threshold: float = DEFAULT_TF_THRESHOLD,
         get_position: Callable[[], Optional[Tuple[Vector3, Quaternion]]] = None,
     ) -> None:
         super().__init__("qr_code_reader")
 
-        self.threshold = threshold
         self.get_position = get_position if get_position else self.get_position_from_tf
 
         self.qr_code_cache: Dict[int, QRCode] = {}
@@ -51,7 +50,6 @@ class QRCodeReader(Node):
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
 
-        np.set_printoptions(suppress=True, precision=3)
         self.last_update = self.get_clock().now()
         self.position = np.array([[0], [0], [0]])
         self.rotation = np.array([[0], [0], [0]])
@@ -65,6 +63,19 @@ class QRCodeReader(Node):
         self.publisher = self.create_publisher(QRCode, "/qr_code", 10)
         self.log_publisher = self.create_publisher(String, "/log", 10)
 
+        self.declare_parameter("tf_threshold", default_tf_threshold)
+        self.declare_parameter("qr_code_size", DEFAULT_QR_CODE_SIZE)
+        self.set_parameters(
+            [
+                rclpy.parameter.Parameter(
+                    "tf_threshold", rclpy.Parameter.Type.DOUBLE, default_tf_threshold
+                ),
+                rclpy.parameter.Parameter(
+                    "qr_code_size", rclpy.Parameter.Type.DOUBLE, DEFAULT_QR_CODE_SIZE
+                ),
+            ]
+        )
+
     def undistort_image(self, image: ndarray) -> ndarray:
         """Return undistorted image"""
         h, w = image.shape[:2]
@@ -76,8 +87,8 @@ class QRCodeReader(Node):
         )
         return undistorted
 
-    def detect_code(self, image: ndarray) -> Tuple[ndarray, ndarray]:
-        """Detect aruco codes from the image and return the corners and ids"""
+    def detect_codes(self, image: ndarray) -> Tuple[ndarray, ndarray]:
+        """Detect aruco codes from the image and return the pixel coordinates of the corners and the ids of the QR codes"""
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         key = getattr(aruco, f"DICT_{4}X{4}_{250}")
         arucoDict = aruco.Dictionary_get(key)
@@ -88,7 +99,10 @@ class QRCodeReader(Node):
         return ids, bboxs
 
     def get_vectors(self, points: List) -> List[ndarray]:
-        """Get the vectors pointing from the camera to the corners of the aruco code"""
+        """Get the vectors pointing from the camera to the corners of the aruco code
+
+        [Source for calculations](https://math.stackexchange.com/a/4405154)
+        """
         rotation_matrix = get_rotation_matrix(self.rotation + self.rotation_offset)
         translational_matrix = self.position
 
@@ -109,13 +123,17 @@ class QRCodeReader(Node):
     def get_position_from_tf(
         self,
     ) -> Optional[Tuple[Vector3, Quaternion]]:
-        """Get current robot position from tf_buffer.lookup_transform"""
+        """Get current robot position from tf_buffer.lookup_transform
+
+        Returns:
+            Optional[Tuple[Vector3, Quaternion]]: (translation, rotation) or None if fetching the current transform fails
+        """
         try:
             transform: TransformStamped = self.tf_buffer.lookup_transform(
                 "odom", "base_footprint", Time()
             )
         except TransformException as exception:
-            self.get_logger().info(
+            self.get_logger().warn(
                 f"Could not transform odom to base_footprint: {exception}"
             )
             return None
@@ -127,7 +145,7 @@ class QRCodeReader(Node):
         return (transform.transform.translation, transform.transform.rotation)
 
     def update_position(self) -> None:
-        """Get current robot position"""
+        """try to update current robot position"""
         pos = self.get_position()
         if not pos:
             return
@@ -149,15 +167,15 @@ class QRCodeReader(Node):
         """Spin node and handle futures"""
         while rclpy.ok():
             rclpy.spin_once(self)
-            if self.future:
-                if self.future.done():
-                    response = self.future.result()
-                    self.future = None
+            if not self.future or not self.future.done():
+                continue
+            response = self.future.result()
+            self.future = None
 
-                    self.qr_code_cache.clear()
-                    self.cache_time = self.get_clock().now()
-                    for qr_code in response.qr_codes:
-                        self.qr_code_cache[qr_code.id] = qr_code
+            self.qr_code_cache.clear()
+            self.cache_time = self.get_clock().now()
+            for qr_code in response.qr_codes:
+                self.qr_code_cache[qr_code.id] = qr_code
 
     def calculate(
         self, points: List[ndarray]
@@ -180,7 +198,7 @@ class QRCodeReader(Node):
         if top_right[2] < bottom_right[2]:
             top_right, bottom_right = bottom_right, top_right
 
-        # Move vectors until the height diference is equal to the height of the QR code
+        # Check the height differences to avoid dividing by zero
         if top_left[2] - bottom_left[2] == 0:
             self.get_logger().warn(
                 "Top left and bottom left coordinates are at the same height"
@@ -191,24 +209,29 @@ class QRCodeReader(Node):
                 "Top right and bottom right coordinates are at the same height"
             )
             return
-        k = QR_CODE_SIZE / (top_left[2] - bottom_left[2])
+
+        # Move vectors until the height diference is equal to the height of the QR code
+        qr_code_size = self.get_parameter("qr_code_size").get_parameter_value()
+        k = qr_code_size.double_value / (top_left[2] - bottom_left[2])
         top_left *= k
         bottom_left *= k
 
-        k = QR_CODE_SIZE / (top_right[2] - bottom_right[2])
+        k = qr_code_size.double_value / (top_right[2] - bottom_right[2])
         top_right *= k
         bottom_right *= k
 
-        # Add the camera position to the points
+        # Reshape the camera position matrix
         new_cam_world = self.camera_position
         new_cam_world.shape = (1, 3)
         new_cam_world = new_cam_world[0]
+
+        # Add the camera position to the points
         top_left += new_cam_world
         bottom_left += new_cam_world
         top_right += new_cam_world
         bottom_right += new_cam_world
 
-        # Calculate the normal vector
+        # Calculate the normal vector of the QR code
         normal_vector = np.cross(top_right - top_left, top_right - bottom_right)
         normal_vector /= np.linalg.norm(normal_vector)
 
@@ -224,10 +247,10 @@ class QRCodeReader(Node):
 
     def image_callback(self, msg_image: Image) -> None:
         """Find and publish aruco code data and position from the image"""
-
         image = self.cv_bridge.imgmsg_to_cv2(msg_image, "bgr8")
+
         image = self.undistort_image(image)
-        data_list, corners_list = self.detect_code(image)
+        data_list, corners_list = self.detect_codes(image)
 
         for i, corners in enumerate(corners_list):
             code_id = int(data_list[i][0])
@@ -237,15 +260,15 @@ class QRCodeReader(Node):
             now = self.get_clock().now()
             diff = (now.nanoseconds - self.last_update.nanoseconds) / 1e9
 
-            if self.threshold >= 0 and abs(diff) > self.threshold:
+            threshold = self.get_parameter("tf_threshold").get_parameter_value()
+            if threshold.double_value >= 0 and abs(diff) > threshold.double_value:
                 self.get_logger().debug(
-                    f"Transform too old ({diff} > {self.threshold}), cannot get accurate location for QR code"
+                    f"Transform too old ({diff} > {threshold.double_value}), cannot get accurate location for QR code"
                 )
-                continue
+                return
 
             vectors = self.get_vectors(corners)
             center, normal_vector, rotation = self.calculate(vectors)
-
             qr_code = QRCode(
                 id=code_id,
                 center=center,
@@ -259,7 +282,7 @@ class QRCodeReader(Node):
             )
             if cache_time > 5e9:
                 self.update_qr_code_cache()
-                continue
+                return
 
             if qr_code.id in self.qr_code_cache:
                 old_qr_code = self.qr_code_cache[qr_code.id]
@@ -298,7 +321,7 @@ class QRCodeReader(Node):
             self.publisher.publish(qr_code)
 
     def reset_found_codes(self) -> None:
-        """Clear list of found aruco codes"""
+        """Clear the QR code cache"""
         self.qr_code_cache.clear()
 
 
