@@ -4,7 +4,7 @@ import sys
 import termios
 import threading
 import tty
-from typing import Callable
+from typing import Callable, List
 
 from std_msgs.msg import String
 
@@ -37,17 +37,30 @@ class MainMenu:
         load_manual_control_view: Callable[[], None],
         load_qr_view: Callable[[], None],
     ) -> None:
+        """Set the view load functions
+
+        Args:
+            load_manual_control_view (Callable[[], None]): Manual control view loader function
+            load_qr_view (Callable[[], None]): QR view loader function
+        """
         self._load_manual_control_view = load_manual_control_view
         self._load_qr_view = load_qr_view
 
     def open(self) -> None:
+        """Open the main menu view"""
         self.running = True
         self._main()
 
     def close(self) -> None:
+        """Close the main menu view"""
         self.running = False
 
     def log(self, data: str) -> None:
+        """Log given data to logger
+
+        Args:
+            data (str): Data to log
+        """
         if self.running:
             self._data_to_log = data
 
@@ -55,7 +68,15 @@ class MainMenu:
         """Publish user input for starting/stopping autonomous exploration."""
         self._publisher.publish(String(data=msg_command))
 
-    def _get_key(self, settings):
+    def _get_key(self, settings: List) -> str:
+        """Interpret the key input by the user
+
+        Args:
+            settings (List): Settings fetched with termios.tcgetattr(sys.stdin)
+
+        Returns:
+            str: The key input by the user
+        """
         tty.setraw(sys.stdin.fileno())
         rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
         if rlist:
@@ -66,11 +87,13 @@ class MainMenu:
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
         return key
 
-    def _print_menu(self):
+    def _print_menu(self) -> None:
+        """Prints the main menu"""
         os.system("clear")
         print(MAIN_MENU)
 
-    def _handle_io(self):
+    def _handle_io(self) -> None:
+        """Handles the inputs of the user while in the menu"""
         self._print_menu()
         log_count = 0
 

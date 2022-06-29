@@ -39,6 +39,7 @@ import select
 import sys
 import termios
 import tty
+from typing import List
 
 from geometry_msgs.msg import Twist
 
@@ -83,14 +84,24 @@ class ManualControl:
         self._publisher = publisher
         self._twist = Twist()
 
-    def open(self):
+    def open(self) -> None:
+        """Open the manual control view"""
         self.running = True
         self._main()
 
-    def close(self):
+    def close(self) -> None:
+        """Close the manual control view"""
         self.running = False
 
-    def _get_key(self, settings):
+    def _get_key(self, settings: List) -> str:
+        """Interpret the key input by the user
+
+        Args:
+            settings (List): Settings fetched with termios.tcgetattr(sys.stdin)
+
+        Returns:
+            str: The key input by the user
+        """
         try:
             tty.setraw(sys.stdin.fileno())
             rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
@@ -104,7 +115,15 @@ class ManualControl:
         except ValueError:
             exit(0)
 
-    def _print_vels(self, target_linear_velocity, target_angular_velocity):
+    def _print_vels(
+        self, target_linear_velocity: float, target_angular_velocity: float
+    ):
+        """Print the linear and angular velocities of the robot
+
+        Args:
+            target_linear_velocity (float): Target linear velocity
+            target_angular_velocity (float): Target angular velocity
+        """
         os.system("clear")
         print(CONTROL_MENU)
         print(
@@ -113,7 +132,17 @@ class ManualControl:
             )
         )
 
-    def _make_simple_profile(self, output, input, slop):
+    def _make_simple_profile(self, output: float, input: float, slop: float) -> float:
+        """Increase or decrease given (linear/angular) velocity
+
+        Args:
+            output (float): Current velocity
+            input (float): Target velocity
+            slop (float): Increase/decrease rate
+
+        Returns:
+            float: Updated velocity
+        """
         if input > output:
             output = min(input, output + slop)
         elif input < output:
@@ -123,7 +152,19 @@ class ManualControl:
 
         return output
 
-    def _constrain(self, input_vel, low_bound, high_bound):
+    def _constrain(
+        self, input_vel: float, low_bound: float, high_bound: float
+    ) -> float:
+        """Constrains the robot velocity to a given range
+
+        Args:
+            input_vel (float): Current velocity
+            low_bound (float): Minimum velocity
+            high_bound (float): Maximum velocity
+
+        Returns:
+            float: Updated velocity
+        """
         if input_vel < low_bound:
             input_vel = low_bound
         elif input_vel > high_bound:
@@ -133,13 +174,29 @@ class ManualControl:
 
         return input_vel
 
-    def _check_linear_limit_velocity(self, velocity):
+    def _check_linear_limit_velocity(self, velocity: float) -> float:
+        """Checks that increasing decreasing linear velocity won't set it out of the given range
+
+        Args:
+            velocity (float): Target velocity
+
+        Returns:
+            float: Updated velocity
+        """
         if TURTLEBOT3_MODEL == "burger":
             return self._constrain(velocity, -BURGER_MAX_LIN_VEL, BURGER_MAX_LIN_VEL)
         else:
             return self._constrain(velocity, -WAFFLE_MAX_LIN_VEL, WAFFLE_MAX_LIN_VEL)
 
-    def _check_angular_limit_velocity(self, velocity):
+    def _check_angular_limit_velocity(self, velocity: float) -> float:
+        """Checks that increasing decreasing angular velocity won't set it out of the given range
+
+        Args:
+            velocity (float): Target velocity
+
+        Returns:
+            float: Updated velocity
+        """
         if TURTLEBOT3_MODEL == "burger":
             return self._constrain(velocity, -BURGER_MAX_ANG_VEL, BURGER_MAX_ANG_VEL)
         else:
