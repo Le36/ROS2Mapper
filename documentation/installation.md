@@ -183,7 +183,7 @@
     rosdep install -i --from-path src --rosdistro foxy -y
     pip3 install -r requirements.txt
     ```
-    - Installing the requirements with pip might give the error `ERROR: Failed building wheel for empy`, but it is probably safe to ignore
+    - Installing the requirements with pip might give the error `ERROR: Failed building wheel for empy/pytest-env`, but it is probably safe to ignore
 6. [Remote] Build
     ```
     colcon build --symlink-install
@@ -231,7 +231,7 @@
     pip3 install -r requirements.txt
     rosdep install -i --from-path src --rosdistro foxy -y
     ```
-    - Installing the requirements with pip might give the error `ERROR: Failed building wheel for empy`, but it is probably safe to ignore
+    - Installing the requirements with pip might give the error `ERROR: Failed building wheel for empy/pytest-env`, but it is probably safe to ignore
 
 11. [TurtleBot3] Build
     ```
