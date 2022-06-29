@@ -40,9 +40,7 @@ import sys
 import termios
 import tty
 
-import rclpy
 from geometry_msgs.msg import Twist
-from rclpy.qos import QoSProfile
 
 BURGER_MAX_LIN_VEL = 0.22
 BURGER_MAX_ANG_VEL = 2.84
@@ -79,9 +77,11 @@ Communications Failed
 
 
 class ManualControl:
-    def __init__(self, return_to_menu) -> None:
+    def __init__(self, return_to_menu, publisher) -> None:
         self._return_to_menu = return_to_menu
         self.running = False
+        self._publisher = publisher
+        self._twist = Twist()
 
     def open(self):
         self.running = True
@@ -91,15 +91,18 @@ class ManualControl:
         self.running = False
 
     def _get_key(self, settings):
-        tty.setraw(sys.stdin.fileno())
-        rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
-        if rlist:
-            key = sys.stdin.read(1)
-        else:
-            key = ""
+        try:
+            tty.setraw(sys.stdin.fileno())
+            rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
+            if rlist:
+                key = sys.stdin.read(1)
+            else:
+                key = ""
 
-        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
-        return key
+            termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
+            return key
+        except ValueError:
+            exit(0)
 
     def _print_vels(self, target_linear_velocity, target_angular_velocity):
         os.system("clear")
@@ -145,10 +148,6 @@ class ManualControl:
     def _main(self):
         settings = termios.tcgetattr(sys.stdin)
 
-        qos = QoSProfile(depth=10)
-        node = rclpy.create_node("teleop_keyboard")
-        pub = node.create_publisher(Twist, "cmd_vel", qos)
-
         target_linear_velocity = 0.0
         target_angular_velocity = 0.0
         control_linear_velocity = 0.0
@@ -186,9 +185,19 @@ class ManualControl:
                 control_angular_velocity = 0.0
                 self._print_vels(target_linear_velocity, target_angular_velocity)
             elif key == "m":
+                twist = Twist()
+                twist.linear.x = 0.0
+                twist.linear.y = 0.0
+                twist.linear.z = 0.0
+
+                twist.angular.x = 0.0
+                twist.angular.y = 0.0
+                twist.angular.z = 0.0
+
+                self._publisher.publish(twist)
                 self._return_to_menu()
             elif key == "\x03":
-                self.running = False
+                self.close()
                 exit(0)
             elif key:
                 print("Input not recognized")
@@ -201,9 +210,9 @@ class ManualControl:
                 (LIN_VEL_STEP_SIZE / 2.0),
             )
 
-            twist.linear.x = control_linear_velocity
-            twist.linear.y = 0.0
-            twist.linear.z = 0.0
+            self._twist.linear.x = control_linear_velocity
+            self._twist.linear.y = 0.0
+            self._twist.linear.z = 0.0
 
             control_angular_velocity = self._make_simple_profile(
                 control_angular_velocity,
@@ -211,19 +220,8 @@ class ManualControl:
                 (ANG_VEL_STEP_SIZE / 2.0),
             )
 
-            twist.angular.x = 0.0
-            twist.angular.y = 0.0
-            twist.angular.z = control_angular_velocity
+            self._twist.angular.x = 0.0
+            self._twist.angular.y = 0.0
+            self._twist.angular.z = control_angular_velocity
 
-            pub.publish(twist)
-
-        twist = Twist()
-        twist.linear.x = 0.0
-        twist.linear.y = 0.0
-        twist.linear.z = 0.0
-
-        twist.angular.x = 0.0
-        twist.angular.y = 0.0
-        twist.angular.z = 0.0
-
-        pub.publish(twist)
+            self._publisher.publish(self._twist)

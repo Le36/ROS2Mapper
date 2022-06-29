@@ -3,7 +3,6 @@ import threading
 import time
 import unittest
 from typing import Tuple
-from unittest.mock import call
 
 import cv2
 import numpy as np
@@ -57,7 +56,9 @@ class QRCodeNodeTest(unittest.TestCase):
 
         self.subscriber = Subscriber()
         self.test_node = NodeNode(self.subscriber.callback)
-        self.qr_code_reader_node = QRCodeReader(threshold=-1, get_position=get_position)
+        self.qr_code_reader_node = QRCodeReader(
+            default_tf_threshold=-1.0, get_position=get_position
+        )
         self.qr_code_reader_node.get_logger().set_level(40)
 
         executor = MultiThreadedExecutor()
@@ -97,7 +98,7 @@ class QRCodeNodeTest(unittest.TestCase):
         np.testing.assert_array_almost_equal(qr_code_1.rotation, qr_code_2.rotation)
 
     def test_sending_image_without_a_qr_code(self):
-        self.test_node.send_image("no-aruco.jpg")
+        self.test_node.send_image("no_aruco.png")
         time.sleep(self.delay)
         self.assertCountEqual(self.subscriber.calls, [])
 

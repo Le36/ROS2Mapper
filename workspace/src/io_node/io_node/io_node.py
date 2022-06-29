@@ -4,6 +4,8 @@ import rclpy
 from interfaces.msg import QRCode
 from rclpy.node import Node
 from std_msgs.msg import String
+from geometry_msgs.msg import Twist
+from rclpy.qos import QoSProfile
 
 from .submodules.main_menu import MainMenu
 from .submodules.manual_control import ManualControl
@@ -21,6 +23,9 @@ class IONode(Node):
         self.exploration_publisher = self.create_publisher(
             String, "/autonomous_exploration", 5
         )
+        self.manual_control_publisher = self.create_publisher(
+            Twist, "cmd_vel", QoSProfile(depth=10)
+        )
 
         # Views
         self.main_menu = MainMenu(self.exploration_publisher)
@@ -29,11 +34,13 @@ class IONode(Node):
             lambda: self.exploration_publisher.publish(String(data="2")),
             self.qr_menu_publisher,
         )
-        self.manual_control = ManualControl(lambda: self.load_view(self.main_menu))
+        self.manual_control_menu = ManualControl(
+            lambda: self.load_view(self.main_menu), self.manual_control_publisher
+        )
 
         # Set main menu load functions
         self.main_menu.set_load_functions(
-            lambda: self.load_view(self.manual_control),
+            lambda: self.load_view(self.manual_control_menu),
             lambda: self.load_view(self.qr_menu),
         )
 

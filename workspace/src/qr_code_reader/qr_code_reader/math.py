@@ -1,12 +1,14 @@
-from math import asin, atan2, cos, sin, sqrt
+"""Calculate the math needed by the camera node. Mostly matrix calculations
+
+Sources:
+    - [Rotation matrices](https://en.wikipedia.org/wiki/Rotation_matrix#Basic_rotations)
+    - [Quaternion -> Euler angles](shorturl.at/djB89)
+    - [Quaternion rotation of angle between two vectors](https://stackoverflow.com/a/1171995)
+"""
+from math import asin, atan2, cos, sin
 
 import numpy as np
 from numpy import ndarray
-
-# Sources:
-# https://en.wikipedia.org/wiki/Rotation_matrix#Basic_rotations
-# https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Quaternion_to_Euler_angles_conversion
-# https://stackoverflow.com/questions/1171849/finding-quaternion-representing-the-rotation-from-one-vector-to-another
 
 
 def rotate_x(x_angle: float) -> ndarray:
