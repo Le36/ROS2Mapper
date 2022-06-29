@@ -13,6 +13,14 @@ from tf2_msgs.msg import TFMessage
 
 
 class ExploreNode(Node):
+    """ExploreNode is responsible for creating a navigation plan for the robot
+    using nav2's simple api commander. It explores a given area using the
+    occupancy grid until there are no more unexplored areas.
+    Args:
+        nav: inherits a BasicNavigator object which is a
+        simple python api for the nav2 package.
+    """
+
     def __init__(self, nav: BasicNavigator) -> None:
         super().__init__("explore_node")
 
@@ -47,14 +55,24 @@ class ExploreNode(Node):
         self.map_origin = []
 
     def go_to_qr_code(self, qrcode: QRCode) -> None:
-        """Navigates to a given QR code"""
+        """Navigates to a given QR code
+        Args:
+            qrcode: QRCode object that has the information about
+            its position and rotation
+        Returns: None
+        """
         self.move(
             qrcode.center[0] + qrcode.normal_vector[0] * 0.2,
             qrcode.center[1] + qrcode.normal_vector[1] * 0.2,
         )
 
     def commander_callback(self, msg: String) -> None:
-        """Handle commands from the IO node"""
+        """Subscription to the IO_nodes /autonomous_exploration topic,
+        which is responsible for handling exploration actions
+        Args:
+            msg: message that the IO_node sends that handles explorer actions
+        Returns: None
+        """
         if msg.data == "1":
             self.searching = True
             self.explore()
@@ -64,7 +82,13 @@ class ExploreNode(Node):
             self.get_logger().warn(f"Unknown command code {msg}")
 
     def map_listener_callback(self, occupancy_grid: OccupancyGrid) -> None:
-        """Listen to occupance grid. Update map and run exploration/retracing"""
+        """Subscription to the /map topic which is nav2's occupancygrid. The map shows
+        where the obstacles are, where there are unoccupied areas and which places are unexplored.
+        The method creates an array using this data and saves relevant metadata.
+        Args:
+            occupancy_grid: an OccupancyGrid object
+        Returns: None
+        """
         if not self.map_set:
             self.get_logger().info("Ready to explore!")
         if not occupancy_grid.header.frame_id == "map":
@@ -88,7 +112,14 @@ class ExploreNode(Node):
                 self.retrace()
 
     def tf_listener_callback(self, msg: TFMessage) -> None:
-        """Update robot position"""
+        """Subscription to the /tf topic which includes information about
+        the robots current position. The method updates the robots position whenever
+        it hears a new message from /tf that is of the correct type.
+        Args:
+            msg: topic message that includes all the relevant data concerning
+            the robot's position
+        Returns: None
+        """
         transform: TransformStamped  # Type hint
         for transform in msg.transforms:
             if transform.header.frame_id == "odom":
@@ -113,7 +144,11 @@ class ExploreNode(Node):
         # self.nav.setInitialPose(self.initial_pose)
 
     def make_map(self) -> Optional[Tuple[float, float]]:
-        """Turn occupance grid to matrix. Returns next explore target."""
+        """Transforms the OccupancyGrid map-array into a matrix.
+        Args:
+            none
+        Returns: the next target of exploration
+        """
         if not self.map_set:
             self.get_logger().info(str("Map has not been set yet"))
             return
@@ -129,7 +164,10 @@ class ExploreNode(Node):
             return value
 
     def find_target(self, map: List[List[int]]) -> Optional[Tuple[float, float]]:
-        """Find next explore target. Returns nav2 x,y cordinates."""
+        """Finds the next explore target and transforms it into coordinate values.
+        Args:
+            map: the map_matrix
+        Returns: tuple of coordinates of the next target"""
         value = self.breadth_first_search(map, self.pos_x, self.pos_y)
         if not value:
             self.get_logger().info("Finished exploring the whole area")
@@ -141,7 +179,10 @@ class ExploreNode(Node):
         return (target_x, target_y)
 
     def transform_coordinates_into_grid(self) -> None:
-        """Convert map coordinate to occupancy grid coordinate"""
+        """Convert map coordinate to occupancy grid coordinate
+        Args:
+            none
+        Returns: none"""
 
         if self.map_origin:
             distance_x = abs(self.robot_position[0] - self.map_origin[0])
@@ -152,7 +193,13 @@ class ExploreNode(Node):
     def breadth_first_search(
         self, map: List[List[int]], start_x: int, start_y: int
     ) -> Optional[Tuple[int, int]]:
-        """Search for closest unexplored area"""
+        """Search for closest unexplored area
+        Args:
+            map: map matrix of occupancy grid
+            start_x: starting x position
+            start_y: starting y position
+        Returns: indeces of the next target or none if everything is found.
+        """
         visited = [[False for x in range(len(map[0]))] for y in range(len(map))]
         visited[start_y][start_x] = True
         queue = [(start_x, start_y)]
@@ -198,7 +245,11 @@ class ExploreNode(Node):
         self.searching = True
 
     def explore(self) -> None:
-        """Explore the area by moving to the closest unexplored area"""
+        """Explore the area by moving to the closest unexplored area
+        Args:
+            none
+        Returns: none
+        """
         if not self.nav.isTaskComplete():
             self.get_logger().info("Task is not complete")
             # Get new location if more than 15 seconds have passed from starting the exploration
@@ -240,6 +291,7 @@ class ExploreNode(Node):
 
     def move(self, x: float, y: float) -> None:
         """Move to pose (x, y)"""
+
         goal_pose = PoseStamped()
         goal_pose.header.frame_id = "map"
         goal_pose.pose.position.x = x
