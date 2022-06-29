@@ -17,7 +17,7 @@ class ExploreNode(Node):
     using nav2's simple api commander. It explores a given area using the
     occupancy grid until there are no more unexplored areas.
     Args:
-        nav: inherits a BasicNavigator object which is a
+        nav: a BasicNavigator object which is a
         simple python api for the nav2 package.
     """
 
@@ -48,6 +48,8 @@ class ExploreNode(Node):
         self.map_set = False
         self.start_time = inf
         self.previous_target = None
+        self.spinning = False
+        self.spin_dist = 6.28
 
         self.retrace_index = 0
         self.retrace_coordinates = []
@@ -245,7 +247,8 @@ class ExploreNode(Node):
         self.searching = True
 
     def explore(self) -> None:
-        """Explore the area by moving to the closest unexplored area
+        """Explore the area by moving to the closest unexplored area. Handles the logic
+        of when to call a new target and when to spin
         Args:
             none
         Returns: none
@@ -258,6 +261,10 @@ class ExploreNode(Node):
                 return
         else:
             self.get_logger().info("Task **is** complete")
+
+        if not self.spinning:
+            self.spinning = True
+            self.nav.spin(self.spin_dist)
 
         target = self.make_map()
 
@@ -275,6 +282,7 @@ class ExploreNode(Node):
         self.previous_target = target
 
         self.start_time = time()
+        self.spinning = False
         self.move(target[0], target[1])
 
     def retrace(self):
@@ -302,19 +310,6 @@ class ExploreNode(Node):
         goal_pose.pose.orientation.z = 0.0
         goal_pose.pose.orientation.w = 1.0
         self.nav.goToPose(goal_pose)
-
-    def move_and_spin(self, x: float, y: float) -> None:
-        """Move to pose (x, y) and spin at the end"""
-        goal_pose = PoseStamped()
-        goal_pose.header.frame_id = "map"
-        goal_pose.pose.position.x = x
-        goal_pose.pose.position.y = y
-        goal_pose.pose.position.z = 0.0
-        goal_pose.pose.orientation.x = 0.0
-        goal_pose.pose.orientation.y = 0.0
-        goal_pose.pose.orientation.z = 0.0
-        goal_pose.pose.orientation.w = 1.0
-        self.nav.moveAndSpin(goal_pose)
 
 
 def main(args=None) -> None:
