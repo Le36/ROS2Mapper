@@ -1,4 +1,5 @@
 import os
+from typing import Union
 
 import rclpy
 from interfaces.msg import QRCode
@@ -55,16 +56,27 @@ class IONode(Node):
         self.view = self.main_menu
         self.view.open()
 
-    def load_view(self, view) -> None:
+    def load_view(self, view: Union[MainMenu, ManualControl, QRMenu]) -> None:
+        """Render the view given as a parameter
+
+        Args:
+            view (Union[MainMenu, ManualControl, QRMenu]): View to be rendered
+        """
         self.view.close()
         self.view = view
         self.view.open()
 
     def check_quit(self) -> None:
+        """Periodically (every 0.1s) checks if the program has been stopped"""
         if not self.view.running:
             exit(0)
 
     def log(self, msg: String) -> None:
+        """Log data to the logger
+
+        Args:
+            msg (String): Data to log
+        """
         self.main_menu.log(msg.data)
         self.qr_menu.log(msg.data)
 
