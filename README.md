@@ -16,7 +16,7 @@ University of Helsinki, Ohjelmistotuotantoprojekti (Software Engineering Project
 - [Install instructions](documentation/installation.md)
 - [API documentation](documentation/api-documentation.md)
 
-## Nodes
+### Nodes
 - [Camera node](workspace/src/camera_node/)
 - [Explore node](workspace/src/explore_node/)
 - [Interfaces](workspace/src/interfaces/)
