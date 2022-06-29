@@ -33,6 +33,7 @@
     ```
 5. [Remote] Clone the repository
     ```
+    sudo apt install git -y
     cd ~
     git clone https://github.com/Le36/ros2-mapper.git
     ```
@@ -138,6 +139,7 @@
 ## Installing project
 1. [Remote] Clone the repository if you have not already
     ```
+    sudo apt install git -y
     cd ~
     git clone https://github.com/Le36/ros2-mapper.git
     ```
@@ -188,6 +190,7 @@
     ```
 7. [TurtleBot3] Clone the repository
     ```
+    sudo apt install git -y
     cd ~
     git clone https://github.com/Le36/ros2-mapper.git
     cd ros2-mapper/workspace
