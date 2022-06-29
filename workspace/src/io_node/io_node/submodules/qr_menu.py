@@ -38,18 +38,29 @@ class QRMenu:
         self.running = False
 
     def open(self) -> None:
+        """Open the manual control view"""
         self.running = True
         self._main()
 
     def close(self) -> None:
+        """Close the manual control view"""
         self.running = False
 
     def log(self, data: str) -> None:
+        """Log given data to logger
+
+        Args:
+            data (str): Data to log
+        """
         if self.running:
             self._data_to_log = data
 
     def qr_listener_callback(self, qr_code: QRCode) -> None:
-        """Listen for QR codes being found and add them to QR menu list"""
+        """Listen for QR codes being found and add them to QR menu list
+
+        Args:
+            qr_code (QRCode): QR code to be added to the list
+        """
         for local_qr_code in self._qr_codes:
             if qr_code.id == local_qr_code.id:
                 return
@@ -59,10 +70,22 @@ class QRMenu:
             self._reprint_menu = True
 
     def _qr_navigation_callback(self, qr_code: QRCode) -> None:
-        """Publish user input for QR code id"""
+        """Publish user input for QR code to be navigated to
+
+        Args:
+            qr_code (QRCode): QR code to be navigated to
+        """
         self._publisher.publish(qr_code)
 
-    def _get_key(self, settings):
+    def _get_key(self, settings: List) -> str:
+        """Interpret the key input by the user
+
+        Args:
+            settings (List): Settings fetched with termios.tcgetattr(sys.stdin)
+
+        Returns:
+            str: The key input by the user
+        """
         tty.setraw(sys.stdin.fileno())
         rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
         if rlist:
@@ -73,7 +96,8 @@ class QRMenu:
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
         return key
 
-    def _print_menu(self):
+    def _print_menu(self) -> None:
+        """Print the QR code menu with found QR codes"""
         os.system("clear")
         if self._qr_codes:
             formatted_list = [
@@ -84,6 +108,7 @@ class QRMenu:
             print(QR_MENU % "No QR codes found")
 
     def _handle_io(self):
+        """Handles the inputs of the user while in the menu"""
         self._print_menu()
         log_count = 0
 
@@ -132,5 +157,6 @@ class QRMenu:
                 print("Input not recognized")
 
     def _main(self):
-        self.thread = threading.Thread(target=self._handle_io)
-        self.thread.start()
+        # self.thread = threading.Thread(target=self._handle_io)
+        # self.thread.start()
+        self._handle_io()
