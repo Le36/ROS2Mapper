@@ -3,19 +3,19 @@
 1. [Remote] Add the apt repository
     ```
     sudo apt update && sudo apt install curl gnupg2 lsb-release -y
-    sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key  -o /usr/share/keyrings/ros-archive-keyring.gpg
+    sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
     sudo apt update
     ```
 2. [Remote] Install ROS2 and Gazebo
     ```
-    sudo apt install ros-foxy-desktop  -y
+    sudo apt install ros-foxy-desktop -y
     source /opt/ros/foxy/setup.bash
     sudo apt install python3-colcon-common-extensions gazebo11 ros-foxy-gazebo-ros-pkgs ros-foxy-cartographer ros-foxy-cartographer-ros ros-foxy-navigation2 ros-foxy-nav2-bringup -y
     ```
 3. [Remote] Install TurtleBot3
     ```
-    sudo apt install python3-vcstool -y
+    sudo apt install python3-vcstool git -y
     mkdir -p ~/turtlebot3_ws/src
     cd ~/turtlebot3_ws
     wget https://raw.githubusercontent.com/ROBOTIS-GIT/turtlebot3/ros2/turtlebot3.repos
@@ -34,7 +34,6 @@
     ```
 5. [Remote] Clone the repository
     ```
-    sudo apt install git -y
     cd ~
     git clone https://github.com/Le36/ros2-mapper.git
     ```
@@ -140,7 +139,6 @@
 ## Installing project
 1. [Remote] Clone the repository if you have not already
     ```
-    sudo apt install git -y
     cd ~
     git clone https://github.com/Le36/ros2-mapper.git
     ```
