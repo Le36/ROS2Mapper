@@ -157,6 +157,5 @@ class QRMenu:
                 print("Input not recognized")
 
     def _main(self):
-        # self.thread = threading.Thread(target=self._handle_io)
-        # self.thread.start()
-        self._handle_io()
+        self.thread = threading.Thread(target=self._handle_io)
+        self.thread.start()

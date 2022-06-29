@@ -38,6 +38,7 @@ import os
 import select
 import sys
 import termios
+import threading
 import tty
 from typing import List
 
@@ -202,7 +203,7 @@ class ManualControl:
         else:
             return self._constrain(velocity, -WAFFLE_MAX_ANG_VEL, WAFFLE_MAX_ANG_VEL)
 
-    def _main(self):
+    def _handle_io(self) -> None:
         settings = termios.tcgetattr(sys.stdin)
 
         target_linear_velocity = 0.0
@@ -282,3 +283,7 @@ class ManualControl:
             self._twist.angular.z = control_angular_velocity
 
             self._publisher.publish(self._twist)
+
+    def _main(self):
+        self.thread = threading.Thread(target=self._handle_io)
+        self.thread.start()
