@@ -12,16 +12,22 @@ class CameraNode(Node):
         self.bridge = CvBridge()
         self.cap = cv2.VideoCapture(0)
         if not self.cap.isOpened():
-            self.get_logger().fatal("Could not open camera")
+            self.get_logger().fatal(
+                "Could not open the camera. This could be because another node is reading data from the camera"
+            )
+            exit(1)
 
         self.publisher = self.create_publisher(Image, "/camera/image_raw", 10)
         self.timer = self.create_timer(1 / 5, self.publish_image)
 
     def publish_image(self) -> None:
         """Publish one image from the camera"""
-        _, image = self.cap.read()
-        ros_image = self.bridge.cv2_to_imgmsg(image, "bgr8")
-        self.publisher.publish(ros_image)
+        ret, image = self.cap.read()
+        if ret:
+            ros_image = self.bridge.cv2_to_imgmsg(image, "bgr8")
+            self.publisher.publish(ros_image)
+        else:
+            self.get_logger().warn("Could not read an image from the camera")
 
 
 def main(args=None) -> None:  # pragma: no cover
