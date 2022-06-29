@@ -3,6 +3,7 @@
 - [VS Code](#vs-code)
     - [Configuring markdown autoformat in VS Code](#configuring-markdown-autoformat-in-vs-code)
 - [Gazebo](#gazebo)
+    - [Setting NAV2 min distance to walls](#setting-nav2-min-distance-to-walls)
     - [SLAM in the Gazebo simulation](#slam-in-the-gazebo-simulation)
     - [Autonomous exploration in the Gazebo simulator](#autonomous-exploration-in-the-gazebo-simulator)
 - [Physical robot](#physical-robot)
@@ -33,6 +34,9 @@
     4. Search for `toc.levels` and change the value to `2..6`
 
 ## Gazebo
+
+### Setting NAV2 min distance to walls
+- edit `~/turtlebot3_ws/src/turtlebot3/turtlebot3/turtlebot3_navigation2/param/burger.yaml` , replace `robot_radius: 0.1` with `robot_radius: 0.3`
 
 ### SLAM in the Gazebo simulation
 
