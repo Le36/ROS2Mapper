@@ -39,11 +39,11 @@ Has three different views for different functions:
 | m            | N/A                | Return to main menu                      |
 | CTRL+C       | N/A                | Quits the program                        |
 
-Reads images from `/camera/image_raw` topic and publishes the QR code positions, normal vectors and orientations to `/qr_code` topic. Also fetches QR code data from `/get_qr_codes` service every five seconds to update the cache.
+---
 
 ## Dependencies
 - rclpy
-- geometry_msgs                                                                                                                                                             |
+- geometry_msgs
 
 ## Usage
 ```
