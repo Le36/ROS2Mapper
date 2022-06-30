@@ -12,6 +12,10 @@ from std_msgs.msg import String
 from tf2_msgs.msg import TFMessage
 
 
+TIMER_PERIOD = 1.0
+SPIN_DIST = 6.28
+
+
 class ExploreNode(Node):
     """ExploreNode is responsible for creating a navigation plan for the robot
     using nav2's simple api commander. It explores a given area using the
@@ -38,23 +42,33 @@ class ExploreNode(Node):
         self.go_to_qr_code_subscription = self.create_subscription(
             QRCode, "/qr_navigator", self.go_to_qr_code, 1
         )
+        self.timer = self.create_timer(TIMER_PERIOD, self.timer_callback)
 
         self.robot_position = [0.0, 0.0, 0.0]
         self.pos_x = -1
         self.pos_y = -1
-        self.initial_pose = None
         self.searching = False
         self.retracing = False
         self.map_set = False
         self.start_time = inf
         self.previous_target = None
         self.spinning = False
-        self.spin_dist = 6.28
 
         self.retrace_index = 0
         self.retrace_coordinates = []
         self.map = []
         self.map_origin = []
+        self.map_matrix = []
+
+    def timer_callback(self):
+        if self.map_set:
+            if self.searching:
+                self.get_logger().info("Calling explore()")
+                self.explore()
+
+            if self.retracing:
+                self.get_logger().info("Calling retrace()")
+                self.retrace()
 
     def go_to_qr_code(self, qrcode: QRCode) -> None:
         """Navigates to a given QR code
@@ -76,7 +90,7 @@ class ExploreNode(Node):
         Returns: None
         """
         if msg.data == "1":
-            self.searching = True
+            self.start_explore()
             self.explore()
         elif msg.data == "2":
             self.cancel_explore()
@@ -106,13 +120,6 @@ class ExploreNode(Node):
         ]
         self.map_resolution = occupancy_grid.info.resolution
 
-        if self.initial_pose is not None:
-            if self.searching:
-                self.explore()
-
-            if self.retracing:
-                self.retrace()
-
     def tf_listener_callback(self, msg: TFMessage) -> None:
         """Subscription to the /tf topic which includes information about
         the robots current position. The method updates the robots position whenever
@@ -128,22 +135,7 @@ class ExploreNode(Node):
                 translation = transform.transform.translation
                 rotation = transform.transform.rotation
                 self.robot_position = [translation.x, translation.y, translation.z]
-                if self.initial_pose is None:
-                    self.set_initial_pose(translation, rotation)
                 self.transform_coordinates_into_grid()
-
-    def set_initial_pose(self, translation: Vector3, rotation: Quaternion) -> None:
-        """Set initial pose"""
-        self.initial_pose = PoseStamped()
-        self.initial_pose.header.frame_id = "map"
-        self.initial_pose.header.stamp = self.nav.get_clock().now().to_msg()
-        self.initial_pose.pose.position.x = translation.x
-        self.initial_pose.pose.position.y = translation.y
-        self.initial_pose.pose.orientation.z = rotation.z
-        self.initial_pose.pose.orientation.w = rotation.w
-
-        # Don't set initial pose, because it breaks in Gazebo
-        # self.nav.setInitialPose(self.initial_pose)
 
     def make_map(self) -> Optional[Tuple[float, float]]:
         """Transforms the OccupancyGrid map-array into a matrix.
@@ -155,22 +147,18 @@ class ExploreNode(Node):
             self.get_logger().info(str("Map has not been set yet"))
             return
 
-        map = []
+        self.map_matrix = []
         for y in range(self.map_height):
-            map.append([])
+            self.map_matrix.append([])
             for x in range(self.map_width):
-                map[y].append(self.map[y * self.map_width + x])
+                self.map_matrix[y].append(self.map[y * self.map_width + x])
 
-        if self.pos_x >= 0 and self.pos_y >= 0:
-            value = self.find_target(map)
-            return value
-
-    def find_target(self, map: List[List[int]]) -> Optional[Tuple[float, float]]:
+    def find_target(self) -> Optional[Tuple[float, float]]:
         """Finds the next explore target and transforms it into coordinate values.
         Args:
             map: the map_matrix
         Returns: tuple of coordinates of the next target"""
-        value = self.breadth_first_search(map, self.pos_x, self.pos_y)
+        value = self.breadth_first_search(self.map_matrix, self.pos_x, self.pos_y)
         if not value:
             self.get_logger().info("Finished exploring the whole area")
             return value
@@ -205,7 +193,6 @@ class ExploreNode(Node):
         visited = [[False for x in range(len(map[0]))] for y in range(len(map))]
         visited[start_y][start_x] = True
         queue = [(start_x, start_y)]
-        self.searching = True
         directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
 
         while queue:
@@ -262,20 +249,20 @@ class ExploreNode(Node):
         else:
             self.get_logger().info("Task **is** complete")
 
-        if not self.spinning:
-            self.spinning = True
-            self.nav.spin(self.spin_dist)
-            return
+        # if not self.spinning:
+        #     self.spinning = True
+        #     self.nav.spin(SPIN_DIST)
+        #     return
 
-        target = self.make_map()
+        self.make_map()
 
-        if not target:
-            target = self.make_map()
+        if self.pos_x >= 0 and self.pos_y >= 0:
+            target = self.find_target()
 
         if self.previous_target == target or not target:
             if len(self.retrace_coordinates) == 0:
                 return
-            # self.searching = False
+            self.searching = False
             self.retracing = True
             return
 
@@ -283,7 +270,7 @@ class ExploreNode(Node):
         self.previous_target = target
 
         self.start_time = time()
-        self.spinning = False
+        # self.spinning = False
         self.move(target[0], target[1])
 
     def retrace(self):
@@ -293,10 +280,8 @@ class ExploreNode(Node):
         if self.retrace_index == len(self.retrace_coordinates):
             self.retrace_index = 0
         target = self.retrace_coordinates[self.retrace_index]
-        self.move_and_spin(target[0], target[1])
+        self.move(target[0], target[1])
         self.retrace_index += 1
-
-        self.make_map()
 
     def move(self, x: float, y: float) -> None:
         """Move to pose (x, y)"""
@@ -311,6 +296,20 @@ class ExploreNode(Node):
         goal_pose.pose.orientation.z = 0.0
         goal_pose.pose.orientation.w = 1.0
         self.nav.goToPose(goal_pose)
+
+    def move_and_spin(self, x: float, y: float) -> None:
+        """Move to pose (x, y) and spin at the end"""
+
+        goal_pose = PoseStamped()
+        goal_pose.header.frame_id = "map"
+        goal_pose.pose.position.x = x
+        goal_pose.pose.position.y = y
+        goal_pose.pose.position.z = 0.0
+        goal_pose.pose.orientation.x = 0.0
+        goal_pose.pose.orientation.y = 0.0
+        goal_pose.pose.orientation.z = 0.0
+        goal_pose.pose.orientation.w = 1.0
+        self.nav.moveAndSpin(goal_pose)
 
 
 def main(args=None) -> None:
