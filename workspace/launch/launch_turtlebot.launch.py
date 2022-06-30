@@ -23,7 +23,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             [
                 os.path.join(get_package_share_directory("nav2_bringup"), "launch"),
-                "/localization_launch.py",
+                "/navigation_launch.py",
             ]
         )
     )
@@ -32,7 +32,6 @@ def generate_launch_description():
         [
             slam,
             nav2,
-            Node(package="qr_code_reader", executable="launch", name="qr_code_reader"),
             Node(package="memory_node", executable="listener", name="memory_node"),
             Node(package="explore_node", executable="launch", name="explore_node"),
         ]
