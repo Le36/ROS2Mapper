@@ -77,7 +77,9 @@ class QRCodeNodeTest(unittest.TestCase):
             id=1,
             center=np.array([1.08456, 0.341482, 0.010306]),
             normal_vector=np.array([-0.716183, 0.69788, -0.006722]),
-            rotation=np.array([1.716183, -0.0, 0.006722, 0.69788]),
+            rotation=np.array(
+                [2.838172e-01, 4.314446e-17, -6.722186e-03, -6.978803e-01]
+            ),
         )
 
     @classmethod
