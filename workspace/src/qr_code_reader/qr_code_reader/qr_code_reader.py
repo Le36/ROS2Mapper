@@ -7,8 +7,7 @@ import numpy as np
 import rclpy
 from cv_bridge import CvBridge
 from geometry_msgs.msg import Quaternion, TransformStamped, Vector3
-from interfaces.msg import QRCode
-from interfaces.srv import GetQRCodes
+from interfaces.msg import QRCode, QRCodeList
 from numpy import ndarray
 from rclpy.node import Node
 from rclpy.time import Time
@@ -43,7 +42,7 @@ class QRCodeReader(Node):
 
         self.get_position = get_position if get_position else self.get_position_from_tf
 
-        self.qr_code_cache: Dict[int, QRCode] = {}
+        self.qr_codes: Dict[int, QRCode] = {}
         self.cache_time = self.get_clock().now()
         self.future = None
         self.cv_bridge = CvBridge()
@@ -59,7 +58,9 @@ class QRCodeReader(Node):
         self.subscription = self.create_subscription(
             Image, "/camera/image_raw", self.image_callback, 10
         )
-        self.qr_code_client = self.create_client(GetQRCodes, "/get_qr_codes")
+        self.qr_code_subscription_ = self.create_subscription(
+            QRCodeList, "/qr_code_list", self.update_qr_code_list, 10
+        )
         self.publisher = self.create_publisher(QRCode, "/qr_code", 10)
         self.log_publisher = self.create_publisher(String, "/log", 10)
 
@@ -155,27 +156,11 @@ class QRCodeReader(Node):
             np.array([rotation.w, rotation.x, rotation.y, rotation.z])
         )
 
-    def update_qr_code_cache(self) -> None:
+    def update_qr_code_list(self, qr_code_list: QRCodeList) -> None:
         """Update QR code cache"""
-        if self.future is not None:
-            return
-        while not self.qr_code_client.wait_for_service(timeout_sec=0.1):
-            self.get_logger().info("/get_qr_codes service not available, waiting...")
-        self.future = self.qr_code_client.call_async(GetQRCodes.Request())
-
-    def spin(self):
-        """Spin node and handle futures"""
-        while rclpy.ok():
-            rclpy.spin_once(self)
-            if not self.future or not self.future.done():
-                continue
-            response = self.future.result()
-            self.future = None
-
-            self.qr_code_cache.clear()
-            self.cache_time = self.get_clock().now()
-            for qr_code in response.qr_codes:
-                self.qr_code_cache[qr_code.id] = qr_code
+        self.qr_codes.clear()
+        for qr_code in qr_code_list.qr_codes:
+            self.qr_codes[qr_code.id] = qr_code
 
     def calculate(
         self, points: List[ndarray]
@@ -240,7 +225,7 @@ class QRCodeReader(Node):
         default_vector = rotation_matrix @ np.array([[0], [0], [1]])
         default_vector.shape = (1, 3)
         default_vector = default_vector[0]
-        rotation = quaternion_of_vectors(-normal_vector, default_vector)
+        rotation = quaternion_of_vectors(normal_vector, default_vector)
 
         center = (top_left + bottom_right) / 2
         return center, normal_vector, rotation
@@ -276,16 +261,8 @@ class QRCodeReader(Node):
                 rotation=rotation,
             )
 
-            # Update cache
-            cache_time = (
-                self.get_clock().now().nanoseconds - self.cache_time.nanoseconds
-            )
-            if cache_time > 5e9:
-                self.update_qr_code_cache()
-                return
-
-            if qr_code.id in self.qr_code_cache:
-                old_qr_code = self.qr_code_cache[qr_code.id]
+            if qr_code.id in self.qr_codes:
+                old_qr_code = self.qr_codes[qr_code.id]
 
                 pos_diff = np.linalg.norm(qr_code.center - old_qr_code.center)
                 old_angle = quaternion_to_euler(old_qr_code.rotation)[2]
@@ -317,19 +294,19 @@ class QRCodeReader(Node):
                 self.log_publisher.publish(
                     String(data=f"Found a new QR code with id {qr_code.id}")
                 )
-            self.qr_code_cache[qr_code.id] = qr_code
+            self.qr_codes[qr_code.id] = qr_code
             self.publisher.publish(qr_code)
 
     def reset_found_codes(self) -> None:
         """Clear the QR code cache"""
-        self.qr_code_cache.clear()
+        self.qr_codes.clear()
 
 
 def main(args=None) -> None:  # pragma: no cover
     """Run the node"""
     rclpy.init(args=args)
     qr_code_reader = QRCodeReader()
-    qr_code_reader.spin()
+    rclpy.spin(qr_code_reader)
     qr_code_reader.destroy_node()
     rclpy.shutdown()
 

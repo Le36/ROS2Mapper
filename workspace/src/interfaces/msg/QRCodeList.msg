@@ -1,2 +1,1 @@
----
 QRCode[] qr_codes

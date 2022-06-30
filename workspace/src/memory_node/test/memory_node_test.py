@@ -2,12 +2,11 @@ import os
 import threading
 import time
 import unittest
+from unittest.mock import Mock
 
 import numpy as np
 import rclpy
-from interfaces.msg import QRCode
-from interfaces.srv import GetQRCodes
-from numpy import ndarray
+from interfaces.msg import QRCode, QRCodeList
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 
@@ -16,17 +15,15 @@ from ..memory_node.submodules.data_repository import data_repository
 
 
 class NodeNode(Node):
-    def __init__(self):
+    def __init__(self, subscriber_callback):
         super().__init__("test_node")
         self.publisher = self.create_publisher(QRCode, "/qr_code", 10)
-        self.client = self.create_client(GetQRCodes, "get_qr_codes")
+        self.subscriber = self.create_subscription(
+            QRCodeList, "/qr_code_list", subscriber_callback, 10
+        )
 
     def add_qr_code(self, qr_code: QRCode):
         self.publisher.publish(qr_code)
-
-    def get_qr_codes(self):
-        request = GetQRCodes.Request()
-        self.future = self.client.call_async(request)
 
 
 class MemoryNodeTest(unittest.TestCase):
@@ -35,9 +32,10 @@ class MemoryNodeTest(unittest.TestCase):
         rclpy.init()
         self.delay = int(os.getenv("DELAY")) if os.getenv("DELAY") else 0.1
 
-        self.test_node = NodeNode()
+        self.mock = Mock()
+        self.test_node = NodeNode(self.mock)
         self.memory_node = MemoryNode()
-        # self.memory_node.get_logger().set_level(40)
+        self.memory_node.get_logger().set_level(40)
 
         executor = MultiThreadedExecutor()
         executor.add_node(self.memory_node)
@@ -47,13 +45,16 @@ class MemoryNodeTest(unittest.TestCase):
         time.sleep(self.delay)
 
     def setUp(self):
+        self.mock.reset_mock()
         data_repository.delete_all()
 
         self.qr_code = QRCode(
             id=1,
             center=np.array([1.08456, 0.341482, 0.010306]),
             normal_vector=np.array([-0.716183, 0.69788, -0.006722]),
-            rotation=np.array([1.716183, -0.0, 0.006722, 0.69788]),
+            rotation=np.array(
+                [2.838172e-01, 4.314446e-17, -6.722186e-03, -6.978803e-01]
+            ),
         )
 
     @classmethod
@@ -74,21 +75,11 @@ class MemoryNodeTest(unittest.TestCase):
         np.testing.assert_array_almost_equal(qr_code_1.rotation, qr_code_2.rotation)
 
     def test_getting_data_when_no_qr_codes_have_been_added(self):
-        self.test_node.get_qr_codes()
         time.sleep(self.delay)
-
-        self.assertTrue(self.test_node.future.done())
-        qr_codes = self.test_node.future.result().qr_codes
-        self.assertCountEqual(qr_codes, [])
+        self.mock.assert_not_called()
 
     def test_adding_data(self):
         self.test_node.add_qr_code(self.qr_code)
         time.sleep(self.delay)
 
-        self.test_node.get_qr_codes()
-        time.sleep(self.delay)
-
-        self.assertTrue(self.test_node.future.done())
-        qr_codes = self.test_node.future.result().qr_codes
-        self.assertEqual(len(qr_codes), 1)
-        self.assert_qr_codes_equal(qr_codes[0], self.qr_code)
+        self.mock.assert_called_once_with(QRCodeList(qr_codes=[self.qr_code]))
