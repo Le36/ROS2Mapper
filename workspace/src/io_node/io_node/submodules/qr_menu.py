@@ -4,7 +4,7 @@ import termios
 import threading
 from typing import List
 
-from interfaces.msg import QRCode
+from interfaces.msg import QRCode, QRCodeList
 
 from .view import View
 
@@ -44,17 +44,13 @@ class QRMenu(View):
         if self.running:
             self._data_to_log = data
 
-    def qr_listener_callback(self, qr_code: QRCode) -> None:
+    def qr_code_list_callback(self, qr_code_list: QRCodeList) -> None:
         """Listen for QR codes being found and add them to QR menu list
 
         Args:
             qr_code (QRCode): QR code to be added to the list
         """
-        for local_qr_code in self._qr_codes:
-            if qr_code.id == local_qr_code.id:
-                return
-
-        self._qr_codes.append(qr_code)
+        self._qr_codes = qr_code_list.qr_codes
         if self.running:
             self._reprint_menu = True
 
