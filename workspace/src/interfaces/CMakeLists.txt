@@ -25,7 +25,7 @@ find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/QRCode.msg"
-  "srv/GetQRCodes.srv"
+  "msg/QRCodeList.msg"
 )
 
 ament_export_dependencies(rosidl_default_runtime)

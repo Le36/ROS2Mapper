@@ -33,16 +33,17 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 # Author: Darby Lim
-
 import os
-import select
 import sys
 import termios
 import threading
-import tty
-from typing import List
+from copy import copy
+from typing import Callable
 
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, Vector3
+from rclpy.node import Publisher
+
+from .view import View
 
 BURGER_MAX_LIN_VEL = 0.22
 BURGER_MAX_ANG_VEL = 2.84
@@ -73,48 +74,19 @@ m : return to main menu
 CTRL-C to quit
 """
 
-e = """
-Communications Failed
-"""
 
-
-class ManualControl:
-    def __init__(self, return_to_menu, publisher) -> None:
+class ManualControl(View):
+    def __init__(
+        self, return_to_menu: Callable[[], None], publisher: Publisher
+    ) -> None:
+        super().__init__()
         self._return_to_menu = return_to_menu
-        self.running = False
         self._publisher = publisher
-        self._twist = Twist()
 
-    def open(self) -> None:
-        """Open the manual control view"""
-        self.running = True
-        self._main()
-
-    def close(self) -> None:
-        """Close the manual control view"""
-        self.running = False
-
-    def _get_key(self, settings: List) -> str:
-        """Interpret the key input by the user
-
-        Args:
-            settings (List): Settings fetched with termios.tcgetattr(sys.stdin)
-
-        Returns:
-            str: The key input by the user
-        """
-        try:
-            tty.setraw(sys.stdin.fileno())
-            rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
-            if rlist:
-                key = sys.stdin.read(1)
-            else:
-                key = ""
-
-            termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
-            return key
-        except ValueError:
-            exit(0)
+        self._target_lin_vel = 0.0
+        self._target_ang_vel = 0.0
+        self._linear_velocity = 0.0
+        self._angular_velocity = 0.0
 
     def _print_vels(
         self, target_linear_velocity: float, target_angular_velocity: float
@@ -128,88 +100,65 @@ class ManualControl:
         os.system("clear")
         print(CONTROL_MENU)
         print(
-            "currently:\tlinear velocity {:.2f}\t angular velocity {:.1f} ".format(
-                target_linear_velocity, target_angular_velocity
-            )
+            f"linear velocity {target_linear_velocity:.2f}\nangular velocity {target_angular_velocity:.1f}"
         )
 
-    def _make_simple_profile(self, output: float, input: float, slop: float) -> float:
+    def _make_simple_profile(
+        self, current: float, target: float, change: float
+    ) -> float:
         """Increase or decrease given (linear/angular) velocity
 
         Args:
-            output (float): Current velocity
-            input (float): Target velocity
-            slop (float): Increase/decrease rate
+            current (float): Current velocity
+            target (float): Target velocity
+            change (float): Increase/decrease rate
 
         Returns:
             float: Updated velocity
         """
-        if input > output:
-            output = min(input, output + slop)
-        elif input < output:
-            output = max(input, output - slop)
-        else:
-            output = input
+        if target > current:
+            return min(target, current + change)
+        if target < current:
+            return max(target, current - change)
+        return target
 
-        return output
-
-    def _constrain(
-        self, input_vel: float, low_bound: float, high_bound: float
-    ) -> float:
-        """Constrains the robot velocity to a given range
+    def _bound(self, value: float, min_val: float, max_val: float) -> float:
+        """Bound value between min and max
 
         Args:
-            input_vel (float): Current velocity
-            low_bound (float): Minimum velocity
-            high_bound (float): Maximum velocity
+            value (float): Value to bound
+            min_val (float): Min value
+            max_val (float): Max value
 
         Returns:
-            float: Updated velocity
+            float: Bounded value
         """
-        if input_vel < low_bound:
-            input_vel = low_bound
-        elif input_vel > high_bound:
-            input_vel = high_bound
-        else:
-            input_vel = input_vel
+        return max(min_val, min(max_val, value))
 
-        return input_vel
-
-    def _check_linear_limit_velocity(self, velocity: float) -> float:
-        """Checks that increasing decreasing linear velocity won't set it out of the given range
-
-        Args:
-            velocity (float): Target velocity
-
-        Returns:
-            float: Updated velocity
-        """
+    def _bound_velocities(self) -> None:
+        """Bound velocities"""
         if TURTLEBOT3_MODEL == "burger":
-            return self._constrain(velocity, -BURGER_MAX_LIN_VEL, BURGER_MAX_LIN_VEL)
+            self._target_lin_vel = self._bound(
+                self._target_lin_vel, -BURGER_MAX_LIN_VEL, BURGER_MAX_LIN_VEL
+            )
+            self._target_ang_vel = self._bound(
+                self._target_ang_vel, -BURGER_MAX_ANG_VEL, BURGER_MAX_ANG_VEL
+            )
         else:
-            return self._constrain(velocity, -WAFFLE_MAX_LIN_VEL, WAFFLE_MAX_LIN_VEL)
-
-    def _check_angular_limit_velocity(self, velocity: float) -> float:
-        """Checks that increasing decreasing angular velocity won't set it out of the given range
-
-        Args:
-            velocity (float): Target velocity
-
-        Returns:
-            float: Updated velocity
-        """
-        if TURTLEBOT3_MODEL == "burger":
-            return self._constrain(velocity, -BURGER_MAX_ANG_VEL, BURGER_MAX_ANG_VEL)
-        else:
-            return self._constrain(velocity, -WAFFLE_MAX_ANG_VEL, WAFFLE_MAX_ANG_VEL)
+            self._target_lin_vel = self._bound(
+                self._target_lin_vel, -WAFFLE_MAX_LIN_VEL, WAFFLE_MAX_LIN_VEL
+            )
+            self._target_ang_vel = self._bound(
+                self._target_ang_vel, -WAFFLE_MAX_ANG_VEL, WAFFLE_MAX_ANG_VEL
+            )
 
     def _handle_io(self) -> None:
+        """Handle inputs"""
         settings = termios.tcgetattr(sys.stdin)
 
-        target_linear_velocity = 0.0
-        target_angular_velocity = 0.0
-        control_linear_velocity = 0.0
-        control_angular_velocity = 0.0
+        empty_twist = Twist()
+        empty_twist.linear = Vector3(x=0.0, y=0.0, z=0.0)
+        empty_twist.angular = Vector3(x=0.0, y=0.0, z=0.0)
 
         os.system("clear")
         print(CONTROL_MENU)
@@ -217,42 +166,20 @@ class ManualControl:
         while self.running:
             key = self._get_key(settings)
             if key == "w":
-                target_linear_velocity = self._check_linear_limit_velocity(
-                    target_linear_velocity + LIN_VEL_STEP_SIZE
-                )
-                self._print_vels(target_linear_velocity, target_angular_velocity)
+                self._target_lin_vel += LIN_VEL_STEP_SIZE
             elif key == "x":
-                target_linear_velocity = self._check_linear_limit_velocity(
-                    target_linear_velocity - LIN_VEL_STEP_SIZE
-                )
-                self._print_vels(target_linear_velocity, target_angular_velocity)
+                self._target_lin_vel -= LIN_VEL_STEP_SIZE
             elif key == "a":
-                target_angular_velocity = self._check_angular_limit_velocity(
-                    target_angular_velocity + ANG_VEL_STEP_SIZE
-                )
-                self._print_vels(target_linear_velocity, target_angular_velocity)
+                self._target_ang_vel += ANG_VEL_STEP_SIZE
             elif key == "d":
-                target_angular_velocity = self._check_angular_limit_velocity(
-                    target_angular_velocity - ANG_VEL_STEP_SIZE
-                )
-                self._print_vels(target_linear_velocity, target_angular_velocity)
+                self._target_ang_vel -= ANG_VEL_STEP_SIZE
             elif key == " " or key == "s":
-                target_linear_velocity = 0.0
-                control_linear_velocity = 0.0
-                target_angular_velocity = 0.0
-                control_angular_velocity = 0.0
-                self._print_vels(target_linear_velocity, target_angular_velocity)
+                self._target_lin_vel = 0.0
+                self._target_ang_vel = 0.0
+                self._linear_velocity = 0.0
+                self._angular_velocity = 0.0
             elif key == "m":
-                twist = Twist()
-                twist.linear.x = 0.0
-                twist.linear.y = 0.0
-                twist.linear.z = 0.0
-
-                twist.angular.x = 0.0
-                twist.angular.y = 0.0
-                twist.angular.z = 0.0
-
-                self._publisher.publish(twist)
+                self._publisher.publish(empty_twist)
                 self._return_to_menu()
             elif key == "\x03":
                 self.close()
@@ -260,30 +187,26 @@ class ManualControl:
             elif key:
                 print("Input not recognized")
 
-            twist = Twist()
-
-            control_linear_velocity = self._make_simple_profile(
-                control_linear_velocity,
-                target_linear_velocity,
+            self._bound_velocities()
+            self._linear_velocity = self._make_simple_profile(
+                self._linear_velocity,
+                self._target_lin_vel,
                 (LIN_VEL_STEP_SIZE / 2.0),
             )
-
-            self._twist.linear.x = control_linear_velocity
-            self._twist.linear.y = 0.0
-            self._twist.linear.z = 0.0
-
-            control_angular_velocity = self._make_simple_profile(
-                control_angular_velocity,
-                target_angular_velocity,
+            self._angular_velocity = self._make_simple_profile(
+                self._angular_velocity,
+                self._target_ang_vel,
                 (ANG_VEL_STEP_SIZE / 2.0),
             )
+            if key in "wxad s":
+                self._print_vels(self._target_lin_vel, self._target_ang_vel)
 
-            self._twist.angular.x = 0.0
-            self._twist.angular.y = 0.0
-            self._twist.angular.z = control_angular_velocity
-
-            self._publisher.publish(self._twist)
+            twist = copy(empty_twist)
+            twist.linear.x = self._linear_velocity
+            twist.angular.z = self._angular_velocity
+            self._publisher.publish(twist)
 
     def _main(self):
+        """Start the manual control view"""
         self.thread = threading.Thread(target=self._handle_io)
         self.thread.start()

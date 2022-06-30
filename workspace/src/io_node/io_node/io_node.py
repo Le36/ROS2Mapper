@@ -2,11 +2,11 @@ import os
 from typing import Union
 
 import rclpy
-from interfaces.msg import QRCode
-from rclpy.node import Node
-from std_msgs.msg import String
 from geometry_msgs.msg import Twist
+from interfaces.msg import QRCode, QRCodeList
+from rclpy.node import Node
 from rclpy.qos import QoSProfile
+from std_msgs.msg import String
 
 from .submodules.main_menu import MainMenu
 from .submodules.manual_control import ManualControl
@@ -48,7 +48,7 @@ class IONode(Node):
         # Subscriptions
         self.log_subscription_ = self.create_subscription(String, "/log", self.log, 10)
         self.qr_code_subscription_ = self.create_subscription(
-            QRCode, "/qr_list", self.qr_menu.qr_listener_callback, 10
+            QRCodeList, "/qr_code_list", self.qr_menu.qr_code_list_callback, 10
         )
 
         self.timer = self.create_timer(0.1, self.check_quit)
