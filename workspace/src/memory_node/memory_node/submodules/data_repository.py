@@ -13,7 +13,7 @@ class DataRepository:
 
     @staticmethod
     def qr_code_to_dict(qr_code: QRCode) -> Dict:
-        """Convert QRCode to dict"""
+        """Convert a QRCode into a dictionary to be used in SQLite commands"""
         return {
             "id": qr_code.id,
             "center_x": qr_code.center[0],
@@ -30,7 +30,7 @@ class DataRepository:
 
     @staticmethod
     def row_to_qr_code(row: List) -> QRCode:
-        """Convert SQLite row to QRCode"""
+        """Convert an SQLite row into a QRCode"""
         return QRCode(
             id=row[0],
             center=np.array(row[1:4]),
@@ -39,7 +39,7 @@ class DataRepository:
         )
 
     def add_qr_code_to_history(self, qr_code: QRCode) -> None:
-        """Add the QR code to the history"""
+        """Add a QR code to the history"""
         connection = get_database_connection()
         cursor = connection.cursor()
         sql = """
@@ -64,6 +64,7 @@ class DataRepository:
         """Add the QR code to the database and if it exists replace it"""
         connection = get_database_connection()
         cursor = connection.cursor()
+
         sql = "DELETE FROM qr_codes WHERE id=:id"
         cursor.execute(sql, {"id": qr_code.id}),
 
@@ -81,7 +82,8 @@ class DataRepository:
                 :rotation_w, :rotation_x, :rotation_y, :rotation_z
             )
         """
-        cursor.execute(sql, self.qr_code_to_dict(qr_code)),
+        cursor.execute(sql, self.qr_code_to_dict(qr_code))
+
         connection.commit()
         connection.close()
 

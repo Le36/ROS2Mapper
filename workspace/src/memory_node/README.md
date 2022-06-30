@@ -1,7 +1,13 @@
 # Memory node
 
 ## Description
+Handles saving the QR codes into the database and publishes the list of QR codes every five seconds and every time the database is updated.  
+Listens to `/qr_code` for new/updated QR codes and publishes the QR code list to `/qr_code_list`
 
-## Requirements
+## Dependencies
+- numpy
 
 ## Usage
+```
+ros2 run memory_node listener
+```
