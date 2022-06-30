@@ -1,14 +1,12 @@
 import os
-import select
 import sys
 import termios
 import threading
-import tty
 from typing import List
 
 from interfaces.msg import QRCode
 
-TURTLEBOT3_MODEL = os.environ["TURTLEBOT3_MODEL"]
+from .view import View
 
 QR_MENU = """
 List of observed QR codes
@@ -26,8 +24,9 @@ CTRL-C to quit
 """
 
 
-class QRMenu:
+class QRMenu(View):
     def __init__(self, return_to_menu, stop_exploring, publisher) -> None:
+        super().__init__()
         self._return_to_menu = return_to_menu
         self._stop_exploring = stop_exploring
         self._publisher = publisher
@@ -35,16 +34,6 @@ class QRMenu:
         self._data_to_log = None
         self._reprint_menu = False
         self._qr_codes: List[QRCode] = []
-        self.running = False
-
-    def open(self) -> None:
-        """Open the manual control view"""
-        self.running = True
-        self._main()
-
-    def close(self) -> None:
-        """Close the manual control view"""
-        self.running = False
 
     def log(self, data: str) -> None:
         """Log given data to logger
@@ -76,25 +65,6 @@ class QRMenu:
             qr_code (QRCode): QR code to be navigated to
         """
         self._publisher.publish(qr_code)
-
-    def _get_key(self, settings: List) -> str:
-        """Interpret the key input by the user
-
-        Args:
-            settings (List): Settings fetched with termios.tcgetattr(sys.stdin)
-
-        Returns:
-            str: The key input by the user
-        """
-        tty.setraw(sys.stdin.fileno())
-        rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
-        if rlist:
-            key = sys.stdin.read(1)
-        else:
-            key = ""
-
-        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
-        return key
 
     def _print_menu(self) -> None:
         """Print the QR code menu with found QR codes"""
