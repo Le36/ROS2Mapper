@@ -51,6 +51,7 @@ class QRMenu(View):
             qr_code (QRCode): QR code to be added to the list
         """
         self._qr_codes = qr_code_list.qr_codes
+        self._qr_codes.sort(key=lambda qr_code: qr_code.id)
         if self.running:
             self._reprint_menu = True
 
