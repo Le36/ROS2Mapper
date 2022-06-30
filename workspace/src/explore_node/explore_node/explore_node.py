@@ -11,7 +11,6 @@ from rclpy.node import Node
 from std_msgs.msg import String
 from tf2_msgs.msg import TFMessage
 
-
 TIMER_PERIOD = 1.0
 SPIN_DIST = 6.28
 
@@ -78,8 +77,9 @@ class ExploreNode(Node):
         Returns: None
         """
         self.move(
-            qrcode.center[0] + qrcode.normal_vector[0] * 0.2,
-            qrcode.center[1] + qrcode.normal_vector[1] * 0.2,
+            qrcode.center[0] + qrcode.normal_vector[0] * 0.5,
+            qrcode.center[1] + qrcode.normal_vector[1] * 0.5,
+            qrcode.rotation,
         )
 
     def commander_callback(self, msg: String) -> None:
@@ -283,18 +283,24 @@ class ExploreNode(Node):
         self.move(target[0], target[1])
         self.retrace_index += 1
 
-    def move(self, x: float, y: float) -> None:
-        """Move to pose (x, y)"""
+    def move(self, x: float, y: float, orientation=None) -> None:
+        """Move to pose (x, y) and optionally to a specific orientation"""
 
         goal_pose = PoseStamped()
         goal_pose.header.frame_id = "map"
         goal_pose.pose.position.x = x
         goal_pose.pose.position.y = y
         goal_pose.pose.position.z = 0.0
-        goal_pose.pose.orientation.x = 0.0
-        goal_pose.pose.orientation.y = 0.0
-        goal_pose.pose.orientation.z = 0.0
-        goal_pose.pose.orientation.w = 1.0
+        if orientation is not None:
+            goal_pose.pose.orientation.w = orientation[0]
+            goal_pose.pose.orientation.x = orientation[1]
+            goal_pose.pose.orientation.y = orientation[2]
+            goal_pose.pose.orientation.z = orientation[3]
+        else:
+            goal_pose.pose.orientation.x = 0.0
+            goal_pose.pose.orientation.y = 0.0
+            goal_pose.pose.orientation.z = 0.0
+            goal_pose.pose.orientation.w = 1.0
         self.nav.goToPose(goal_pose)
 
     def move_and_spin(self, x: float, y: float) -> None:
