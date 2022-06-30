@@ -1,8 +1,8 @@
 # QR Code reader
 
 ## Description
-**Note: Assumes that the Raspberry Pi camera v2 is used**
-Reads images from `/camera/image_raw` topic and publishes the QR code positions, normal vectors and orientations to `/qr_code` topic. Also fetches QR code data from `/get_qr_codes` service every five seconds to update the cache.
+**Note: Assumes that the Raspberry Pi camera v2 is used**  
+Reads images from `/camera/image_raw` topic and publishes the QR code positions, normal vectors and orientations to `/qr_code` topic. Also listens to the list of QR codes from `/qr_code_list`
 
 **Sources for the math**
 - [Rotation matrices](https://en.wikipedia.org/wiki/Rotation_matrix#Basic_rotations)
