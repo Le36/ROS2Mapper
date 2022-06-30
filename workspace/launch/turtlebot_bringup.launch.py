@@ -23,5 +23,6 @@ def generate_launch_description():
         [
             slam,
             Node(package="camera_node", executable="launch", name="camera_node"),
+            Node(package="qr_code_reader", executable="launch", name"qr_code_reader"),
         ]
     )
