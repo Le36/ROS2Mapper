@@ -23,3 +23,13 @@
 | /autonomous_exploration | std_msgs/msg/String       | `IONode`       | `ExploreNode`           | The I/O node uses this topic to command the exploration node                                                                    |
 | /qr_navigator           | interfaces/msg/QRCode     | `IONode`       | `ExploreNode`           | The I/O node uses this topic to command the explore node to navigate to the given QR code                                       |
 | /qr_code_list           | interfaces/msg/QRCodeList | `MemoryNode`   | `IONode` `QRCodeReader` | Called with the current list of QR codes five times per second and every time the database is updated                           |
+
+## Quality of Services
+| Topic                   | History   | Depth | Reliability | Durability | Deadline       | Lifespan       | Liveliness     | Lease Duration |
+| ----------------------- | --------- | ----- | ----------- | ---------- | -------------- | -------------- | -------------- | -------------- |
+| /qr_code                | Keep last | 10    | Reliable    | Volatile   | System default | System default | System default | System default |
+| /log                    | Keep last | 10    | Reliable    | Volatile   | System default | System default | System default | System default |
+| /camera/image_raw       | Keep last | 10    | Reliable    | Volatile   | System default | System default | System default | System default |
+| /autonomous_exploration | Keep last | 5     | Reliable    | Volatile   | System default | System default | System default | System default |
+| /qr_navigator           | Keep last | 5     | Reliable    | Volatile   | System default | System default | System default | System default |
+| /qr_code_list           | Keep last | 10    | Reliable    | Volatile   | System default | System default | System default | System default |
