@@ -4,6 +4,12 @@
 **Note: Assumes that the Raspberry Pi camera v2 is used**
 Reads images from `/camera/image_raw` topic and publishes the QR code positions, normal vectors and orientations to `/qr_code` topic. Also fetches QR code data from `/get_qr_codes` service every five seconds to update the cache.
 
+**Sources for the math**
+- [Rotation matrices](https://en.wikipedia.org/wiki/Rotation_matrix#Basic_rotations)
+- [Quaternion -> Euler angles](shorturl.at/djB89)
+- [Quaternion rotation of angle between two vectors](https://stackoverflow.com/a/1171995)
+- [Pixel -> 3d point](https://math.stackexchange.com/a/4405154)
+
 ## Requirements
 - numpy
 - opencv

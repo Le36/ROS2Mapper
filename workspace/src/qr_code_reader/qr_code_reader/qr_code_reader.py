@@ -188,12 +188,12 @@ class QRCodeReader(Node):
             self.get_logger().warn(
                 "Top left and bottom left coordinates are at the same height"
             )
-            return
+            return None
         if top_right[2] - bottom_right[2] == 0:
             self.get_logger().warn(
                 "Top right and bottom right coordinates are at the same height"
             )
-            return
+            return None
 
         # Move vectors until the height diference is equal to the height of the QR code
         qr_code_size = self.get_parameter("qr_code_size").get_parameter_value()
@@ -209,6 +209,14 @@ class QRCodeReader(Node):
         new_cam_world = self.camera_position
         new_cam_world.shape = (1, 3)
         new_cam_world = new_cam_world[0]
+
+        # Check that the QR code is not too far away
+        center = (top_left + bottom_right) / 2
+        if np.linalg.norm(center) > 3:
+            self.get_logger().info(
+                f"QR code is too far away ({np.linalg.norm(center)}m), ignoring"
+            )
+            return None
 
         # Add the camera position to the points
         top_left += new_cam_world
@@ -253,7 +261,10 @@ class QRCodeReader(Node):
                 return
 
             vectors = self.get_vectors(corners)
-            center, normal_vector, rotation = self.calculate(vectors)
+            pos = self.calculate(vectors)
+            if not pos:
+                continue
+            center, normal_vector, rotation = pos
             qr_code = QRCode(
                 id=code_id,
                 center=center,
