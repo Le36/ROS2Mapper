@@ -225,7 +225,7 @@ class QRCodeReader(Node):
         default_vector = rotation_matrix @ np.array([[0], [0], [1]])
         default_vector.shape = (1, 3)
         default_vector = default_vector[0]
-        rotation = quaternion_of_vectors(-normal_vector, default_vector)
+        rotation = quaternion_of_vectors(normal_vector, default_vector)
 
         center = (top_left + bottom_right) / 2
         return center, normal_vector, rotation
