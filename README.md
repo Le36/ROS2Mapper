@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/Le36/ros2-mapper/actions/workflows/main.yml/badge.svg)](https://github.com/Le36/ros2-mapper/actions/workflows/main.yml)
 [![codecov](https://codecov.io/gh/Le36/ros2-mapper/branch/main/graph/badge.svg?token=8TI9BF62Q4)](https://codecov.io/gh/Le36/ros2-mapper)  
-The University of Helsinki, Ohjelmistotuotantoprojekti (Software Engineering Project), summer 2022
+University of Helsinki, Ohjelmistotuotantoprojekti (Software Engineering Project), summer 2022
 
 ## Documents
 
