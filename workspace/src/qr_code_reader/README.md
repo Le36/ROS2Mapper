@@ -1,8 +1,8 @@
 # QR Code reader
 
 ## Description
-**Note: Assumes that the Raspberry Pi camera v2 is used**  
-Reads images from `/camera/image_raw` topic and publishes the QR code positions, normal vectors and orientations to `/qr_code` topic. Also updates internal list of QR codes from `/qr_code_list`. Ignores QR codes that are over 3m away to fix issues with the exploration and the low resolution.
+**Note: Assumes that the Raspberry Pi Camera v2 is used**  
+This node reads images from `/camera/image_raw` topic and publishes the QR code positions, normal vectors, and orientations to the `/qr_code` topic. This node also updates its internal list of QR codes from `/qr_code_list`. QR codes farther than 3m away are ignored to prevent issues with the exploration and the low resolution of the images.
 
 **Sources for the math**
 - [Rotation matrices](https://en.wikipedia.org/wiki/Rotation_matrix#Basic_rotations)
@@ -18,10 +18,10 @@ Reads images from `/camera/image_raw` topic and publishes the QR code positions,
 - interfaces
 
 ## Parameters
-| Parameter    | Type   | Default | Description                                                                                                                                                                                       |
-| ------------ | ------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| tf_threshold | double | 0.01    | Time threshold for dropping data because latest transform(position) was too old. If a negative value is used, all transformations are used and no data is dropped at the cost of reduced accuracy |
-| qr_code_size | double | 0.2     | QR code side length in meters                                                                                                                                                                     |
+| Parameter    | Type   | Default | Description                                                                                                                                                                                           |
+| ------------ | ------ | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| tf_threshold | double | 0.01    | Time threshold for dropping data because the latest transform(position) was too old. If a negative value is used, all transformations are used and no data is dropped at the cost of reduced accuracy |
+| qr_code_size | double | 0.2     | QR code side length in meters                                                                                                                                                                         |
 
 ## Topics
 | Publish/Subscribe | Topic               | Type                      | Description                                                                       |
