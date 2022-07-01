@@ -107,3 +107,14 @@ At multiple points during this project, I thought that I'd rather do some web de
 - Stuff works differently in the simulation than on the physical robot
 - Using simulation time is confusing
 - ROS 2 doesn't support the fish shell (no source file after colcon build)
+
+## Sprint 4
+In the ROS2 documentation [Synchronous vs. asynchronous service clients](https://docs.ros.org/en/foxy/How-To-Guides/Sync-Vs-Async.html#synchronous-calls) the link to 'The Simple Service and Client' tutorial actually links to 'Writing a simple publisher and subscriber'
+
+Using services is harder than I think it should be. Why can't I just call a service like a function and instead have to do some asynchronous magic? Also the tutorials [Writing a simple service and client](https://docs.ros.org/en/foxy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Service-And-Client.html) and [Synchronous vs. asynchronous service clients](https://docs.ros.org/en/foxy/How-To-Guides/Sync-Vs-Async.html) are bad because they don't cover the case where a node would want to call it's own function to get the response from the service and instead call the service in the main function which is useless. The 'Writing a simple service and client' tutorial also links a [GitHub repository](https://github.com/ros2/examples/tree/foxy/rclpy/services) with client examples, but none of them are useful...
+
+### Positives
+
+### Negatives
+- Calling services is unnecessarily complicated
+- ROS2 tutorials lack tutorials for what I wanted to do
