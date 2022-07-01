@@ -2,7 +2,7 @@
 
 ## Description
 **Note: Assumes that the Raspberry Pi camera v2 is used**  
-Reads images from `/camera/image_raw` topic and publishes the QR code positions, normal vectors and orientations to `/qr_code` topic. Also listens to the list of QR codes from `/qr_code_list`
+Reads images from `/camera/image_raw` topic and publishes the QR code positions, normal vectors and orientations to `/qr_code` topic. Also updates internal list of QR codes from `/qr_code_list`. Ignores QR codes that are over 3m away to fix issues with the exploration and the low resolution.
 
 **Sources for the math**
 - [Rotation matrices](https://en.wikipedia.org/wiki/Rotation_matrix#Basic_rotations)
@@ -15,13 +15,22 @@ Reads images from `/camera/image_raw` topic and publishes the QR code positions,
 - opencv
 - opencv-contrib-python
 - Requires that transform from odom to base_footprint is available
-- Requires a publisher to `/camera/image_raw` and a service `/get_qr_codes`
+- interfaces
 
 ## Parameters
 | Parameter    | Type   | Default | Description                                                                                                                                                                                       |
 | ------------ | ------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | tf_threshold | double | 0.01    | Time threshold for dropping data because latest transform(position) was too old. If a negative value is used, all transformations are used and no data is dropped at the cost of reduced accuracy |
 | qr_code_size | double | 0.2     | QR code side length in meters                                                                                                                                                                     |
+
+## Topics
+| Publish/Subscribe | Topic               | Type                      | Description                                                                       |
+| ----------------- | ------------------- | ------------------------- | --------------------------------------------------------------------------------- |
+| Subscribe         | `/camera/image_raw` | sensor_msgs/msg/Image     | Reads images from this topic                                                      |
+| Subscribe         | `/qr_code_list`     | interfaces/msg/QRCodeList | Updates internal QR code list when a new list is published to this topic          |
+| Publish           | `/qr_code`          | interfaces/msg/QRCode     | Publishes new QR codes and QR codes that have moved over 20cm or rotated over 20° |
+| Publish           | `/log`              | std_msgs/msg/String       | Publishes here when a QR code has moved/rotated or a new QR code was found        |
+
 
 ## Usage
 ```

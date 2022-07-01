@@ -25,7 +25,7 @@ class IONode(Node):
             String, "/autonomous_exploration", 5
         )
         self.manual_control_publisher = self.create_publisher(
-            Twist, "cmd_vel", QoSProfile(depth=10)
+            Twist, "/cmd_vel", QoSProfile(depth=10)
         )
 
         # Views
