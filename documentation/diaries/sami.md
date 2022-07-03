@@ -57,3 +57,15 @@ During sprint3 we started to create most own the nodes ourselves. We remade expl
 I mostly worked on the explore node and it came obvious it wouldn't be as smooth sailing as before. nav2 doesn't have ready made api for python in Foxy. It does have for galactic but we are already heavily invested to use foxy and not changing it at this point of the project. I went trough the simple commander which is the nav2 interface for python in galactic and took the funtions we needed for commanding nav2. They could be used with just small alternations. Later on we ended up alternating the full simple commander for our use. 
 
 Getting exploration working I had to get better understanding of the occupance grid and ended up printing maps in terminal a lot. In the end it was pretty easy to get exploration working at some level with Kosti. We ended up just looking for closest x,y cordinate which isn't explored yet with minimum radius requiment. We also realised loops aren't so easy to use in ros2 and there is really not note on those in tutorials. Getting the exploration and in the end also our movement node working with every other node was the bigger task. 
+
+## Sprint 4 (22.6. - 4.7.)
+
+<Strong>Real world is not as clean as simulation.</Strong>
+
+We realised we haven't tested enough everything together in physical robot or seperatly even. We got too confident in our nodes while developing them in simulation. We didn't realise what problems real life application would have versus simulated version (normal software). 
+
+It seems something (opencr?) doesn't empty itself when rasp in turtlebot is rebooted. Odom still seems to keep some stats and is really in wrong position in slam -> everything breaks. Seems like we have to do full shutdown after everytime robot has done some exploring. 
+
+Whole week went trying to get physical robot to start and work certainly. Slam and nav guides change it in params file doesn't really open what should be changed. Of course some of the variables can be understood from the names. Trial and error seems to be the way. 
+
+Atleast learned a bit of what error codes go away with reboot and when we have to do a full shutdown. 
