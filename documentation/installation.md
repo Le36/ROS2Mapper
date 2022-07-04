@@ -1,4 +1,6 @@
 # Installation
+
+Either follow the steps below or download the finished Raspberry Pi image [here](https://drive.google.com/file/d/1OW1qKr4fnz0A-hVEwMp_qjMUp9qKRk7-/view?usp=sharing)
 ## Installing dependencies
 1. [Remote] Add the apt repository
     ```
