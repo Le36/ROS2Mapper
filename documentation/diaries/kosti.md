@@ -40,3 +40,7 @@ I also tried to look into a solution that would circumvent m-explorer completely
 # Sprint 3
 
 I'm doing this after the fact due to my work week being cut short by covid, so sorry for the brevity. The third sprint proved to be the biggest challenge as we had to move from the third party explorer_lite package to our own package due to explorer_lite not being cofigurable at all. Once we got the node started (Sami initialized it) we managed to add some functionality everyday, which was a big departure from the usual. Biggest things I made during the sprint were the breadth first search, subscription to /tf topic and installing a slightly modified simple commander api from nav2. There was a lot of time spent looking into which topics were relevant to our issues and working with the data we got from them. New issues popped constantly due to nav being  cumbersome, especially with the physical robot, which I don't think we got working in time for the customer meeting.
+
+# Sprint 4
+
+The first half of the sprint was spent with covid, so it took a bit of time to catch up with what we had done once I got back. All in all it was a fairly simple sprint as I mostly just documented and refactored explore_node.
