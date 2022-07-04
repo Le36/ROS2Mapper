@@ -32,7 +32,7 @@ def generate_launch_description():
         [
             slam,
             nav2,
-            Node(package="memory_node", executable="listener", name="memory_node"),
-            Node(package="explore_node", executable="launch", name="explore_node"),
+            Node(package="ros2mapper_memory_node", executable="listener", name="ros2mapper_memory_node"),
+            Node(package="ros2mapper_explore_node", executable="launch", name="ros2mapper_explore_node"),
         ]
     )
