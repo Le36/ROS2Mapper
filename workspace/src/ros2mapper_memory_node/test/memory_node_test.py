@@ -10,8 +10,8 @@ from interfaces.msg import QRCode, QRCodeList
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 
-from ..ros2_mapper_memory_node.memory_node import MemoryNode
-from ..ros2_mapper_memory_node.submodules.data_repository import data_repository
+from ..ros2mapper_memory_node.memory_node import MemoryNode
+from ..ros2mapper_memory_node.submodules.data_repository import data_repository
 
 
 class NodeNode(Node):

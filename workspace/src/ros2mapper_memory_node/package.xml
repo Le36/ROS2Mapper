@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-    <name>ros2_mapper_memory_node</name>
+    <name>ros2mapper_memory_node</name>
     <version>0.0.0</version>
     <description>Manages saving the QR codes</description>
     <maintainer email="48809753+Le36@users.noreply.github.com">leevi</maintainer>
