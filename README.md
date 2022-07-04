@@ -25,6 +25,20 @@ University of Helsinki, Ohjelmistotuotantoprojekti (Software Engineering Project
 - [Nav2 simple commander](workspace/src/nav2_simple_commander/)
 - [QR Code reader](workspace/src/qr_code_reader/)
 
+### Running the project
+In the Gazebo simulator
+```
+cd workspace
+source install/setup.bash && source venv/bin/activate
+./run.sh
+```
+On the physical robot
+```
+cd workspace
+source install/setup.bash && source venv/bin/activate
+IP=<TurtleBot3 IP address> ./run.sh
+```
+
 ## Dev documents
 
 - [Tutorials](documentation/tutorials.md)

@@ -17,13 +17,11 @@ elif [ -z "$BOT" ]; then
   # Remote -> Raspi
   ssh ubuntu@"$IP" 'cd ~/ros2-mapper/workspace && BOT=1 ./run.sh' >/dev/null 2>&1 &
   sleep 30
-  ros2 launch/remote_launch.py >/dev/null 2>&1 &
+  ros2 launch/launch_turtlebot.launch.py >/dev/null 2>&1 &
   ros2 run io_node control
   exit 0
 else
   # Raspi
-  ros2 launch turtlebot3_bringup robot.launch.py >/dev/null 2>&1 &
-  sleep 20
-  ros2 run camera_node launch >/dev/null 2>&1
+  ros2 launch launch/turtlebot3_bringup.launch.py
   wait
 fi
