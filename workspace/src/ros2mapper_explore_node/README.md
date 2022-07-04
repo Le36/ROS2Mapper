@@ -24,5 +24,5 @@ This node commands Nav2 with our version of [nav2 simple commander](../nav2_simp
 
 ## Usage
 ```
-ros2 run explore_node launch
+ros2 run ros2mapper_explore_node launch
 ```

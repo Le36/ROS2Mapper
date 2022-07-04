@@ -17,5 +17,5 @@ Listens to `/qr_code` for new/updated QR codes and publishes the QR code list to
 
 ## Usage
 ```
-ros2 run memory_node listener
+ros2 run ros2mapper_memory_node listener
 ```

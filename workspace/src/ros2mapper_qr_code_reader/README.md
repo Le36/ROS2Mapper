@@ -34,5 +34,5 @@ This node reads images from `/camera/image_raw` topic and publishes the QR code 
 
 ## Usage
 ```
-ros2 run qr_code_reader launch
+ros2 run ros2mapper_qr_code_reader launch
 ```

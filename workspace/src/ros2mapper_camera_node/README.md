@@ -13,5 +13,5 @@ Reads images from the camera and publishes them to `/camera/image_raw` five time
 
 ## Usage
 ```
-ros2 run camera_node launch
+ros2 run ros2mapper_camera_node launch
 ```
