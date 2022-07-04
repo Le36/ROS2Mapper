@@ -70,3 +70,19 @@ __Positives__:
 __Negatives__:
  - Issues with setting up Python venv with ROS2 even when following the official tutorial
  - Nav2 some a tendency to do very weird things, e.g. crashing, working differently at diffferent times despite using same commands
+
+
+## Sprint 4 (22.06. - 04.07.)
+Our last sprint comprised of refactoring and documentation instead of development and this is reflected in this part of the diary. I took it upon myself to document the I/O node I created in the previous sprint. In addition to this we made some last changes to the program itself in order to get the physical robot to work better.
+
+I started with documenting the I/O node. I decided to look in to the documentation of other nodes like the nav2 simple commander to look it should be done. After getting inspiration from that and discussing the methods we should use within our team, I created the documentation in not time.
+
+When it came to Quality of Service documentation I decided to look into the tutorials of ROS2 and found a helpful [page](https://docs.ros.org/en/rolling/Concepts/About-Quality-of-Service-Settings.html) that contained all the information I needed. On this basis I was able to also write the Quality of Service documentation.
+
+One major thing that is in my mind at this point is the difference between the simulation and the physical robot. Although the same code should work identically in both, this was almost never the case. I strongly feel this is due to our code, dependencies, or any other factor directly influenced by ourselves. It was easy to blame nav2 or any other third party software for the things that didn't work but I am sure it was in fact our own nodes that caused things to break.
+
+__Positives__:
+ - Quality of Service settings documentation in ROS2 documentation
+
+__Negatives__:
+ - Same code still not working in simulation vs. physical robot
