@@ -48,5 +48,5 @@ Has three different views for different functions:
 
 ## Usage
 ```
-ros2 run io_node control
+ros2 run ros2mapper_io_node control
 ```

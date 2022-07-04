@@ -7,7 +7,7 @@ from .submodules.data_repository import data_repository
 
 class MemoryNode(Node):
     def __init__(self) -> None:
-        super().__init__("memory_node")
+        super().__init__("ros2mapper_memory_node")
         self.qr_code_subscription = self.create_subscription(
             QRCode, "/qr_code", self.add_qr_code_callback, 10
         )
