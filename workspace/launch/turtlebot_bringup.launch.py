@@ -9,7 +9,7 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    slam = IncludeLaunchDescription(
+    turtlebot3_bringup = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [
                 os.path.join(
@@ -21,8 +21,8 @@ def generate_launch_description():
     )
     return LaunchDescription(
         [
-            slam,
-            Node(package="camera_node", executable="launch", name="camera_node"),
-            Node(package="qr_code_reader", executable="launch", name"qr_code_reader"),
+            turtlebot3_bringup,
+            Node(package="ros2mapper_camera_node", executable="launch", name="ros2mapper_camera_node"),
+            Node(package="ros2mapper_qr_code_reader", executable="launch", name"ros2mapper_qr_code_reader"),
         ]
     )
