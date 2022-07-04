@@ -4,4 +4,4 @@ omit =
     **/__init__.py,
     src/**/setup.py,
     src/**/test/**,
-    src/io_node/**
+    src/ros2mapper_io_node/**
