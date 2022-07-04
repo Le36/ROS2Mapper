@@ -17,13 +17,13 @@ University of Helsinki, Ohjelmistotuotantoprojekti (Software Engineering Project
 - [API documentation](documentation/api-documentation.md)
 
 ### Nodes
-- [Camera node](workspace/src/camera_node/)
-- [Explore node](workspace/src/explore_node/)
+- [Camera node](workspace/src/ros2mapper_camera_node/)
+- [Explore node](workspace/src/ros2mapper_explore_node/)
 - [Interfaces](workspace/src/interfaces/)
-- [IO node](workspace/src/io_node/)
-- [Memory node](workspace/src/memory_node/)
+- [IO node](workspace/src/ros2mapper_io_node/)
+- [Memory node](workspace/src/ros2mapper_memory_node/)
 - [Nav2 simple commander](workspace/src/nav2_simple_commander/)
-- [QR Code reader](workspace/src/qr_code_reader/)
+- [QR Code reader](workspace/src/ros2mapper_qr_code_reader/)
 
 ### Running the project
 In the Gazebo simulator
